@@ -71,9 +71,10 @@ soumettre ses informations, et télécharger le magazine PDF.
 
 2. **Given** un visiteur clique sur "Télécharger" pour
    un magazine,
-   **When** le formulaire s'affiche,
-   **Then** il contient les champs : nom & prénoms,
-   contact, niveau d'étude, âge, filière actuelle.
+   **When** une modale s'ouvre par-dessus la page,
+   **Then** elle contient les champs : nom & prénoms,
+   contact, niveau d'étude (liste déroulante), âge,
+   filière actuelle (texte libre).
 
 3. **Given** un visiteur remplit tous les champs et soumet
    le formulaire,
@@ -169,6 +170,14 @@ partenaires avec leurs logos et noms.
   lente ? Le contenu textuel MUST s'afficher en
   priorité grâce au rendu serveur (SSR).
 
+## Clarifications
+
+### Session 2026-03-02
+
+- Q: Comment le contenu (magazines, rubriques, partenaires) est-il géré pour la V1 ? → A: Interface admin protégée par mot de passe pour ajouter/modifier le contenu.
+- Q: Les champs "niveau d'étude" et "filière actuelle" sont-ils des listes déroulantes ou du texte libre ? → A: Liste déroulante pour "niveau d'étude", texte libre pour "filière actuelle".
+- Q: Comment le formulaire de téléchargement apparaît-il ? → A: Modale (popup) qui s'ouvre par-dessus la page du magazine.
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
@@ -187,7 +196,10 @@ partenaires avec leurs logos et noms.
   contact, niveau d'étude, âge, filière actuelle.
 - **FR-005**: Tous les champs du formulaire de
   téléchargement MUST être obligatoires et validés
-  avant soumission.
+  avant soumission. Le champ "niveau d'étude" MUST
+  être une liste déroulante avec des choix prédéfinis.
+  Le champ "filière actuelle" MUST être un champ de
+  texte libre.
 - **FR-006**: Le système MUST enregistrer les informations
   du téléchargeur en base de données à chaque soumission
   de formulaire.
@@ -206,6 +218,15 @@ partenaires avec leurs logos et noms.
   pour le référencement et la performance.
 - **FR-012**: La navigation MUST être présente sur toutes
   les pages et indiquer la page active.
+- **FR-013**: Le site MUST comporter une interface
+  d'administration protégée par mot de passe permettant
+  d'ajouter, modifier et supprimer les magazines,
+  rubriques et partenaires.
+- **FR-014**: L'accès à l'interface admin MUST être
+  restreint par une authentification par mot de passe.
+- **FR-015**: Le formulaire de téléchargement MUST
+  s'afficher dans une modale (popup) par-dessus la page
+  du magazine, sans navigation vers une page séparée.
 
 ### Key Entities
 
@@ -231,7 +252,7 @@ partenaires avec leurs logos et noms.
   le formulaire de téléchargement est la seule barrière
   avant accès au PDF.
 - Le contenu (magazines, rubriques, partenaires) est
-  géré directement en base de données pour la V1
+  géré via une interface admin protégée par mot de passe
   (pas de CMS externe).
 - Le champ "contact" correspond à un numéro de
   téléphone (format ivoirien, ex: 07 XX XX XX XX).
