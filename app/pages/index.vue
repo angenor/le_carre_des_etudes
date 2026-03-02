@@ -7,40 +7,49 @@ useHead({
 <template>
   <div>
     <!-- Section Hero -->
-    <section class="relative overflow-hidden bg-emerald-700">
-      <div class="absolute inset-0">
-        <img
-          src="/images/hero/magazine-hero.svg"
-          alt="Présentation du magazine Le Carré des Études — le magazine de la communauté estudiantine de Côte d'Ivoire"
-          class="h-full w-full object-cover object-right opacity-60"
-        />
-      </div>
-      <div class="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
-        <div class="max-w-2xl">
-          <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Le Carré des Études
-          </h1>
-          <p class="mt-4 text-lg text-emerald-100 sm:text-xl lg:text-2xl">
-            Guider, Informer, Inspirer
-          </p>
-          <p class="mt-6 max-w-xl text-base leading-relaxed text-emerald-50/90 sm:text-lg">
-            Le magazine de la communauté estudiantine de Côte d'Ivoire.
-            Découvrez des portraits inspirants, des parcours remarquables
-            et toute l'actualité qui façonne l'avenir des étudiants ivoiriens.
-          </p>
-          <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <NuxtLink
-              to="/magazine"
-              class="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-base font-semibold text-emerald-700 shadow-sm transition-colors hover:bg-emerald-50"
-            >
-              Découvrir le magazine
-            </NuxtLink>
-            <NuxtLink
-              to="/rubriques"
-              class="inline-flex items-center justify-center rounded-lg border-2 border-white/30 px-6 py-3 text-base font-semibold text-white transition-colors hover:border-white/60 hover:bg-white/10"
-            >
-              Nos rubriques
-            </NuxtLink>
+    <section class="relative overflow-hidden bg-gray-900">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:gap-12">
+          <!-- Texte -->
+          <div class="relative z-10 px-6 pt-20 pb-10 sm:px-10 sm:pt-24 lg:w-1/2 lg:py-32 lg:pr-0 lg:pl-12 xl:pl-16">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl xl:text-6xl">
+              Le Carré des Études
+            </h1>
+            <p class="mt-4 text-xl font-medium text-amber-400 sm:text-2xl">
+              Guider, Informer, Inspirer
+            </p>
+            <p class="mt-6 max-w-lg text-base leading-relaxed text-gray-300 sm:text-lg">
+              Le magazine de la communauté estudiantine de Côte d'Ivoire.
+              Découvrez des portraits inspirants, des parcours remarquables
+              et toute l'actualité qui façonne l'avenir des étudiants ivoiriens.
+            </p>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <NuxtLink
+                to="/magazine"
+                class="inline-flex items-center justify-center rounded-lg bg-amber-400 px-6 py-3 text-base font-semibold text-gray-900 shadow-sm transition-colors hover:bg-amber-300"
+              >
+                Découvrir le magazine
+              </NuxtLink>
+              <NuxtLink
+                to="/rubriques"
+                class="inline-flex items-center justify-center rounded-lg border-2 border-white/30 px-6 py-3 text-base font-semibold text-white transition-colors hover:border-white/60 hover:bg-white/10"
+              >
+                Nos rubriques
+              </NuxtLink>
+            </div>
+          </div>
+          <!-- Image couverture magazine -->
+          <div class="relative flex justify-center px-6 pb-12 lg:w-1/2 lg:px-0 lg:py-16">
+            <div class="relative w-64 sm:w-72 lg:w-80 xl:w-96">
+              <div class="absolute -inset-4 rounded-2xl bg-amber-400/20 blur-2xl" />
+              <img
+                src="/images/hero/magazine.png"
+                alt="Couverture du magazine Le Carré des Études — le magazine de la communauté estudiantine de Côte d'Ivoire"
+                class="relative rounded-lg shadow-2xl shadow-black/50"
+                width="432"
+                height="768"
+              />
+            </div>
           </div>
         </div>
       </div>
