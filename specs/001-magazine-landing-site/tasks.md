@@ -70,16 +70,16 @@
 
 ### Implementation for User Story 2
 
-- [ ] T017 [P] [US2] Implement GET /api/magazines (return all published magazines) in `server/api/magazines/index.get.ts`
-- [ ] T018 [P] [US2] Implement GET /api/magazines/:id (return single magazine or 404) in `server/api/magazines/[id].get.ts`
-- [ ] T019 [P] [US2] Implement POST /api/downloads (validate form fields including Ivorian phone regex, studyLevel enum, age 15-99; save to DB; return pdfUrl) in `server/api/downloads/index.post.ts`
-- [ ] T020 [US2] Create magazine card component (name, description, version, date, cover image, "Télécharger" button) in `app/components/MagazineCard.vue`
-- [ ] T021 [US2] Create download modal component (form with fullName, contact, studyLevel dropdown, age, fieldOfStudy text input; client-side validation; submit to POST /api/downloads; trigger PDF download on success) in `app/components/DownloadModal.vue`
-- [ ] T022 [US2] Create magazine listing page (fetch GET /api/magazines, display MagazineCard grid, open DownloadModal on click, disable download button if no pdfPath) in `app/pages/magazine.vue`
-- [ ] T023 [P] [US2] Implement POST /api/magazines (admin: create magazine with name, description, version, pdfPath, coverImage, publishedAt) in `server/api/magazines/index.post.ts`
-- [ ] T024 [P] [US2] Implement PUT /api/magazines/:id (admin: update magazine) in `server/api/magazines/[id].put.ts`
-- [ ] T025 [P] [US2] Implement DELETE /api/magazines/:id (admin: delete magazine and its file) in `server/api/magazines/[id].delete.ts`
-- [ ] T026 [US2] Create admin magazines management page (list, create, edit, delete magazines with file upload) in `app/pages/admin/magazines.vue`
+- [x] T017 [P] [US2] Implement GET /api/magazines (return all published magazines) in `server/api/magazines/index.get.ts`
+- [x] T018 [P] [US2] Implement GET /api/magazines/:id (return single magazine or 404) in `server/api/magazines/[id].get.ts`
+- [x] T019 [P] [US2] Implement POST /api/downloads (validate form fields including Ivorian phone regex, studyLevel enum, age 15-99; save to DB; return pdfUrl) in `server/api/downloads/index.post.ts`
+- [x] T020 [US2] Create magazine card component (name, description, version, date, cover image, "Télécharger" button) in `app/components/MagazineCard.vue`
+- [x] T021 [US2] Create download modal component (form with fullName, contact, studyLevel dropdown, age, fieldOfStudy text input; client-side validation; submit to POST /api/downloads; trigger PDF download on success) in `app/components/DownloadModal.vue`
+- [x] T022 [US2] Create magazine listing page (fetch GET /api/magazines, display MagazineCard grid, open DownloadModal on click, disable download button if no pdfPath) in `app/pages/magazine.vue`
+- [x] T023 [P] [US2] Implement POST /api/magazines (admin: create magazine with name, description, version, pdfPath, coverImage, publishedAt) in `server/api/magazines/index.post.ts`
+- [x] T024 [P] [US2] Implement PUT /api/magazines/:id (admin: update magazine) in `server/api/magazines/[id].put.ts`
+- [x] T025 [P] [US2] Implement DELETE /api/magazines/:id (admin: delete magazine and its file) in `server/api/magazines/[id].delete.ts`
+- [x] T026 [US2] Create admin magazines management page (list, create, edit, delete magazines with file upload) in `app/pages/admin/magazines.vue`
 
 **Checkpoint**: User Story 2 complete — visitors can browse magazines, fill the download form, and get the PDF. Admin can manage magazines.
 

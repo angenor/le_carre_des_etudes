@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "@tailwindcss/vite": "^4.2.1",
     "nuxt": "^4.3.1",
@@ -25,7 +26,8 @@
       "prisma",
       "@prisma/engines",
       "esbuild",
-      "@parcel/watcher"
+      "@parcel/watcher",
+      "better-sqlite3"
     ]
   }
 }
