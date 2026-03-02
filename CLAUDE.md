@@ -59,3 +59,26 @@ Standard Nuxt 4 layout with the `app/` directory convention:
 
 - **Install Nuxt modules** with `npx nuxi@latest module add <module>` (not manual pnpm add + config edit)
 - **Package manager**: always use `pnpm`, never npm/yarn/bun
+
+
+## Conventions
+
+- **Français avec accents** (é, è, ê, à, ç, ù) obligatoires dans le code et les contenus
+- **Nommage de fichiers/dossiers : PAS d'accents ni de caractères spéciaux** (problèmes d'encodage SSH/Docker en production). Utiliser uniquement `[a-z0-9_-]`.
+- Champs trilingues : `*_fr`, `*_en`, `*_ar`
+- Alias : `@bank` → `./bank`
+
+## Parallel Sub-agents Strategy
+
+Use multiple sub-agents in parallel for efficiency:
+- Search frontend + backend simultaneously
+- Explore multiple files/folders at the same time
+- Run tests + verifications in parallel after modifications
+- **Avant de créer un nouveau composant** : Toujours lancer un sous-agent pour vérifier si un composant similaire existe déjà(rechercher par nom et par fonctionnalité). Évite les redondances et favorise la réutilisation.
+
+## Active Technologies
+- TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7 (001-magazine-landing-site)
+- SQLite via Prisma 7 (`dev.db` at project root); generated client in `app/generated/prisma/` (001-magazine-landing-site)
+
+## Recent Changes
+- 001-magazine-landing-site: Added TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7
