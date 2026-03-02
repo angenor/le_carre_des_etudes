@@ -15,8 +15,12 @@ logs
 
 # Misc
 .DS_Store
+Thumbs.db
+*.tmp
+*.swp
 .fleet
 .idea
+.vscode
 
 # Local env files
 .env

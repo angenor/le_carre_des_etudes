@@ -129,10 +129,10 @@
 
 **Purpose**: Responsive design, SSR validation, performance, and edge case handling across all pages
 
-- [ ] T041 [P] Ensure all pages and components are responsive (mobile 375px, tablet 768px, desktop 1280px) across `app/pages/` and `app/components/`
-- [ ] T042 [P] Add alt text to all images for accessibility across all components
-- [ ] T043 Verify SSR renders content server-side for all public pages (text-first, images lazy-loaded)
-- [ ] T044 Run full quickstart.md verification checklist (all 12 items)
+- [x] T041 [P] Ensure all pages and components are responsive (mobile 375px, tablet 768px, desktop 1280px) across `app/pages/` and `app/components/`
+- [x] T042 [P] Add alt text to all images for accessibility across all components
+- [x] T043 Verify SSR renders content server-side for all public pages (text-first, images lazy-loaded)
+- [x] T044 Run full quickstart.md verification checklist (all 12 items)
 
 ---
 
