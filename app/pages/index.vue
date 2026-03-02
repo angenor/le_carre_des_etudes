@@ -12,7 +12,7 @@ useHead({
         <img
           src="/images/hero/magazine-hero.svg"
           alt="Présentation du magazine Le Carré des Études — le magazine de la communauté estudiantine de Côte d'Ivoire"
-          class="h-full w-full object-cover opacity-60"
+          class="h-full w-full object-cover object-right opacity-60"
         />
       </div>
       <div class="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
