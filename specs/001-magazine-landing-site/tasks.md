@@ -32,16 +32,16 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Create default layout with navbar and footer in `app/layouts/default.vue`
-- [ ] T006 [P] Create navigation bar component with links to 4 public pages and active-page indicator in `app/components/AppNavbar.vue`
-- [ ] T007 [P] Create footer component in `app/components/AppFooter.vue`
-- [ ] T008 [P] Implement admin authentication API route (POST /api/auth/login, compare password to ADMIN_PASSWORD env var, set server session) in `server/api/auth/login.post.ts`
-- [ ] T009 [P] Implement admin auth middleware (check session, return 401 if invalid) in `server/middleware/admin.ts`
-- [ ] T010 [P] Create admin auth composable (client-side login state, login/logout methods) in `app/composables/useAdmin.ts`
-- [ ] T011 Create admin login page (password form, call POST /api/auth/login, redirect to /admin on success) in `app/pages/admin/login.vue`
-- [ ] T012 Create admin dashboard page (links to manage magazines, rubriques, partenaires) in `app/pages/admin/index.vue`
-- [ ] T013 [P] Implement file upload API route (POST /api/upload, multipart, category field, save to public/uploads/{category}/) in `server/api/upload/index.post.ts`
-- [ ] T014 Update root `app/app.vue` to use default layout with NuxtLayout
+- [x] T005 Create default layout with navbar and footer in `app/layouts/default.vue`
+- [x] T006 [P] Create navigation bar component with links to 4 public pages and active-page indicator in `app/components/AppNavbar.vue`
+- [x] T007 [P] Create footer component in `app/components/AppFooter.vue`
+- [x] T008 [P] Implement admin authentication API route (POST /api/auth/login, compare password to ADMIN_PASSWORD env var, set server session) in `server/api/auth/login.post.ts`
+- [x] T009 [P] Implement admin auth middleware (check session, return 401 if invalid) in `server/middleware/admin.ts`
+- [x] T010 [P] Create admin auth composable (client-side login state, login/logout methods) in `app/composables/useAdmin.ts`
+- [x] T011 Create admin login page (password form, call POST /api/auth/login, redirect to /admin on success) in `app/pages/admin/login.vue`
+- [x] T012 Create admin dashboard page (links to manage magazines, rubriques, partenaires) in `app/pages/admin/index.vue`
+- [x] T013 [P] Implement file upload API route (POST /api/upload, multipart, category field, save to public/uploads/{category}/) in `server/api/upload/index.post.ts`
+- [x] T014 Update root `app/app.vue` to use default layout with NuxtLayout
 
 **Checkpoint**: Foundation ready — layout, navigation, admin auth, and file upload infrastructure are operational
 
