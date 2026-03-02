@@ -93,13 +93,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T027 [P] [US3] Implement GET /api/rubriques (return all content items grouped by type: portrait, parcours_inspirant, en_vedette) in `server/api/rubriques/index.get.ts`
-- [ ] T028 [P] [US3] Create rubrique card component (image, title, description) in `app/components/RubriqueCard.vue`
-- [ ] T029 [US3] Create rubriques page (fetch GET /api/rubriques, display sections grouped by type, hide empty sections) in `app/pages/rubriques.vue`
-- [ ] T030 [P] [US3] Implement POST /api/rubriques (admin: create content item with type, title, description, imagePath, order) in `server/api/rubriques/index.post.ts`
-- [ ] T031 [P] [US3] Implement PUT /api/rubriques/:id (admin: update content item) in `server/api/rubriques/[id].put.ts`
-- [ ] T032 [P] [US3] Implement DELETE /api/rubriques/:id (admin: delete content item and its image) in `server/api/rubriques/[id].delete.ts`
-- [ ] T033 [US3] Create admin rubriques management page (list, create with type selector, edit, delete content items with image upload) in `app/pages/admin/rubriques.vue`
+- [x] T027 [P] [US3] Implement GET /api/rubriques (return all content items grouped by type: portrait, parcours_inspirant, en_vedette) in `server/api/rubriques/index.get.ts`
+- [x] T028 [P] [US3] Create rubrique card component (image, title, description) in `app/components/RubriqueCard.vue`
+- [x] T029 [US3] Create rubriques page (fetch GET /api/rubriques, display sections grouped by type, hide empty sections) in `app/pages/rubriques.vue`
+- [x] T030 [P] [US3] Implement POST /api/rubriques (admin: create content item with type, title, description, imagePath, order) in `server/api/rubriques/index.post.ts`
+- [x] T031 [P] [US3] Implement PUT /api/rubriques/:id (admin: update content item) in `server/api/rubriques/[id].put.ts`
+- [x] T032 [P] [US3] Implement DELETE /api/rubriques/:id (admin: delete content item and its image) in `server/api/rubriques/[id].delete.ts`
+- [x] T033 [US3] Create admin rubriques management page (list, create with type selector, edit, delete content items with image upload) in `app/pages/admin/rubriques.vue`
 
 **Checkpoint**: User Story 3 complete — editorial content displays grouped by type, empty sections hidden. Admin can manage content items.
 
