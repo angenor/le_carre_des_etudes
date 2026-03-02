@@ -113,13 +113,13 @@
 
 ### Implementation for User Story 4
 
-- [ ] T034 [P] [US4] Implement GET /api/partenaires (return all partners ordered by order field) in `server/api/partenaires/index.get.ts`
-- [ ] T035 [P] [US4] Create partner logo component (logo image, name, optional link) in `app/components/PartnerLogo.vue`
-- [ ] T036 [US4] Create partenaires page (fetch GET /api/partenaires, display logo grid, show empty state message if no partners) in `app/pages/partenaires.vue`
-- [ ] T037 [P] [US4] Implement POST /api/partenaires (admin: create partner with name, logoPath, url, order) in `server/api/partenaires/index.post.ts`
-- [ ] T038 [P] [US4] Implement PUT /api/partenaires/:id (admin: update partner) in `server/api/partenaires/[id].put.ts`
-- [ ] T039 [P] [US4] Implement DELETE /api/partenaires/:id (admin: delete partner and its logo) in `server/api/partenaires/[id].delete.ts`
-- [ ] T040 [US4] Create admin partenaires management page (list, create, edit, delete partners with logo upload) in `app/pages/admin/partenaires.vue`
+- [x] T034 [P] [US4] Implement GET /api/partenaires (return all partners ordered by order field) in `server/api/partenaires/index.get.ts`
+- [x] T035 [P] [US4] Create partner logo component (logo image, name, optional link) in `app/components/PartnerLogo.vue`
+- [x] T036 [US4] Create partenaires page (fetch GET /api/partenaires, display logo grid, show empty state message if no partners) in `app/pages/partenaires.vue`
+- [x] T037 [P] [US4] Implement POST /api/partenaires (admin: create partner with name, logoPath, url, order) in `server/api/partenaires/index.post.ts`
+- [x] T038 [P] [US4] Implement PUT /api/partenaires/:id (admin: update partner) in `server/api/partenaires/[id].put.ts`
+- [x] T039 [P] [US4] Implement DELETE /api/partenaires/:id (admin: delete partner and its logo) in `server/api/partenaires/[id].delete.ts`
+- [x] T040 [US4] Create admin partenaires management page (list, create, edit, delete partners with logo upload) in `app/pages/admin/partenaires.vue`
 
 **Checkpoint**: User Story 4 complete — partner logos and names display in a grid. Admin can manage partners.
 
