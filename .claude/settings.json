@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm remove @nuxtjs/tailwindcss)",
+      "Bash(npx pnpm config set --location project onlyBuiltDependencies \"prisma\" \"esbuild\" \"@prisma/engines\" \"@prisma/client\" \"@parcel/watcher\")"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  }
+}
