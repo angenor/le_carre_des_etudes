@@ -10,9 +10,48 @@ datasource db {
   provider = "sqlite"
 }
 
-model User {
+model Magazine {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  version     String     @unique
+  pdfPath     String
+  coverImage  String?
+  publishedAt DateTime
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  downloads   Download[]
+}
+
+model Download {
+  id           Int      @id @default(autoincrement())
+  fullName     String
+  contact      String
+  studyLevel   String
+  age          Int
+  fieldOfStudy String
+  magazineId   Int
+  magazine     Magazine @relation(fields: [magazineId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model ContentItem {
+  id          Int      @id @default(autoincrement())
+  type        String
+  title       String
+  description String
+  imagePath   String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Partner {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
+  name      String
+  logoPath  String
+  url       String?
+  order     Int      @default(0)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

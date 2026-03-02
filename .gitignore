@@ -27,3 +27,9 @@ logs
 /app/generated/prisma
 *.db
 *.db-journal
+
+# Uploaded files (keep directory structure via .gitkeep)
+/public/uploads/magazines/*
+/public/uploads/rubriques/*
+/public/uploads/partenaires/*
+!.gitkeep

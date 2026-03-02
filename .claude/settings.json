@@ -3,7 +3,8 @@
     "allow": [
       "Bash(pnpm remove @nuxtjs/tailwindcss)",
       "Bash(npx pnpm config set --location project onlyBuiltDependencies \"prisma\" \"esbuild\" \"@prisma/engines\" \"@prisma/client\" \"@parcel/watcher\")",
-      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --paths-only)"
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --paths-only)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)"
     ],
     "additionalDirectories": [
       "/tmp"
