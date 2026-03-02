@@ -55,8 +55,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Create homepage with hero image, magazine name, mission statement, and call-to-action in `app/pages/index.vue`
-- [ ] T016 [US1] Add placeholder hero image in `public/images/hero/` and reference it from homepage
+- [x] T015 [US1] Create homepage with hero image, magazine name, mission statement, and call-to-action in `app/pages/index.vue`
+- [x] T016 [US1] Add placeholder hero image in `public/images/hero/` and reference it from homepage
 
 **Checkpoint**: User Story 1 complete — homepage displays magazine presentation and navigation works across all pages
 
