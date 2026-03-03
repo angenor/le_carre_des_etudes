@@ -26,32 +26,19 @@ watch(() => route.path, () => {
 </script>
 
 <template>
-  <nav class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+  <nav class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/20 backdrop-blur-xl">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-16 items-center justify-between">
-        <!-- Marque / Logo -->
-        <NuxtLink
-          to="/"
-          class="flex items-center gap-2 text-xl font-bold tracking-tight text-gray-900 transition-colors hover:text-emerald-700"
-          @click="closeMobileMenu"
-        >
-          <span class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-emerald-600 text-sm font-black text-white">
-            CÉ
-          </span>
-          <span class="hidden sm:inline">Le Carré des Études</span>
-          <span class="sm:hidden">Le Carré</span>
-        </NuxtLink>
-
+      <div class="flex h-14 items-center justify-center md:justify-between">
         <!-- Liens de navigation (desktop) -->
         <ul class="hidden md:flex md:items-center md:gap-1">
           <li v-for="link in navLinks" :key="link.to">
             <NuxtLink
               :to="link.to"
-              class="rounded-md px-3 py-2 text-sm font-medium transition-colors"
+              class="rounded-full px-4 py-1.5 text-sm font-medium transition-all"
               :class="
                 isActive(link.to)
-                  ? 'bg-emerald-50 text-emerald-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-white/20 text-white'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'
               "
             >
               {{ link.label }}
@@ -62,16 +49,14 @@ watch(() => route.path, () => {
         <!-- Bouton hamburger (mobile) -->
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 md:hidden"
+          class="absolute right-4 inline-flex items-center justify-center rounded-full p-2 text-white/80 transition-colors hover:bg-white/10 hover:text-white focus:outline-none md:hidden"
           :aria-expanded="mobileMenuOpen"
           aria-label="Ouvrir le menu de navigation"
           @click="mobileMenuOpen = !mobileMenuOpen"
         >
-          <!-- Icône hamburger -->
           <svg
             v-if="!mobileMenuOpen"
             class="h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -79,11 +64,9 @@ watch(() => route.path, () => {
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          <!-- Icône fermeture -->
           <svg
             v-else
             class="h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -95,7 +78,7 @@ watch(() => route.path, () => {
       </div>
     </div>
 
-    <!-- Menu mobile -->
+    <!-- Menu mobile glassmorphism -->
     <Transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="opacity-0 -translate-y-1"
@@ -104,16 +87,16 @@ watch(() => route.path, () => {
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <div v-if="mobileMenuOpen" class="border-t border-gray-100 bg-white md:hidden">
+      <div v-if="mobileMenuOpen" class="border-t border-white/10 bg-black/30 backdrop-blur-xl md:hidden">
         <ul class="space-y-1 px-4 py-3">
           <li v-for="link in navLinks" :key="link.to">
             <NuxtLink
               :to="link.to"
-              class="block rounded-md px-3 py-2 text-base font-medium transition-colors"
+              class="block rounded-lg px-3 py-2.5 text-base font-medium transition-colors"
               :class="
                 isActive(link.to)
-                  ? 'bg-emerald-50 text-emerald-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-white/20 text-white'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'
               "
               @click="closeMobileMenu"
             >
