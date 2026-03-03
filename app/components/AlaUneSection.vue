@@ -176,7 +176,7 @@ const edition = {
 
 .electric-main-border {
   width: 280px;
-  height: 498px;
+  aspect-ratio: 583 / 828;
   border-radius: 24px;
   border: 2px solid #dd8448;
   margin-top: -4px;
@@ -187,7 +187,6 @@ const edition = {
 @media (min-width: 640px) {
   .electric-main-border {
     width: 320px;
-    height: 569px;
   }
 }
 
