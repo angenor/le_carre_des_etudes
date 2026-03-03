@@ -26,57 +26,53 @@ watch(() => route.path, () => {
 </script>
 
 <template>
-  <nav class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/20 backdrop-blur-xl">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-14 items-center justify-center md:justify-between">
-        <!-- Liens de navigation (desktop) -->
-        <ul class="hidden md:flex md:items-center md:gap-1">
-          <li v-for="link in navLinks" :key="link.to">
-            <NuxtLink
-              :to="link.to"
-              class="rounded-full px-4 py-1.5 text-sm font-medium transition-all"
-              :class="
-                isActive(link.to)
-                  ? 'bg-white/20 text-white'
-                  : 'text-white/70 hover:bg-white/10 hover:text-white'
-              "
-            >
-              {{ link.label }}
-            </NuxtLink>
-          </li>
-        </ul>
-
-        <!-- Bouton hamburger (mobile) -->
-        <button
-          type="button"
-          class="absolute right-4 inline-flex items-center justify-center rounded-full p-2 text-white/80 transition-colors hover:bg-white/10 hover:text-white focus:outline-none md:hidden"
-          :aria-expanded="mobileMenuOpen"
-          aria-label="Ouvrir le menu de navigation"
-          @click="mobileMenuOpen = !mobileMenuOpen"
-        >
-          <svg
-            v-if="!mobileMenuOpen"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-          <svg
-            v-else
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+  <nav class="fixed left-0 top-4 z-50 ml-4 sm:ml-6 lg:ml-8">
+    <!-- Desktop : pill compacte à gauche -->
+    <div class="hidden items-center gap-1 rounded-full border border-white/15 bg-black/20 px-2 py-1.5 backdrop-blur-xl md:inline-flex">
+      <NuxtLink
+        v-for="link in navLinks"
+        :key="link.to"
+        :to="link.to"
+        class="rounded-full px-4 py-1.5 text-sm font-medium transition-all"
+        :class="
+          isActive(link.to)
+            ? 'bg-white/20 text-white'
+            : 'text-white/70 hover:bg-white/10 hover:text-white'
+        "
+      >
+        {{ link.label }}
+      </NuxtLink>
     </div>
+
+    <!-- Mobile : bouton hamburger -->
+    <button
+      type="button"
+      class="inline-flex items-center justify-center rounded-full border border-white/15 bg-black/20 p-2.5 text-white/80 backdrop-blur-xl transition-colors hover:bg-black/30 hover:text-white focus:outline-none md:hidden"
+      :aria-expanded="mobileMenuOpen"
+      aria-label="Ouvrir le menu de navigation"
+      @click="mobileMenuOpen = !mobileMenuOpen"
+    >
+      <svg
+        v-if="!mobileMenuOpen"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg
+        v-else
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
 
     <!-- Menu mobile glassmorphism -->
     <Transition
@@ -87,12 +83,12 @@ watch(() => route.path, () => {
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <div v-if="mobileMenuOpen" class="border-t border-white/10 bg-black/30 backdrop-blur-xl md:hidden">
-        <ul class="space-y-1 px-4 py-3">
+      <div v-if="mobileMenuOpen" class="mt-2 rounded-2xl border border-white/15 bg-black/30 backdrop-blur-xl md:hidden">
+        <ul class="space-y-1 px-3 py-3">
           <li v-for="link in navLinks" :key="link.to">
             <NuxtLink
               :to="link.to"
-              class="block rounded-lg px-3 py-2.5 text-base font-medium transition-colors"
+              class="block rounded-lg px-4 py-2.5 text-base font-medium transition-colors"
               :class="
                 isActive(link.to)
                   ? 'bg-white/20 text-white'
