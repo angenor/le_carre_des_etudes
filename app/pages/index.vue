@@ -6,52 +6,54 @@ useHead({
 
 <template>
   <div>
-    <!-- Section Hero -->
-    <section class="relative overflow-hidden bg-gray-900">
-      <div class="mx-auto max-w-7xl">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:gap-12">
-          <!-- Texte -->
-          <div class="relative z-10 px-6 pt-20 pb-10 sm:px-10 sm:pt-24 lg:w-1/2 lg:py-32 lg:pr-0 lg:pl-12 xl:pl-16">
-            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl xl:text-6xl">
-              Le Carré des Études
-            </h1>
-            <p class="mt-4 text-xl font-medium text-amber-400 sm:text-2xl">
-              Guider, Informer, Inspirer
-            </p>
-            <p class="mt-6 max-w-lg text-base leading-relaxed text-gray-300 sm:text-lg">
-              Le magazine de la communauté estudiantine de Côte d'Ivoire.
-              Découvrez des portraits inspirants, des parcours remarquables
-              et toute l'actualité qui façonne l'avenir des étudiants ivoiriens.
-            </p>
-            <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
-              <NuxtLink
-                to="/magazine"
-                class="inline-flex items-center justify-center rounded-lg bg-amber-400 px-6 py-3 text-base font-semibold text-gray-900 shadow-sm transition-colors hover:bg-amber-300"
-              >
-                Découvrir le magazine
-              </NuxtLink>
-              <NuxtLink
-                to="/rubriques"
-                class="inline-flex items-center justify-center rounded-lg border-2 border-white/30 px-6 py-3 text-base font-semibold text-white transition-colors hover:border-white/60 hover:bg-white/10"
-              >
-                Nos rubriques
-              </NuxtLink>
-            </div>
-          </div>
-          <!-- Image couverture magazine -->
-          <div class="relative flex justify-center px-6 pb-12 lg:w-1/2 lg:px-0 lg:py-16">
-            <div class="relative w-64 sm:w-72 lg:w-80 xl:w-96">
-              <div class="absolute -inset-4 rounded-2xl bg-amber-400/20 blur-2xl" />
-              <img
-                src="/images/hero/magazine.png"
-                alt="Couverture du magazine Le Carré des Études — le magazine de la communauté estudiantine de Côte d'Ivoire"
-                class="relative rounded-lg shadow-2xl shadow-black/50"
-                width="432"
-                height="768"
-              />
-            </div>
+    <!-- Section Hero — Full Screen -->
+    <section class="relative h-dvh min-h-150 overflow-hidden bg-gray-900">
+      <!-- Image desktop 16:9 -->
+      <img
+        src="/images/hero/hero_section.jpg"
+        alt="Couverture du magazine Le Carré des Études"
+        class="absolute inset-0 hidden h-full w-full object-cover md:block"
+      />
+      <!-- Image mobile 9:16 -->
+      <img
+        src="/images/hero/magazine.png"
+        alt="Couverture du magazine Le Carré des Études"
+        class="absolute inset-0 block h-full w-full object-cover object-top md:hidden"
+      />
+      <!-- H1 accessible (masqué car le titre est sur l'image) -->
+      <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
+      <!-- Dégradé bas pour les CTA -->
+      <div class="absolute inset-x-0 bottom-0 h-72 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
+      <!-- Contenu bas : tagline + CTA -->
+      <div class="absolute inset-x-0 bottom-0 z-10 px-6 pb-16 sm:pb-20">
+        <div class="mx-auto max-w-4xl text-center">
+          <p class="text-lg font-medium tracking-wide text-amber-400 sm:text-xl md:text-2xl">
+            Guider, Informer, Inspirer
+          </p>
+          <p class="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-gray-300 sm:text-base">
+            Le magazine de la communauté estudiantine de Côte d'Ivoire
+          </p>
+          <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+            <NuxtLink
+              to="/magazine"
+              class="inline-flex items-center justify-center rounded-full bg-amber-400 px-8 py-3 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg transition-all hover:bg-amber-300 hover:shadow-amber-400/25 sm:text-base"
+            >
+              Découvrir le magazine
+            </NuxtLink>
+            <NuxtLink
+              to="/rubriques"
+              class="inline-flex items-center justify-center rounded-full border-2 border-white/40 px-8 py-3 text-sm font-bold tracking-wide text-white uppercase backdrop-blur-sm transition-all hover:border-white hover:bg-white/10 sm:text-base"
+            >
+              Nos rubriques
+            </NuxtLink>
           </div>
         </div>
+      </div>
+      <!-- Indicateur de scroll -->
+      <div class="absolute inset-x-0 bottom-4 z-10 flex animate-bounce justify-center">
+        <svg class="h-6 w-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+        </svg>
       </div>
     </section>
 
