@@ -7,5 +7,6 @@ useHead({
 <template>
   <div>
     <HeroSection />
+    <AlaUneSection />
   </div>
 </template>
