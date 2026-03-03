@@ -79,6 +79,7 @@ Use multiple sub-agents in parallel for efficiency:
 ## Active Technologies
 - TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7 (001-magazine-landing-site)
 - SQLite via Prisma 7 (`dev.db` at project root); generated client in `app/generated/prisma/` (001-magazine-landing-site)
+- TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7, h3 (002-magazine-backend-sync)
 
 ## Recent Changes
 - 001-magazine-landing-site: Added TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7
