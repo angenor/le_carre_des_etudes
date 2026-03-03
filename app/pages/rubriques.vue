@@ -29,44 +29,118 @@ useHead({
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-    <div class="text-center mb-12">
-      <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">Nos rubriques</h1>
-      <p class="mt-4 text-lg text-gray-600">
-        Découvrez nos interviews, portraits et contenus éditoriaux
-      </p>
-    </div>
+  <div class="min-h-screen bg-gray-950">
+    <!-- Hero section avec motifs SVG -->
+    <section class="relative overflow-hidden bg-gray-950 pb-20 pt-32 sm:pb-28 sm:pt-40">
+      <!-- Grille de points + radial glow -->
+      <svg class="absolute inset-0 h-full w-full" aria-hidden="true">
+        <defs>
+          <pattern id="rubriques-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="1" fill="rgba(251,191,36,0.12)" />
+          </pattern>
+          <radialGradient id="rubriques-fade" cx="50%" cy="30%" r="60%">
+            <stop offset="0%" stop-color="rgba(221,132,72,0.15)" />
+            <stop offset="100%" stop-color="transparent" />
+          </radialGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#rubriques-grid)" />
+        <rect width="100%" height="100%" fill="url(#rubriques-fade)" />
+      </svg>
 
-    <!-- Chargement -->
-    <div v-if="status === 'pending'" class="py-16 text-center text-gray-500">
-      Chargement des rubriques...
-    </div>
+      <!-- Lignes diagonales -->
+      <svg class="absolute inset-0 h-full w-full opacity-[0.04]" aria-hidden="true">
+        <line x1="0%" y1="100%" x2="60%" y2="0%" stroke="#dd8448" stroke-width="1" />
+        <line x1="20%" y1="100%" x2="80%" y2="0%" stroke="#dd8448" stroke-width="1" />
+        <line x1="40%" y1="100%" x2="100%" y2="0%" stroke="#dd8448" stroke-width="1" />
+        <line x1="60%" y1="100%" x2="100%" y2="20%" stroke="#dd8448" stroke-width="1" />
+      </svg>
 
-    <!-- État vide -->
-    <div v-else-if="!hasAnyContent" class="py-16 text-center">
-      <p class="text-lg text-gray-500">Aucune rubrique disponible pour le moment.</p>
-      <p class="mt-2 text-sm text-gray-400">Revenez bientôt pour découvrir nos contenus.</p>
-    </div>
+      <!-- Halos lumineux -->
+      <div class="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-amber-500/5 blur-3xl" />
+      <div class="absolute -bottom-10 -left-10 h-60 w-60 rounded-full bg-amber-400/5 blur-3xl" />
 
-    <!-- Sections par type -->
-    <div v-else class="space-y-16">
-      <template v-for="section in sections" :key="section.key">
-        <section v-if="rubriques?.[section.key]?.length">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-emerald-500 pb-2 inline-block">
-            {{ section.label }}
-          </h2>
-          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <RubriqueCard
-              v-for="item in rubriques[section.key]"
-              :key="item.id"
-              :id="item.id"
-              :title="item.title"
-              :description="item.description"
-              :image-path="item.imagePath"
-            />
+      <!-- Losanges décoratifs -->
+      <svg class="absolute right-10 top-32 h-20 w-20 rotate-45 text-amber-500/10 sm:right-20 sm:h-32 sm:w-32" aria-hidden="true">
+        <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+      <svg class="absolute bottom-20 left-8 h-14 w-14 rotate-12 text-amber-400/8 sm:left-16 sm:h-20 sm:w-20" aria-hidden="true">
+        <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1" />
+      </svg>
+
+      <!-- Contenu hero -->
+      <div class="relative mx-auto max-w-5xl px-6 text-center">
+        <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
+          Éditorial
+        </span>
+
+        <h1 class="mt-6 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+          Nos
+          <span class="relative">
+            <span class="relative z-10 bg-linear-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent">
+              rubriques
+            </span>
+            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none" aria-hidden="true">
+              <path d="M1 5.5C40 2 80 2 100 4C120 6 160 6 199 3" stroke="#dd8448" stroke-width="2" stroke-linecap="round" opacity="0.5" />
+            </svg>
+          </span>
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-400">
+          Découvrez nos interviews, portraits et contenus éditoriaux
+        </p>
+
+        <!-- Séparateur -->
+        <div class="mx-auto mt-10 flex items-center justify-center gap-3">
+          <span class="h-px w-12 bg-linear-to-r from-transparent to-amber-500/50" />
+          <svg class="h-4 w-4 rotate-45 text-amber-500/40" fill="currentColor" viewBox="0 0 16 16">
+            <rect width="16" height="16" rx="2" />
+          </svg>
+          <span class="h-px w-12 bg-linear-to-l from-transparent to-amber-500/50" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Contenu -->
+    <section class="relative pb-20 sm:pb-28">
+      <div class="mx-auto max-w-6xl px-6">
+        <!-- Chargement -->
+        <div v-if="status === 'pending'" class="py-20 text-center">
+          <div class="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-amber-500/20 border-t-amber-500" />
+          <p class="mt-4 text-sm text-gray-500">Chargement des rubriques...</p>
+        </div>
+
+        <!-- État vide -->
+        <div v-else-if="!hasAnyContent" class="py-20 text-center">
+          <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-gray-800 bg-gray-900">
+            <svg class="h-8 w-8 text-amber-500/60" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5" />
+            </svg>
           </div>
-        </section>
-      </template>
-    </div>
+          <h2 class="mt-5 text-lg font-semibold text-white">Aucune rubrique disponible</h2>
+          <p class="mt-2 text-sm text-gray-500">Revenez bientôt pour découvrir nos contenus.</p>
+        </div>
+
+        <!-- Sections par type -->
+        <div v-else class="space-y-20">
+          <template v-for="section in sections" :key="section.key">
+            <div v-if="rubriques?.[section.key]?.length">
+              <h2 class="mb-8 inline-block border-b-2 border-amber-500/60 pb-2 text-2xl font-bold text-white">
+                {{ section.label }}
+              </h2>
+              <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <RubriqueCard
+                  v-for="item in rubriques[section.key]"
+                  :key="item.id"
+                  :id="item.id"
+                  :title="item.title"
+                  :description="item.description"
+                  :image-path="item.imagePath"
+                />
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
