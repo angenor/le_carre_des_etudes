@@ -6,9 +6,37 @@ const edition = {
   sousTitre: 'Édition inaugurale',
   description:
     'Découvrez notre tout premier numéro : orientation post-bac, bourses disponibles, conseils de réussite et portraits d\'étudiants inspirants de Côte d\'Ivoire.',
-  datePublication: 'Mars 2026',
+  dateDisponibilite: new Date('2026-03-13T00:00:00'),
   pdfUrl: '#',
 }
+
+// Compte à rebours
+const now = useState('countdown-now', () => new Date())
+let timer: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  timer = setInterval(() => {
+    now.value = new Date()
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+
+const countdown = computed(() => {
+  const diff = edition.dateDisponibilite.getTime() - now.value.getTime()
+  if (diff <= 0) return null
+
+  const jours = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const heures = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const secondes = Math.floor((diff % (1000 * 60)) / 1000)
+
+  return { jours, heures, minutes, secondes }
+})
+
+const estDisponible = computed(() => !countdown.value)
 </script>
 
 <template>
@@ -106,15 +134,31 @@ const edition = {
             {{ edition.description }}
           </p>
 
-          <!-- Date -->
-          <p class="mt-4 text-sm text-gray-500">
-            Publié en {{ edition.datePublication }}
-          </p>
+          <!-- Compte à rebours -->
+          <div v-if="countdown" class="mt-8 w-full max-w-md">
+            <p class="mb-4 text-sm font-medium tracking-wide text-gray-500 uppercase">
+              Disponible le 13 mars 2026
+            </p>
+            <div class="grid grid-cols-4 gap-3">
+              <div v-for="bloc in [
+                { valeur: countdown.jours, label: 'Jours' },
+                { valeur: countdown.heures, label: 'Heures' },
+                { valeur: countdown.minutes, label: 'Min' },
+                { valeur: countdown.secondes, label: 'Sec' },
+              ]" :key="bloc.label" class="countdown-bloc">
+                <span class="countdown-valeur">
+                  {{ String(bloc.valeur).padStart(2, '0') }}
+                </span>
+                <span class="countdown-label">{{ bloc.label }}</span>
+              </div>
+            </div>
+          </div>
 
           <!-- Boutons -->
           <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <!-- Bouton principal : Télécharger -->
+            <!-- Bouton principal : Télécharger (actif seulement si disponible) -->
             <a
+              v-if="estDisponible"
               :href="edition.pdfUrl"
               class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-amber-400/30"
             >
@@ -123,6 +167,17 @@ const edition = {
               </svg>
               Télécharger
             </a>
+
+            <!-- Bouton désactivé avant la date -->
+            <span
+              v-else
+              class="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-full bg-white/5 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-500 uppercase"
+            >
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              Bientôt disponible
+            </span>
 
             <!-- Bouton secondaire : Voir les détails -->
             <NuxtLink
@@ -264,6 +319,37 @@ const edition = {
   opacity: 0.3;
   z-index: -1;
   background: linear-gradient(-30deg, #dd8448, transparent, #dd8448);
+}
+
+/* Countdown */
+.countdown-bloc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(221, 132, 72, 0.15);
+}
+
+.countdown-valeur {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(180deg, #fbbf24, #dd8448);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.countdown-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* Content (image) container */
