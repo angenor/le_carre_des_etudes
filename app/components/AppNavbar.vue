@@ -26,9 +26,9 @@ watch(() => route.path, () => {
 </script>
 
 <template>
-  <nav class="fixed left-0 top-4 z-50 ml-4 sm:ml-6 lg:ml-8">
-    <!-- Desktop : pill compacte à gauche -->
-    <div class="hidden items-center gap-1 rounded-full border border-white/15 bg-black/20 px-2 py-1.5 backdrop-blur-xl md:inline-flex">
+  <nav class="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
+    <!-- Desktop : pill compacte centrée -->
+    <div class="hidden items-center gap-1 rounded-full border border-amber-400/20 bg-gray-900/60 px-2 py-1.5 backdrop-blur-xl md:inline-flex">
       <NuxtLink
         v-for="link in navLinks"
         :key="link.to"
@@ -36,8 +36,8 @@ watch(() => route.path, () => {
         class="rounded-full px-4 py-1.5 text-sm font-medium transition-all"
         :class="
           isActive(link.to)
-            ? 'bg-white/20 text-white'
-            : 'text-white/70 hover:bg-white/10 hover:text-white'
+            ? 'bg-amber-400 text-gray-900'
+            : 'text-white/80 hover:bg-amber-400/15 hover:text-amber-400'
         "
       >
         {{ link.label }}
@@ -47,7 +47,7 @@ watch(() => route.path, () => {
     <!-- Mobile : bouton hamburger -->
     <button
       type="button"
-      class="inline-flex items-center justify-center rounded-full border border-white/15 bg-black/20 p-2.5 text-white/80 backdrop-blur-xl transition-colors hover:bg-black/30 hover:text-white focus:outline-none md:hidden"
+      class="inline-flex items-center justify-center rounded-full border border-amber-400/20 bg-gray-900/60 p-2.5 text-amber-400 backdrop-blur-xl transition-colors hover:bg-gray-900/80 focus:outline-none md:hidden"
       :aria-expanded="mobileMenuOpen"
       aria-label="Ouvrir le menu de navigation"
       @click="mobileMenuOpen = !mobileMenuOpen"
@@ -83,7 +83,7 @@ watch(() => route.path, () => {
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <div v-if="mobileMenuOpen" class="mt-2 rounded-2xl border border-white/15 bg-black/30 backdrop-blur-xl md:hidden">
+      <div v-if="mobileMenuOpen" class="absolute inset-x-4 mt-2 rounded-2xl border border-amber-400/20 bg-gray-900/70 backdrop-blur-xl md:hidden">
         <ul class="space-y-1 px-3 py-3">
           <li v-for="link in navLinks" :key="link.to">
             <NuxtLink
@@ -91,8 +91,8 @@ watch(() => route.path, () => {
               class="block rounded-lg px-4 py-2.5 text-base font-medium transition-colors"
               :class="
                 isActive(link.to)
-                  ? 'bg-white/20 text-white'
-                  : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  ? 'bg-amber-400 text-gray-900'
+                  : 'text-white/80 hover:bg-amber-400/15 hover:text-amber-400'
               "
               @click="closeMobileMenu"
             >
