@@ -24,16 +24,10 @@ useHead({
       <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
       <!-- Dégradé bas pour les CTA -->
       <div class="absolute inset-x-0 bottom-0 h-72 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-      <!-- Contenu bas : tagline + CTA -->
+      <!-- CTA -->
       <div class="absolute inset-x-0 bottom-0 z-10 px-6 pb-16 sm:pb-20">
         <div class="mx-auto max-w-4xl text-center">
-          <p class="text-lg font-medium tracking-wide text-amber-400 sm:text-xl md:text-2xl">
-            Guider, Informer, Inspirer
-          </p>
-          <p class="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-gray-300 sm:text-base">
-            Le magazine de la communauté estudiantine de Côte d'Ivoire
-          </p>
-          <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+          <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
             <NuxtLink
               to="/magazine"
               class="inline-flex items-center justify-center rounded-full bg-amber-400 px-8 py-3 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg transition-all hover:bg-amber-300 hover:shadow-amber-400/25 sm:text-base"
