@@ -7,6 +7,7 @@ interface FeaturedMagazine {
   subtitle: string | null
   pdfPath: string | null
   coverImage: string | null
+  coverImageOg: string | null
   publishedAt: string
   availableAt: string | null
   isFeatured: boolean

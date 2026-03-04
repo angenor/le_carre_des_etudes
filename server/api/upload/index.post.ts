@@ -1,9 +1,12 @@
 import { defineEventHandler, readMultipartFormData, createError, setResponseStatus } from 'h3'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join, extname } from 'node:path'
+import sharp from 'sharp'
 
 const ALLOWED_CATEGORIES = ['magazines', 'rubriques', 'partenaires'] as const
 type Category = typeof ALLOWED_CATEGORIES[number]
+
+const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.tiff']
 
 /**
  * Nettoie un nom de fichier : supprime les caractères spéciaux,
@@ -23,6 +26,17 @@ function sanitizeFilename(filename: string): string {
     .toLowerCase()
 
   return sanitized + ext.toLowerCase()
+}
+
+/**
+ * Génère une version OG (Open Graph) optimisée pour le SEO.
+ * Redimensionnée à 1200x630, JPEG qualité 80.
+ */
+async function generateOgImage(buffer: Buffer, outputPath: string): Promise<void> {
+  await sharp(buffer)
+    .resize(1200, 630, { fit: 'cover', position: 'center' })
+    .jpeg({ quality: 80, progressive: true })
+    .toFile(outputPath)
 }
 
 export default defineEventHandler(async (event) => {
@@ -74,12 +88,29 @@ export default defineEventHandler(async (event) => {
   // Créer le répertoire s'il n'existe pas
   await mkdir(uploadDir, { recursive: true })
 
-  // Écrire le fichier sur le disque
+  // Écrire le fichier original sur le disque
   await writeFile(filePath, filePart.data)
 
-  // Retourner le chemin public du fichier
+  // Chemin public du fichier original
   const publicPath = `/uploads/${category}/${uniqueFilename}`
 
+  // Générer la version OG si c'est une image
+  const ext = extname(sanitized).toLowerCase()
+  let ogPath: string | null = null
+
+  if (IMAGE_EXTENSIONS.includes(ext)) {
+    const baseName = sanitized.slice(0, sanitized.length - ext.length)
+    const ogFilename = `${timestamp}-${baseName}-og.jpg`
+    const ogFilePath = join(uploadDir, ogFilename)
+
+    try {
+      await generateOgImage(filePart.data, ogFilePath)
+      ogPath = `/uploads/${category}/${ogFilename}`
+    } catch {
+      // Si la génération OG échoue, on continue sans (non bloquant)
+    }
+  }
+
   setResponseStatus(event, 201)
-  return { path: publicPath }
+  return { path: publicPath, ogPath }
 })

@@ -17,7 +17,8 @@ model Magazine {
   version     String     @unique
   subtitle    String?
   pdfPath     String
-  coverImage  String?
+  coverImage    String?
+  coverImageOg  String?
   publishedAt DateTime
   availableAt DateTime?
   isFeatured  Boolean    @default(false)

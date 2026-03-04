@@ -7,6 +7,7 @@ interface Magazine {
   subtitle: string | null
   pdfPath: string | null
   coverImage: string | null
+  coverImageOg: string | null
   publishedAt: string
   availableAt: string | null
   isFeatured: boolean
@@ -22,6 +23,25 @@ useHead({
       ? `${magazine.value.name} — ${magazine.value.version}`
       : 'Magazine — Le Carré des Études',
   ),
+})
+
+useSeoMeta({
+  ogTitle: computed(() =>
+    magazine.value
+      ? `${magazine.value.name} — ${magazine.value.version}`
+      : 'Magazine — Le Carré des Études',
+  ),
+  ogDescription: computed(() => magazine.value?.description || 'Découvrez les magazines du Carré des Études'),
+  ogImage: computed(() => magazine.value?.coverImageOg || magazine.value?.coverImage || ''),
+  ogType: 'article',
+  twitterCard: 'summary_large_image',
+  twitterTitle: computed(() =>
+    magazine.value
+      ? `${magazine.value.name} — ${magazine.value.version}`
+      : 'Magazine — Le Carré des Études',
+  ),
+  twitterDescription: computed(() => magazine.value?.description || 'Découvrez les magazines du Carré des Études'),
+  twitterImage: computed(() => magazine.value?.coverImageOg || magazine.value?.coverImage || ''),
 })
 
 const showDownloadModal = ref(false)

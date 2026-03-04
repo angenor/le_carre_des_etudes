@@ -34,3 +34,4 @@
 - The spec references @toast-ui/editor in the Assumptions section (already installed in the project) as context, not as a requirement. The functional requirements remain technology-agnostic ("éditeur de texte riche").
 - The Assumptions section documents reasonable defaults for migration strategy (portrait → parcours_inspirant) and component reuse.
 - All 4 rubrique types have been specified with distinct visual identities based on the magazine captures provided.
+- Clarification session 2026-03-04: 3 questions asked and resolved (listing display style, section order, items limit per section). All integrated into FR-007 and FR-010.

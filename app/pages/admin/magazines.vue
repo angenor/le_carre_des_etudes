@@ -11,6 +11,7 @@ interface Magazine {
   subtitle: string | null
   pdfPath: string
   coverImage: string | null
+  coverImageOg: string | null
   publishedAt: string
   availableAt: string | null
   isFeatured: boolean
@@ -32,6 +33,7 @@ const form = reactive({
   subtitle: '',
   pdfPath: '',
   coverImage: '',
+  coverImageOg: '',
   publishedAt: '',
   availableAt: '',
 })
@@ -54,6 +56,7 @@ function resetForm() {
   form.subtitle = ''
   form.pdfPath = ''
   form.coverImage = ''
+  form.coverImageOg = ''
   form.publishedAt = ''
   form.availableAt = ''
   editingMagazine.value = null
@@ -73,6 +76,7 @@ function openEditForm(magazine: Magazine) {
   form.subtitle = magazine.subtitle || ''
   form.pdfPath = magazine.pdfPath
   form.coverImage = magazine.coverImage || ''
+  form.coverImageOg = magazine.coverImageOg || ''
   form.publishedAt = magazine.publishedAt.slice(0, 10)
   form.availableAt = magazine.availableAt ? magazine.availableAt.slice(0, 16) : ''
   errorMessage.value = ''
@@ -84,15 +88,14 @@ function cancelForm() {
   resetForm()
 }
 
-async function uploadFile(file: File, category: string): Promise<string> {
+async function uploadFile(file: File, category: string): Promise<{ path: string; ogPath: string | null }> {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('category', category)
-  const result = await $fetch<{ path: string }>('/api/upload', {
+  return await $fetch<{ path: string; ogPath: string | null }>('/api/upload', {
     method: 'POST',
     body: formData,
   })
-  return result.path
 }
 
 async function handlePdfUpload(event: Event) {
@@ -100,7 +103,8 @@ async function handlePdfUpload(event: Event) {
   const file = input.files?.[0]
   if (!file) return
   try {
-    form.pdfPath = await uploadFile(file, 'magazines')
+    const result = await uploadFile(file, 'magazines')
+    form.pdfPath = result.path
   } catch {
     errorMessage.value = 'Erreur lors de l\'envoi du PDF'
   }
@@ -111,7 +115,9 @@ async function handleCoverUpload(event: Event) {
   const file = input.files?.[0]
   if (!file) return
   try {
-    form.coverImage = await uploadFile(file, 'magazines')
+    const result = await uploadFile(file, 'magazines')
+    form.coverImage = result.path
+    form.coverImageOg = result.ogPath || ''
   } catch {
     errorMessage.value = 'Erreur lors de l\'envoi de la couverture'
   }
@@ -132,6 +138,7 @@ async function saveMagazine() {
           subtitle: form.subtitle || null,
           pdfPath: form.pdfPath,
           coverImage: form.coverImage || null,
+          coverImageOg: form.coverImageOg || null,
           publishedAt: form.publishedAt,
           availableAt: form.availableAt || null,
         },
@@ -146,6 +153,7 @@ async function saveMagazine() {
           subtitle: form.subtitle || null,
           pdfPath: form.pdfPath,
           coverImage: form.coverImage || null,
+          coverImageOg: form.coverImageOg || null,
           publishedAt: form.publishedAt,
           availableAt: form.availableAt || null,
         },

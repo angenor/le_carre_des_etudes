@@ -103,10 +103,10 @@ Un visiteur clique sur une rubrique depuis la page de listing pour accéder à u
 - **FR-004** : L'interface admin DOIT proposer un éditeur de texte riche pour la rédaction du contenu des rubriques.
 - **FR-005** : Le type « Agenda & Opportunités » DOIT inclure des champs pour la date de l'événement et le lieu.
 - **FR-006** : Le type « Parcours Inspirant » DOIT inclure un champ sous-titre pour le nom et titre de la personne profilée.
-- **FR-007** : La page de listing DOIT regrouper les contenus par type avec un en-tête de section visuellement distinct pour chaque type.
+- **FR-007** : La page de listing DOIT regrouper les contenus par type dans l'ordre : En Vedette → Parcours Inspirant → Agenda & Opportunités → Focus, avec un en-tête de section visuellement distinct pour chaque type.
 - **FR-008** : Chaque rubrique DOIT avoir une page de détail accessible depuis le listing, affichant le contenu complet dans la mise en page spécialisée du type.
 - **FR-009** : L'affichage DOIT être responsive et lisible sur mobile (375px), tablette (768px) et desktop (1280px+).
-- **FR-010** : La page listing DOIT afficher le premier item de chaque section en layout magazine (inspiré des captures du magazine physique), et les items suivants en cards stylisées différentes selon le type.
+- **FR-010** : La page listing DOIT afficher le premier item de chaque section en layout magazine (inspiré des captures du magazine physique), et les items suivants en cards stylisées différentes selon le type, avec un maximum de 4 items par section (1 magazine + 3 cards) et un lien « Voir tout » si davantage existent.
 - **FR-011** : Le formulaire admin DOIT adapter dynamiquement ses champs en fonction du type sélectionné.
 - **FR-012** : Les anciens contenus de type « portrait » DOIVENT être traités comme « parcours_inspirant » pour la rétro-compatibilité.
 
@@ -131,6 +131,7 @@ Un visiteur clique sur une rubrique depuis la page de listing pour accéder à u
 
 - Q: Sur la page listing, quel style d'affichage pour chaque rubrique ? → A: Mix — le premier item de chaque section s'affiche en layout magazine (inspiré des captures), les suivants en cards stylisées par type. Le layout magazine complet est aussi utilisé sur la page de détail.
 - Q: Dans quel ordre les 4 types de rubriques apparaissent-ils sur la page listing ? → A: En Vedette → Parcours Inspirant → Agenda & Opportunités → Focus.
+- Q: Faut-il limiter le nombre d'items affichés par section sur le listing ? → A: Maximum 4 par section (1 en layout magazine + 3 en cards), avec un lien « Voir tout » si plus d'items existent.
 
 ## Assumptions
 
