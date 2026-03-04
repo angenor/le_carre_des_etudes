@@ -66,75 +66,84 @@ const heroContentRef = ref<HTMLElement>()
 const losange1 = ref<HTMLElement>()
 const losange2 = ref<HTMLElement>()
 const sectionsContainer = ref<HTMLElement>()
+const pageRef = ref<HTMLElement>()
+
+let gsapCtx: ReturnType<typeof useGsap.context> | null = null
+
+function initAnimations() {
+  gsapCtx?.revert()
+  if (!pageRef.value) return
+
+  gsapCtx = useGsap.context(() => {
+    // Hero — stagger des enfants
+    if (heroContentRef.value) {
+      useGsap.from(heroContentRef.value.children, {
+        y: 40, opacity: 0, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+      })
+    }
+
+    // Losanges flottants
+    if (losange1.value) {
+      useGsap.fromTo(losange1.value,
+        { rotation: 45, y: 0 },
+        { rotation: 55, y: -10, duration: 4, ease: 'sine.inOut', repeat: -1, yoyo: true },
+      )
+    }
+    if (losange2.value) {
+      useGsap.fromTo(losange2.value,
+        { rotation: 12, y: 0 },
+        { rotation: 0, y: 10, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true },
+      )
+    }
+
+    // Sections de rubriques — observer chaque bloc de section
+    if (sectionsContainer.value) {
+      Array.from(sectionsContainer.value.children).forEach((bloc) => {
+        const header = bloc.querySelector('.section-header')
+        if (header) {
+          useGsap.from(header, {
+            x: -50, opacity: 0, duration: 0.6, ease: 'power2.out',
+            scrollTrigger: { trigger: header, start: 'top 85%', toggleActions: 'play none none reset' },
+          })
+        }
+
+        const grid = bloc.querySelector('.section-grid')
+        if (grid) {
+          useGsap.from(grid.children, {
+            y: 50, opacity: 0, scale: 0.9, duration: 0.5, stagger: 0.08, ease: 'back.out(1.3)',
+            scrollTrigger: { trigger: grid, start: 'top 85%', toggleActions: 'play none none reset' },
+          })
+        }
+      })
+    }
+  }, pageRef.value)
+
+  useScrollTrigger.refresh()
+}
 
 onMounted(() => {
-  // Hero — stagger des enfants
-  if (heroContentRef.value) {
-    useGsap.from(heroContentRef.value.children, {
-      y: 40,
-      opacity: 0,
-      duration: 0.7,
-      stagger: 0.12,
-      ease: 'power3.out',
-    })
-  }
-
-  // Losanges flottants
-  if (losange1.value) {
-    useGsap.fromTo(losange1.value,
-      { rotation: 45, y: 0 },
-      { rotation: 55, y: -10, duration: 4, ease: 'sine.inOut', repeat: -1, yoyo: true },
-    )
-  }
-  if (losange2.value) {
-    useGsap.fromTo(losange2.value,
-      { rotation: 12, y: 0 },
-      { rotation: 0, y: 10, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true },
-    )
-  }
-
-  // Sections de rubriques — observer chaque bloc de section
-  if (sectionsContainer.value) {
-    const sectionBlocs = sectionsContainer.value.children
-    Array.from(sectionBlocs).forEach((bloc) => {
-      // Titre de section — slide depuis la gauche
-      const header = bloc.querySelector('.section-header')
-      if (header) {
-        useGsap.from(header, {
-          x: -50,
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: header,
-            start: 'top 85%',
-          },
-        })
+  const stop = watch(
+    () => [pageRef.value, sectionsContainer.value],
+    async ([page, sections]) => {
+      if (!page) return
+      if (!sections && status.value !== 'pending') {
+        await nextTick()
       }
+      await nextTick()
+      stop()
+      initAnimations()
+    },
+    { immediate: true },
+  )
+})
 
-      // Grille de cartes — stagger
-      const grid = bloc.querySelector('.section-grid')
-      if (grid) {
-        useGsap.from(grid.children, {
-          y: 50,
-          opacity: 0,
-          scale: 0.9,
-          duration: 0.5,
-          stagger: 0.08,
-          ease: 'back.out(1.3)',
-          scrollTrigger: {
-            trigger: grid,
-            start: 'top 85%',
-          },
-        })
-      }
-    })
-  }
+onUnmounted(() => {
+  gsapCtx?.revert()
 })
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-950">
+  <div ref="pageRef" class="min-h-screen bg-gray-950">
     <!-- Hero section avec motifs SVG -->
     <section class="relative overflow-hidden bg-gray-950 pb-20 pt-32 sm:pb-28 sm:pt-40">
       <!-- Grille de points + radial glow -->

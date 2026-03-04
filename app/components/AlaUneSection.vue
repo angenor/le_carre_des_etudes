@@ -66,13 +66,22 @@ const sectionRef = ref<HTMLElement>()
 const badgeRef = ref<HTMLElement>()
 const magazineCoverRef = ref<HTMLElement>()
 const infosRef = ref<HTMLElement>()
+const svgFilterRef = ref<SVGElement>()
 
-onMounted(() => {
+let gsapCtx: ReturnType<typeof useGsap.context> | null = null
+
+function initAnimations() {
+  gsapCtx?.revert()
+
   if (!sectionRef.value) return
 
-  // Badge « À la une » — slide down + fade
-  if (badgeRef.value) {
-    useGsap.from(badgeRef.value, {
+  // Redémarrer les animations SVG <animate> (stoppées après navigation back)
+  svgFilterRef.value?.querySelectorAll('animate').forEach((el) => {
+    (el as SVGAnimateElement).beginElement()
+  })
+
+  gsapCtx = useGsap.context(() => {
+    useGsap.from(badgeRef.value!, {
       y: -30,
       opacity: 0,
       duration: 0.8,
@@ -83,11 +92,8 @@ onMounted(() => {
         toggleActions: 'play none none reset',
       },
     })
-  }
 
-  // Magazine cover — slide in from left + rotation
-  if (magazineCoverRef.value) {
-    useGsap.from(magazineCoverRef.value, {
+    useGsap.from(magazineCoverRef.value!, {
       x: -120,
       rotation: -8,
       opacity: 0,
@@ -99,11 +105,8 @@ onMounted(() => {
         toggleActions: 'play none none reset',
       },
     })
-  }
 
-  // Infos droite — stagger des enfants
-  if (infosRef.value) {
-    useGsap.from(infosRef.value.children, {
+    useGsap.from(infosRef.value!.children, {
       y: 40,
       opacity: 0,
       duration: 0.7,
@@ -115,7 +118,27 @@ onMounted(() => {
         toggleActions: 'play none none reset',
       },
     })
-  }
+  }, sectionRef.value)
+
+  useScrollTrigger.refresh()
+}
+
+// Watch sectionRef : gère le cas où v-if rend la section après onMounted
+onMounted(() => {
+  const stop = watch(
+    () => sectionRef.value,
+    async (el) => {
+      if (!el) return
+      await nextTick()
+      stop()
+      initAnimations()
+    },
+    { immediate: true },
+  )
+})
+
+onUnmounted(() => {
+  gsapCtx?.revert()
 })
 </script>
 
@@ -137,7 +160,7 @@ onMounted(() => {
         <!-- Gauche : magazine avec electric border -->
         <div ref="magazineCoverRef" class="relative flex shrink-0 justify-center">
           <!-- SVG Filter -->
-          <svg class="absolute h-0 w-0" aria-hidden="true">
+          <svg ref="svgFilterRef" class="absolute h-0 w-0" aria-hidden="true">
             <defs>
               <filter id="turbulent-displace" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
                 <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />

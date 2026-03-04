@@ -17,59 +17,49 @@ const headerRef = ref<HTMLElement>()
 const logosRef = ref<HTMLElement>()
 const ctaRef = ref<HTMLElement>()
 
-onMounted(() => {
+let gsapCtx: ReturnType<typeof useGsap.context> | null = null
+
+function initAnimations() {
+  gsapCtx?.revert()
   if (!sectionRef.value) return
 
-  // Header — slide up + fade
-  if (headerRef.value) {
-    useGsap.from(headerRef.value.children, {
-      y: 25,
-      opacity: 0,
-      duration: 0.6,
-      stagger: 0.1,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: headerRef.value,
-        start: 'top 85%',
-        toggleActions: 'play none none reset',
-      },
+  gsapCtx = useGsap.context(() => {
+    useGsap.from(headerRef.value!.children, {
+      y: 25, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: headerRef.value, start: 'top 85%', toggleActions: 'play none none reset' },
     })
-  }
 
-  // Logos — bounce élastique en stagger
-  if (logosRef.value) {
-    useGsap.from(logosRef.value.children, {
-      scale: 0,
-      opacity: 0,
-      rotation: -15,
-      duration: 0.7,
-      stagger: {
-        each: 0.1,
-        from: 'center',
-      },
+    useGsap.from(logosRef.value!.children, {
+      scale: 0, opacity: 0, rotation: -15, duration: 0.7,
+      stagger: { each: 0.1, from: 'center' },
       ease: 'elastic.out(1, 0.5)',
-      scrollTrigger: {
-        trigger: logosRef.value,
-        start: 'top 80%',
-        toggleActions: 'play none none reset',
-      },
+      scrollTrigger: { trigger: logosRef.value, start: 'top 80%', toggleActions: 'play none none reset' },
     })
-  }
 
-  // CTA — slide up
-  if (ctaRef.value) {
-    useGsap.from(ctaRef.value, {
-      y: 20,
-      opacity: 0,
-      duration: 0.6,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: ctaRef.value,
-        start: 'top 90%',
-        toggleActions: 'play none none reset',
-      },
+    useGsap.from(ctaRef.value!, {
+      y: 20, opacity: 0, duration: 0.6, ease: 'power2.out',
+      scrollTrigger: { trigger: ctaRef.value, start: 'top 90%', toggleActions: 'play none none reset' },
     })
-  }
+  }, sectionRef.value)
+
+  useScrollTrigger.refresh()
+}
+
+onMounted(() => {
+  const stop = watch(
+    () => sectionRef.value,
+    async (el) => {
+      if (!el) return
+      await nextTick()
+      stop()
+      initAnimations()
+    },
+    { immediate: true },
+  )
+})
+
+onUnmounted(() => {
+  gsapCtx?.revert()
 })
 </script>
 
@@ -128,7 +118,7 @@ onMounted(() => {
       <div ref="ctaRef" class="mt-12 text-center">
         <NuxtLink
           to="/partenaires"
-          class="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-8 py-3 text-sm font-semibold text-amber-400 transition-all hover:bg-amber-500/20 hover:shadow-lg hover:shadow-amber-500/5"
+          class="inline-flex items-center gap-2 rounded-full bg-amber-500 px-8 py-3 text-sm font-semibold text-gray-950 shadow-md shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/30"
         >
           Voir tous nos partenaires
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
