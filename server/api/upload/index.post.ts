@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { join, extname } from 'node:path'
 import sharp from 'sharp'
 
-const ALLOWED_CATEGORIES = ['magazines', 'rubriques', 'partenaires'] as const
+const ALLOWED_CATEGORIES = ['magazines', 'rubriques', 'partenaires', 'homepage'] as const
 type Category = typeof ALLOWED_CATEGORIES[number]
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.tiff']

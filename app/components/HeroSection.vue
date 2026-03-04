@@ -6,6 +6,11 @@ const desktopImg = ref<HTMLImageElement>()
 const mobileImg = ref<HTMLImageElement>()
 const scrollIndicator = ref<HTMLElement>()
 
+// Images dynamiques depuis le backoffice, avec fallback sur les images statiques
+const { data: heroImages } = await useFetch<Record<string, string>>('/api/homepage-images')
+const desktopSrc = computed(() => heroImages.value?.hero_desktop || '/images/hero/hero_section.jpg')
+const mobileSrc = computed(() => heroImages.value?.hero_mobile || '/images/hero/magazine.png')
+
 function onImageLoad() {
   emit('imageLoaded')
 }
@@ -120,14 +125,14 @@ onUnmounted(() => {
   <section ref="heroRef" class="relative overflow-hidden bg-gray-900 md:h-dvh md:min-h-150">
     <img
       ref="desktopImg"
-      src="/images/hero/hero_section.jpg"
+      :src="desktopSrc"
       alt="Couverture du magazine Le Carré des Études"
       class="absolute inset-0 hidden h-full w-full object-cover md:block will-change-transform"
       @load="onImageLoad"
     />
     <img
       ref="mobileImg"
-      src="/images/hero/magazine.png"
+      :src="mobileSrc"
       alt="Couverture du magazine Le Carré des Études"
       class="block w-full md:hidden will-change-transform"
       @load="onImageLoad"

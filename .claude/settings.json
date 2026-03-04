@@ -15,7 +15,10 @@
       "Bash(sqlite3 dev.db \"UPDATE Magazine SET slug = ''n-1'' WHERE id = 1;\")",
       "WebFetch(domain:miningobs.mg)",
       "Bash(lsof -i :3000 -i :3001 -i :3007 -P -n)",
-      "Bash(pnpm prisma migrate dev --name add-visitor-id)"
+      "Bash(pnpm prisma migrate dev --name add-visitor-id)",
+      "Bash(npx tsx -e \":*)",
+      "Bash(sqlite3 dev.db \"INSERT OR IGNORE INTO HomepageImage \\(slug, label, imagePath, updatedAt\\) VALUES \\(''hero_desktop'', ''Grand format \\(desktop\\)'', ''/images/hero/hero_section.jpg'', datetime\\(''now''\\)\\), \\(''hero_mobile'', ''Petit format \\(mobile\\)'', ''/images/hero/magazine.png'', datetime\\(''now''\\)\\);\")",
+      "Bash(sqlite3 dev.db \"SELECT * FROM HomepageImage;\")"
     ],
     "additionalDirectories": [
       "/tmp"
