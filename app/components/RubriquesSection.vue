@@ -69,12 +69,13 @@ function initAnimations() {
 
 onMounted(() => {
   const stop = watch(
-    () => sectionRef.value,
-    async (el) => {
-      if (!el) return
+    [() => sectionRef.value, highlights],
+    async ([el, data]) => {
+      if (!el || !data?.length) return
       await nextTick()
       stop()
       initAnimations()
+      requestAnimationFrame(() => useScrollTrigger.refresh())
     },
     { immediate: true },
   )
@@ -169,10 +170,10 @@ onUnmounted(() => {
       <div ref="ctaRef" class="mt-12 text-center">
         <NuxtLink
           to="/rubriques"
-          class="inline-flex items-center gap-2 rounded-full bg-amber-500 px-8 py-3 text-sm font-semibold text-gray-950 shadow-md shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/30"
+          class="group/cta inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 transition-colors hover:text-amber-300"
         >
           Voir toutes les rubriques
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <svg class="h-4 w-4 transition-transform group-hover/cta:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
           </svg>
         </NuxtLink>
