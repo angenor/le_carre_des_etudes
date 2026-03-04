@@ -46,13 +46,13 @@ function formatDate(dateStr: string): string {
       </NuxtLink>
 
       <!-- Panneau d'infos superposé -->
-      <div class="lg:rounded-l-[20px] lg:rounded-t-[20px] bg-gray-900 border border-gray-800 lg:absolute bottom-6 -right-10 lg:w-52 px-5 pt-4 pb-6 lg:h-72 shadow-xl flex flex-col transition-all group-hover:border-amber-500/30 group-hover:shadow-amber-500/5">
+      <div class="animated-border lg:rounded-l-[20px] lg:rounded-t-[20px] lg:absolute bottom-6 -right-10 lg:w-52 px-5 pt-4 pb-6 lg:h-72 shadow-xl flex flex-col">
         <span class="inline-block text-xs text-gray-500">
           {{ formatDate(publishedAt) }}
         </span>
 
         <NuxtLink :to="`/magazine/${id}`" class="block">
-          <h2 class="text-lg font-bold leading-tight mt-1 mb-1.5 text-white line-clamp-2 hover:text-amber-400 transition-colors">
+          <h2 class="text-lg font-bold leading-tight mt-1 mb-1.5 text-white line-clamp-2 hover:text-amber-400 hover:underline transition-colors">
             {{ name }}
           </h2>
         </NuxtLink>
@@ -94,3 +94,47 @@ function formatDate(dateStr: string): string {
     </div>
   </article>
 </template>
+
+<style scoped>
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0turn;
+}
+
+.animated-border {
+  --border-angle: 0turn;
+  --main-bg: conic-gradient(
+    from var(--border-angle),
+    #111827,
+    #030712 5%,
+    #030712 60%,
+    #111827 95%
+  );
+  --gradient-border: conic-gradient(
+    from var(--border-angle),
+    transparent 25%,
+    #f59e0b,
+    #dd8448 99%,
+    transparent
+  );
+
+  border: solid 2px transparent;
+  background:
+    var(--main-bg) padding-box,
+    var(--gradient-border) border-box,
+    var(--main-bg) border-box;
+  background-position: center center;
+  animation: bg-spin 3s linear infinite;
+}
+
+.animated-border:hover {
+  animation-play-state: paused;
+}
+
+@keyframes bg-spin {
+  to {
+    --border-angle: 1turn;
+  }
+}
+</style>
