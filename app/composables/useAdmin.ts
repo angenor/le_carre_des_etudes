@@ -5,7 +5,8 @@ export function useAdmin() {
   async function checkSession(): Promise<boolean> {
     if (checked.value) return isLoggedIn.value
     try {
-      const { admin } = await $fetch('/api/auth/me')
+      const requestFetch = useRequestFetch()
+      const { admin } = await requestFetch('/api/auth/me')
       isLoggedIn.value = admin
     }
     catch {
