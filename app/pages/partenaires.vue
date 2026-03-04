@@ -106,16 +106,26 @@ useHead({
           <p class="mt-2 text-sm text-gray-500">Revenez bientôt pour découvrir nos partenaires.</p>
         </div>
 
-        <!-- Grille de partenaires -->
-        <div v-else class="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-          <PartnerLogo
+        <!-- Logos partenaires -->
+        <div v-else class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+          <component
+            :is="partner.url ? 'a' : 'div'"
             v-for="partner in partners"
             :key="partner.id"
-            :id="partner.id"
-            :name="partner.name"
-            :logo-path="partner.logoPath"
-            :url="partner.url"
-          />
+            :href="partner.url || undefined"
+            :target="partner.url ? '_blank' : undefined"
+            :rel="partner.url ? 'noopener noreferrer' : undefined"
+            class="flex flex-col items-center gap-3 transition-opacity hover:opacity-80"
+          >
+            <div class="flex h-20 w-20 items-center justify-center rounded-xl bg-white/90 p-3 sm:h-24 sm:w-24">
+              <img
+                :src="partner.logoPath"
+                :alt="`Logo ${partner.name}`"
+                class="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <span class="text-xs font-medium text-gray-400">{{ partner.name }}</span>
+          </component>
         </div>
       </div>
     </section>
