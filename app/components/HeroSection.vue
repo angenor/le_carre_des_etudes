@@ -122,7 +122,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section ref="heroRef" class="relative overflow-hidden bg-gray-900 md:h-dvh md:min-h-150">
+  <section ref="heroRef" class="relative overflow-hidden bg-gray-900 h-dvh min-h-150">
     <img
       ref="desktopImg"
       :src="desktopSrc"
@@ -134,11 +134,11 @@ onUnmounted(() => {
       ref="mobileImg"
       :src="mobileSrc"
       alt="Couverture du magazine Le Carré des Études"
-      class="block w-full md:hidden will-change-transform"
+      class="absolute inset-0 block h-full w-full object-cover md:hidden will-change-transform"
       @load="onImageLoad"
     />
     <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
-    <div ref="scrollIndicator" class="absolute inset-x-0 bottom-8 z-10 hidden flex-col items-center gap-3 md:flex">
+    <div ref="scrollIndicator" class="absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-3">
       <!-- Ligne verticale animée -->
       <div class="scroll-line h-10 w-px bg-gradient-to-b from-transparent via-white/60 to-white/80"></div>
       <!-- Chevrons en cascade -->
