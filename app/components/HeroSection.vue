@@ -32,21 +32,73 @@ onMounted(async () => {
     }
 
     if (scrollIndicator.value) {
+      const chevrons = scrollIndicator.value.querySelectorAll('.scroll-chevron')
+      const label = scrollIndicator.value.querySelector('.scroll-label')
+      const line = scrollIndicator.value.querySelector('.scroll-line')
+
+      // Entrée initiale
       useGsap.fromTo(
         scrollIndicator.value,
-        { y: 0, opacity: 0.6 },
-        { y: 10, opacity: 1, duration: 1.2, ease: 'power2.inOut', repeat: -1, yoyo: true },
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 1, delay: 1.5, ease: 'power3.out' },
       )
 
-      useGsap.to(scrollIndicator.value, {
-        opacity: 0,
-        scrollTrigger: {
-          trigger: heroRef.value,
-          start: '10% top',
-          end: '20% top',
-          scrub: true,
+      // Ligne qui pulse
+      if (line) {
+        useGsap.fromTo(
+          line,
+          { scaleY: 0 },
+          { scaleY: 1, duration: 1.4, delay: 1.8, ease: 'power2.out', transformOrigin: 'top center' },
+        )
+      }
+
+      // Chevrons en cascade infinie
+      if (chevrons.length) {
+        const tl = useGsap.timeline({ repeat: -1, delay: 2.2 })
+        tl.fromTo(
+          chevrons,
+          { y: -4, opacity: 0 },
+          { y: 6, opacity: 1, duration: 0.5, stagger: 0.15, ease: 'power2.out' },
+        )
+        tl.to(
+          chevrons,
+          { y: 16, opacity: 0, duration: 0.5, stagger: 0.15, ease: 'power2.in' },
+          '+=0.3',
+        )
+        tl.set(chevrons, { y: -4, opacity: 0 })
+        tl.to({}, { duration: 0.4 }) // pause avant la boucle
+      }
+
+      // Label qui pulse doucement
+      if (label) {
+        useGsap.fromTo(
+          label,
+          { opacity: 0 },
+          { opacity: 0.7, duration: 1.5, delay: 2, ease: 'power2.out' },
+        )
+        useGsap.fromTo(
+          label,
+          { opacity: 0.5 },
+          { opacity: 0.9, duration: 2, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 3.5 },
+        )
+      }
+
+      // Disparition au scroll (fromTo pour garantir le retour à l'état visible)
+      useGsap.fromTo(
+        scrollIndicator.value,
+        { opacity: 1, y: 0 },
+        {
+          opacity: 0,
+          y: -10,
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: heroRef.value,
+            start: '5% top',
+            end: '15% top',
+            scrub: true,
+          },
         },
-      })
+      )
     }
   }, heroRef.value)
 
@@ -73,10 +125,23 @@ onUnmounted(() => {
       class="block w-full md:hidden will-change-transform"
     />
     <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
-    <div ref="scrollIndicator" class="absolute inset-x-0 bottom-4 z-10 flex justify-center">
-      <svg class="h-6 w-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-      </svg>
+    <div ref="scrollIndicator" class="absolute inset-x-0 bottom-8 z-10 hidden flex-col items-center gap-3 md:flex">
+      <!-- Ligne verticale animée -->
+      <div class="scroll-line h-10 w-px bg-gradient-to-b from-transparent via-white/60 to-white/80"></div>
+      <!-- Chevrons en cascade -->
+      <div class="flex flex-col items-center -space-y-1">
+        <svg class="scroll-chevron h-5 w-5 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
+        </svg>
+        <svg class="scroll-chevron h-5 w-5 text-white/70 drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
+        </svg>
+        <svg class="scroll-chevron h-5 w-5 text-white/40 drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
+        </svg>
+      </div>
+      <!-- Label -->
+      <span class="scroll-label text-[10px] font-light tracking-[0.3em] uppercase text-white/60">Découvrir</span>
     </div>
   </section>
 </template>
