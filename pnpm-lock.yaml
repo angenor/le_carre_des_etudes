@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@hypernym/nuxt-gsap':
+        specifier: 2.4.3
+        version: 2.4.3
       '@prisma/adapter-better-sqlite3':
         specifier: ^7.4.2
         version: 7.4.2
@@ -386,6 +389,9 @@ packages:
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
+
+  '@hypernym/nuxt-gsap@2.4.3':
+    resolution: {integrity: sha512-l3m7Z6NHWqPtz5Q7o18WKW1vOu0XVHtNZurRdE+Es5zKWdIUoHd6L5mNz440drE0bzCN7jIDicRlE5fcj30rpQ==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2312,6 +2318,9 @@ packages:
 
   graphmatch@1.1.1:
     resolution: {integrity: sha512-5ykVn/EXM1hF0XCaWh05VbYvEiOL2lY1kBxZtaYsyvjp7cmWOU1XsAdfQBwClraEofXDT197lFbXOEVMHpvQOg==}
+
+  gsap@3.14.2:
+    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
 
   gzip-size@7.0.0:
     resolution: {integrity: sha512-O1Ld7Dr+nqPnmGpdhzLmMTQ4vAsD+rHwMm1NLUmoUFFymBOMKxCCrtDxqdBRYXdeEPEi3SyoR4TizJLQrnKBNA==}
@@ -4268,6 +4277,10 @@ snapshots:
     dependencies:
       hono: 4.11.4
 
+  '@hypernym/nuxt-gsap@2.4.3':
+    dependencies:
+      gsap: 3.14.2
+
   '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.34.5':
@@ -6179,6 +6192,8 @@ snapshots:
   grammex@3.1.12: {}
 
   graphmatch@1.1.1: {}
+
+  gsap@3.14.2: {}
 
   gzip-size@7.0.0:
     dependencies:

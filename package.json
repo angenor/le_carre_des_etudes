@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@hypernym/nuxt-gsap": "2.4.3",
     "@prisma/adapter-better-sqlite3": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "@tailwindcss/vite": "^4.2.1",

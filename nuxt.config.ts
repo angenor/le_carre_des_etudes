@@ -4,6 +4,11 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  modules: ['@hypernym/nuxt-gsap'],
+  gsap: {
+    composables: true,
+    provide: false,
+  },
   css: ['~/assets/css/main.css'],
   vite: {
     plugins: [

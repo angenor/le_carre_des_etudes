@@ -58,6 +58,8 @@ const dateDisponibiliteFormatee = computed(() => {
     day: 'numeric',
   })
 })
+
+const showDownloadModal = ref(false)
 </script>
 
 <template>
@@ -188,16 +190,17 @@ const dateDisponibiliteFormatee = computed(() => {
           <!-- Boutons -->
           <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <!-- Bouton principal : Télécharger (actif seulement si disponible) -->
-            <a
+            <button
               v-if="estDisponible && magazine.pdfPath"
-              :href="magazine.pdfPath"
+              type="button"
               class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-amber-400/30"
+              @click="showDownloadModal = true"
             >
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
               Télécharger
-            </a>
+            </button>
 
             <!-- Bouton désactivé avant la date ou sans PDF -->
             <span
@@ -224,6 +227,14 @@ const dateDisponibiliteFormatee = computed(() => {
         </div>
       </div>
     </div>
+
+    <!-- Modal de téléchargement -->
+    <DownloadModal
+      v-if="showDownloadModal"
+      :magazine-id="magazine.id"
+      :magazine-name="magazine.name"
+      @close="showDownloadModal = false"
+    />
   </section>
 </template>
 
