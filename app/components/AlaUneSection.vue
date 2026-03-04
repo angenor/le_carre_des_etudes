@@ -81,43 +81,26 @@ function initAnimations() {
   })
 
   gsapCtx = useGsap.context(() => {
-    useGsap.from(badgeRef.value!, {
-      y: -30,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'back.out(1.7)',
-      scrollTrigger: {
-        trigger: sectionRef.value,
-        start: 'top 80%',
-        toggleActions: 'play none none reset',
+    useGsap.fromTo(badgeRef.value!,
+      { y: -30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.7)',
+        scrollTrigger: { trigger: sectionRef.value, start: 'top 80%', toggleActions: 'play none none reset' },
       },
-    })
+    )
 
-    useGsap.from(magazineCoverRef.value!, {
-      x: -120,
-      rotation: -8,
-      opacity: 0,
-      duration: 1.2,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: sectionRef.value,
-        start: 'top 70%',
-        toggleActions: 'play none none reset',
+    useGsap.fromTo(magazineCoverRef.value!,
+      { x: -120, rotation: -8, opacity: 0 },
+      { x: 0, rotation: 0, opacity: 1, duration: 1.2, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef.value, start: 'top 70%', toggleActions: 'play none none reset' },
       },
-    })
+    )
 
-    useGsap.from(infosRef.value!.children, {
-      y: 40,
-      opacity: 0,
-      duration: 0.7,
-      stagger: 0.12,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: sectionRef.value,
-        start: 'top 65%',
-        toggleActions: 'play none none reset',
+    useGsap.fromTo(infosRef.value!.children,
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.value, start: 'top 65%', toggleActions: 'play none none reset' },
       },
-    })
+    )
   }, sectionRef.value)
 
   useScrollTrigger.refresh()

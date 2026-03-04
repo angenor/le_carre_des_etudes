@@ -176,6 +176,10 @@ const facebookUrl = 'https://www.facebook.com/profile.php?id=61588510360890'
       <p class="mt-6 text-center text-xs text-gray-600">
         &copy; {{ currentYear }} Le Carré des Études. Tous droits réservés.
       </p>
+      <p class="mt-2 text-center text-xs text-gray-700">
+        Plateforme développée par
+        <a href="https://angenor.firebaseapp.com/" target="_blank" rel="noopener noreferrer" class="text-gray-500 transition-colors duration-200 hover:text-amber-400">Angenor N'GOUANDI</a>
+      </p>
     </div>
   </footer>
 </template>

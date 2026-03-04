@@ -46,22 +46,28 @@ function initAnimations() {
   if (!sectionRef.value) return
 
   gsapCtx = useGsap.context(() => {
-    useGsap.from(headerRef.value!.children, {
-      y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: headerRef.value, start: 'top 85%', toggleActions: 'play none none reset' },
-    })
+    useGsap.fromTo(headerRef.value!.children,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power2.out',
+        scrollTrigger: { trigger: headerRef.value, start: 'top 85%', toggleActions: 'play none none reset' },
+      },
+    )
 
-    useGsap.from(gridRef.value!.children, {
-      y: 60, opacity: 0, scale: 0.85, duration: 0.6,
-      stagger: { each: 0.08, from: 'random' },
-      ease: 'back.out(1.4)',
-      scrollTrigger: { trigger: gridRef.value, start: 'top 80%', toggleActions: 'play none none reset' },
-    })
+    useGsap.fromTo(gridRef.value!.children,
+      { y: 60, opacity: 0, scale: 0.85 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.6,
+        stagger: { each: 0.08, from: 'random' },
+        ease: 'back.out(1.4)',
+        scrollTrigger: { trigger: gridRef.value, start: 'top 80%', toggleActions: 'play none none reset' },
+      },
+    )
 
-    useGsap.from(ctaRef.value!, {
-      y: 20, opacity: 0, duration: 0.6, ease: 'power2.out',
-      scrollTrigger: { trigger: ctaRef.value, start: 'top 90%', toggleActions: 'play none none reset' },
-    })
+    useGsap.fromTo(ctaRef.value!,
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out',
+        scrollTrigger: { trigger: ctaRef.value, start: 'top 90%', toggleActions: 'play none none reset' },
+      },
+    )
   }, sectionRef.value)
 
   useScrollTrigger.refresh()
