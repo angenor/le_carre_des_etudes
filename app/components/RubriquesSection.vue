@@ -33,6 +33,9 @@ const highlights = computed(() => {
 
 const hasContent = computed(() => highlights.value.length > 0)
 
+// Lightbox
+const selectedItem = ref<(ContentItemWithMagazine & { sectionLabel: string }) | null>(null)
+
 // Refs pour GSAP
 const sectionRef = ref<HTMLElement>()
 const headerRef = ref<HTMLElement>()
@@ -138,13 +141,10 @@ onUnmounted(() => {
         <div
           v-for="item in highlights"
           :key="item.id"
-          class="group"
+          class="group cursor-pointer"
+          @click="selectedItem = item"
         >
-          <NuxtLink
-            v-if="item.magazine?.slug"
-            :to="`/magazine/${item.magazine.slug}`"
-            class="block overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5"
-          >
+          <div class="block overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5">
             <div class="relative aspect-210/297 overflow-hidden bg-gray-800">
               <img
                 :src="item.imagePath"
@@ -155,18 +155,6 @@ onUnmounted(() => {
               <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 <span class="text-xs font-medium text-amber-400">{{ item.sectionLabel }}</span>
               </div>
-            </div>
-          </NuxtLink>
-          <div
-            v-else
-            class="block overflow-hidden rounded-xl border border-white/10 bg-white/5"
-          >
-            <div class="relative aspect-210/297 overflow-hidden bg-gray-800">
-              <img
-                :src="item.imagePath"
-                :alt="`Rubrique ${item.sectionLabel}`"
-                class="h-full w-full object-cover"
-              />
             </div>
           </div>
         </div>
@@ -185,5 +173,14 @@ onUnmounted(() => {
         </NuxtLink>
       </div>
     </div>
+
+    <!-- Lightbox -->
+    <RubriqueLightbox
+      v-if="selectedItem"
+      :image-path="selectedItem.imagePath"
+      :magazine-slug="selectedItem.magazine?.slug"
+      :section-label="selectedItem.sectionLabel"
+      @close="selectedItem = null"
+    />
   </section>
 </template>

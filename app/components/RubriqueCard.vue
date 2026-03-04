@@ -1,28 +1,23 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   imagePath: string
   magazineSlug?: string | null
 }>()
 
-const linkTo = computed(() =>
-  props.magazineSlug ? `/magazine/${props.magazineSlug}` : undefined,
-)
+const emit = defineEmits<{ click: [] }>()
 </script>
 
 <template>
-  <component
-    :is="linkTo ? resolveComponent('NuxtLink') : 'div'"
-    :to="linkTo"
-    class="group block overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all"
-    :class="linkTo ? 'cursor-pointer hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5' : ''"
+  <div
+    class="group block cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5"
+    @click="emit('click')"
   >
     <div class="relative aspect-210/297 overflow-hidden bg-gray-800">
       <img
         v-if="imagePath"
         :src="imagePath"
         alt="Rubrique"
-        class="h-full w-full object-cover transition-transform duration-300"
-        :class="linkTo ? 'group-hover:scale-105' : ''"
+        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
       <div
         v-else
@@ -33,5 +28,5 @@ const linkTo = computed(() =>
         </svg>
       </div>
     </div>
-  </component>
+  </div>
 </template>

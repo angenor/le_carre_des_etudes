@@ -138,23 +138,23 @@ onUnmounted(() => {
       @load="onImageLoad"
     />
     <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
-    <div ref="scrollIndicator" class="absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-3">
+    <div ref="scrollIndicator" class="absolute inset-x-0 bottom-10 z-10 flex flex-col items-center gap-5">
       <!-- Ligne verticale animée -->
-      <div class="scroll-line h-10 w-px bg-gradient-to-b from-transparent via-white/60 to-white/80"></div>
+      <div class="scroll-line h-20 w-0.5 bg-gradient-to-b from-transparent via-white/70 to-white/90"></div>
       <!-- Chevrons en cascade -->
-      <div class="flex flex-col items-center -space-y-1">
-        <svg class="scroll-chevron h-5 w-5 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+      <div class="flex flex-col items-center -space-y-2">
+        <svg class="scroll-chevron h-12 w-12 text-white drop-shadow-[0_0_14px_rgba(255,255,255,0.6)]" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
         </svg>
-        <svg class="scroll-chevron h-5 w-5 text-white/70 drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+        <svg class="scroll-chevron h-12 w-12 text-white/70 drop-shadow-[0_0_14px_rgba(255,255,255,0.5)]" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
         </svg>
-        <svg class="scroll-chevron h-5 w-5 text-white/40 drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+        <svg class="scroll-chevron h-12 w-12 text-white/50 drop-shadow-[0_0_14px_rgba(255,255,255,0.4)]" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7" />
         </svg>
       </div>
       <!-- Label -->
-      <span class="scroll-label text-[10px] font-light tracking-[0.3em] uppercase text-white/60">Découvrir</span>
+      <span class="scroll-label text-sm font-light tracking-[0.3em] uppercase text-white/80">Découvrir</span>
     </div>
   </section>
 </template>

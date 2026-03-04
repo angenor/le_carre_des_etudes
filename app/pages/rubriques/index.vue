@@ -57,6 +57,9 @@ const hasAnyContent = computed(() => {
   return Object.values(rubriques.value).some((items) => items.length > 0)
 })
 
+// Lightbox
+const selectedItem = ref<ContentItemWithMagazine | null>(null)
+
 useHead({
   title: 'Rubriques — Le Carré des Études',
 })
@@ -252,6 +255,7 @@ onUnmounted(() => {
                   :key="item.id"
                   :image-path="item.imagePath"
                   :magazine-slug="item.magazine?.slug"
+                  @click="selectedItem = item"
                 />
               </div>
 
@@ -273,5 +277,13 @@ onUnmounted(() => {
         </div>
       </div>
     </section>
+
+    <!-- Lightbox -->
+    <RubriqueLightbox
+      v-if="selectedItem"
+      :image-path="selectedItem.imagePath"
+      :magazine-slug="selectedItem.magazine?.slug"
+      @close="selectedItem = null"
+    />
   </div>
 </template>
