@@ -35,7 +35,7 @@ const hasContent = computed(() => highlights.value.length > 0)
 </script>
 
 <template>
-  <section v-if="hasContent" class="relative overflow-hidden bg-gray-950 py-20 sm:py-28">
+  <section v-if="hasContent" class="relative overflow-hidden bg-gray-950 pb-20 pt-6 sm:pb-28 sm:pt-10">
     <!-- Fond décoratif -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(221,132,72,0.06),transparent_60%)]" />
     <svg class="absolute inset-0 h-full w-full opacity-[0.03]" aria-hidden="true">
