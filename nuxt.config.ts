@@ -8,6 +8,9 @@ export default defineNuxtConfig({
   gsap: {
     composables: true,
     provide: false,
+    extraPlugins: {
+      scrollTrigger: true,
+    },
   },
   css: ['~/assets/css/main.css'],
   vite: {

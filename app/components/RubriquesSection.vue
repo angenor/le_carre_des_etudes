@@ -32,10 +32,68 @@ const highlights = computed(() => {
 })
 
 const hasContent = computed(() => highlights.value.length > 0)
+
+// Refs pour GSAP
+const sectionRef = ref<HTMLElement>()
+const headerRef = ref<HTMLElement>()
+const gridRef = ref<HTMLElement>()
+const ctaRef = ref<HTMLElement>()
+
+onMounted(() => {
+  if (!sectionRef.value) return
+
+  // Header — enfants stagger vers le haut
+  if (headerRef.value) {
+    useGsap.from(headerRef.value.children, {
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: headerRef.value,
+        start: 'top 85%',
+      },
+    })
+  }
+
+  // Cards de la grille — stagger en vague
+  if (gridRef.value) {
+    useGsap.from(gridRef.value.children, {
+      y: 60,
+      opacity: 0,
+      scale: 0.85,
+      duration: 0.6,
+      stagger: {
+        each: 0.08,
+        from: 'random',
+      },
+      ease: 'back.out(1.4)',
+      scrollTrigger: {
+        trigger: gridRef.value,
+        start: 'top 80%',
+      },
+    })
+  }
+
+  // CTA — slide up
+  if (ctaRef.value) {
+    useGsap.from(ctaRef.value, {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: ctaRef.value,
+        start: 'top 90%',
+      },
+    })
+  }
+})
 </script>
 
 <template>
-  <section v-if="hasContent" class="relative overflow-hidden bg-gray-950 pb-20 pt-6 sm:pb-28 sm:pt-10">
+  <section v-if="hasContent" ref="sectionRef" class="relative overflow-hidden bg-gray-950 pb-20 pt-6 sm:pb-28 sm:pt-10">
     <!-- Fond décoratif -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(221,132,72,0.06),transparent_60%)]" />
     <svg class="absolute inset-0 h-full w-full opacity-[0.03]" aria-hidden="true">
@@ -49,7 +107,7 @@ const hasContent = computed(() => highlights.value.length > 0)
 
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- En-tête -->
-      <div class="mb-14 text-center">
+      <div ref="headerRef" class="mb-14 text-center">
         <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
           Éditorial
         </span>
@@ -76,7 +134,7 @@ const hasContent = computed(() => highlights.value.length > 0)
       </div>
 
       <!-- Grille d'images -->
-      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 sm:gap-6">
+      <div ref="gridRef" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 sm:gap-6">
         <div
           v-for="item in highlights"
           :key="item.id"
@@ -115,7 +173,7 @@ const hasContent = computed(() => highlights.value.length > 0)
       </div>
 
       <!-- CTA -->
-      <div class="mt-12 text-center">
+      <div ref="ctaRef" class="mt-12 text-center">
         <NuxtLink
           to="/rubriques"
           class="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-8 py-3 text-sm font-semibold text-amber-400 transition-all hover:bg-amber-500/20 hover:shadow-lg hover:shadow-amber-500/5"

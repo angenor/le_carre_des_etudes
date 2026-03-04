@@ -10,16 +10,74 @@ interface Partner {
 const { data: partenaires } = useFetch<Partner[]>('/api/partenaires')
 
 const hasContent = computed(() => (partenaires.value?.length ?? 0) > 0)
+
+// Refs pour GSAP
+const sectionRef = ref<HTMLElement>()
+const headerRef = ref<HTMLElement>()
+const logosRef = ref<HTMLElement>()
+const ctaRef = ref<HTMLElement>()
+
+onMounted(() => {
+  if (!sectionRef.value) return
+
+  // Header — slide up + fade
+  if (headerRef.value) {
+    useGsap.from(headerRef.value.children, {
+      y: 25,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: headerRef.value,
+        start: 'top 85%',
+      },
+    })
+  }
+
+  // Logos — bounce élastique en stagger
+  if (logosRef.value) {
+    useGsap.from(logosRef.value.children, {
+      scale: 0,
+      opacity: 0,
+      rotation: -15,
+      duration: 0.7,
+      stagger: {
+        each: 0.1,
+        from: 'center',
+      },
+      ease: 'elastic.out(1, 0.5)',
+      scrollTrigger: {
+        trigger: logosRef.value,
+        start: 'top 80%',
+      },
+    })
+  }
+
+  // CTA — slide up
+  if (ctaRef.value) {
+    useGsap.from(ctaRef.value, {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: ctaRef.value,
+        start: 'top 90%',
+      },
+    })
+  }
+})
 </script>
 
 <template>
-  <section v-if="hasContent" class="relative overflow-hidden bg-gray-950 pb-20 pt-6 sm:pb-28 sm:pt-10">
+  <section v-if="hasContent" ref="sectionRef" class="relative overflow-hidden bg-gray-950 pb-20 pt-6 sm:pb-28 sm:pt-10">
     <!-- Fond décoratif -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(221,132,72,0.05),transparent_60%)]" />
 
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- En-tête -->
-      <div class="mb-12 text-center">
+      <div ref="headerRef" class="mb-12 text-center">
         <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
           Partenaires
         </span>
@@ -42,7 +100,7 @@ const hasContent = computed(() => (partenaires.value?.length ?? 0) > 0)
       </div>
 
       <!-- Logos -->
-      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+      <div ref="logosRef" class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
         <component
           :is="partner.url ? 'a' : 'div'"
           v-for="partner in partenaires"
@@ -64,7 +122,7 @@ const hasContent = computed(() => (partenaires.value?.length ?? 0) > 0)
       </div>
 
       <!-- CTA -->
-      <div class="mt-12 text-center">
+      <div ref="ctaRef" class="mt-12 text-center">
         <NuxtLink
           to="/partenaires"
           class="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-8 py-3 text-sm font-semibold text-amber-400 transition-all hover:bg-amber-500/20 hover:shadow-lg hover:shadow-amber-500/5"

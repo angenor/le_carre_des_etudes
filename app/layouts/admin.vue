@@ -1,9 +1,11 @@
 <script setup lang="ts">
-const { isLoggedIn, logout } = useAdmin()
+const { isLoggedIn, checked, logout, checkSession } = useAdmin()
 const route = useRoute()
 
+await checkSession()
+
 watchEffect(() => {
-  if (!isLoggedIn.value) {
+  if (checked.value && !isLoggedIn.value) {
     navigateTo('/admin/login')
   }
 })

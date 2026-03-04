@@ -60,16 +60,70 @@ const dateDisponibiliteFormatee = computed(() => {
 })
 
 const showDownloadModal = ref(false)
+
+// Refs pour GSAP
+const sectionRef = ref<HTMLElement>()
+const badgeRef = ref<HTMLElement>()
+const magazineCoverRef = ref<HTMLElement>()
+const infosRef = ref<HTMLElement>()
+
+onMounted(() => {
+  if (!sectionRef.value) return
+
+  // Badge « À la une » — slide down + fade
+  if (badgeRef.value) {
+    useGsap.from(badgeRef.value, {
+      y: -30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'back.out(1.7)',
+      scrollTrigger: {
+        trigger: sectionRef.value,
+        start: 'top 80%',
+      },
+    })
+  }
+
+  // Magazine cover — slide in from left + rotation
+  if (magazineCoverRef.value) {
+    useGsap.from(magazineCoverRef.value, {
+      x: -120,
+      rotation: -8,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: sectionRef.value,
+        start: 'top 70%',
+      },
+    })
+  }
+
+  // Infos droite — stagger des enfants
+  if (infosRef.value) {
+    useGsap.from(infosRef.value.children, {
+      y: 40,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: sectionRef.value,
+        start: 'top 65%',
+      },
+    })
+  }
+})
 </script>
 
 <template>
-  <section v-if="magazine" class="relative overflow-hidden bg-gray-950 py-20 sm:py-28">
+  <section v-if="magazine" ref="sectionRef" class="relative overflow-hidden bg-gray-950 py-20 sm:py-28">
     <!-- Fond subtil -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(221,132,72,0.08),transparent_60%)]" />
 
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- Titre de section -->
-      <div class="mb-14 text-center">
+      <div ref="badgeRef" class="mb-14 text-center">
         <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
           À la une
         </span>
@@ -78,7 +132,7 @@ const showDownloadModal = ref(false)
       <!-- Contenu principal -->
       <div class="flex flex-col items-center gap-12 lg:flex-row lg:gap-20">
         <!-- Gauche : magazine avec electric border -->
-        <div class="relative flex shrink-0 justify-center">
+        <div ref="magazineCoverRef" class="relative flex shrink-0 justify-center">
           <!-- SVG Filter -->
           <svg class="absolute h-0 w-0" aria-hidden="true">
             <defs>
@@ -148,7 +202,7 @@ const showDownloadModal = ref(false)
         </div>
 
         <!-- Droite : infos édition -->
-        <div class="flex flex-col items-center text-center lg:items-start lg:text-left">
+        <div ref="infosRef" class="flex flex-col items-center text-center lg:items-start lg:text-left">
           <!-- Badge numéro -->
           <span class="inline-block rounded-full bg-amber-500/15 px-4 py-1 text-sm font-bold tracking-wider text-amber-400">
             {{ magazine.version }}
