@@ -73,20 +73,18 @@ const facebookUrl = 'https://www.facebook.com/profile.php?id=61588510360890'
             « Le Carré des Études » est un magazine ivoirien pensé pour les étudiants, avec pour mission principale de guider, informer et inspirer la jeunesse estudiantine de Côte d'Ivoire.
           </p>
 
-          <!-- Réseaux sociaux -->
-          <div class="mt-6 flex gap-3">
-            <a
-              :href="facebookUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook"
-              class="group flex size-9 items-center justify-center rounded-full border border-gray-800 bg-white/3 transition-all duration-300 hover:border-amber-500/40 hover:bg-amber-500/10 hover:shadow-lg hover:shadow-amber-500/5"
-            >
-              <svg class="size-4 text-gray-500 transition-colors duration-300 group-hover:text-amber-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-            </a>
-          </div>
+          <!-- Suivez-nous sur Facebook -->
+          <a
+            :href="facebookUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group mt-6 inline-flex items-center gap-2.5 rounded-full border border-gray-800 bg-white/3 px-4 py-2 transition-all duration-300 hover:border-amber-500/40 hover:bg-amber-500/10 hover:shadow-lg hover:shadow-amber-500/5"
+          >
+            <svg class="size-4 text-gray-500 transition-colors duration-300 group-hover:text-amber-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+            <span class="text-sm text-gray-400 transition-colors duration-300 group-hover:text-white">Suivez-nous sur Facebook</span>
+          </a>
         </div>
 
         <!-- Colonne 2 : Contact -->

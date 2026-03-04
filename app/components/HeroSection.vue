@@ -1,22 +1,23 @@
 <template>
-  <section class="relative aspect-9/16 w-full overflow-hidden bg-gray-900 md:aspect-auto md:h-dvh md:min-h-150">
+  <section class="relative overflow-hidden bg-gray-900 md:h-dvh md:min-h-150">
     <!-- Image desktop 16:9 -->
     <img
       src="/images/hero/hero_section.jpg"
       alt="Couverture du magazine Le Carré des Études"
       class="absolute inset-0 hidden h-full w-full object-cover md:block"
     />
-    <!-- Image mobile 9:16 -->
+    <!-- Image mobile 9:16 — taille naturelle, pas de crop -->
     <img
       src="/images/hero/magazine.png"
       alt="Couverture du magazine Le Carré des Études"
-      class="absolute inset-0 block h-full w-full object-cover object-center md:hidden"
+      class="block w-full md:hidden"
     />
     <!-- H1 accessible (masqué car le titre est sur l'image) -->
     <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
     <!-- Dégradé bas pour les CTA -->
-    <div class="absolute inset-x-0 bottom-0 h-72 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-    <!-- CTA -->
+    <!-- <div class="absolute inset-x-0 bottom-0 h-72 bg-linear-to-t from-black/80 via-black/40 to-transparent" /> -->
+    <!-- CTA (commenté pour inciter au scroll) -->
+    <!--
     <div class="absolute inset-x-0 bottom-0 z-10 px-6 pb-16 sm:pb-20">
       <div class="mx-auto max-w-4xl text-center">
         <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
@@ -35,6 +36,7 @@
         </div>
       </div>
     </div>
+    -->
     <!-- Indicateur de scroll -->
     <div class="absolute inset-x-0 bottom-4 z-10 flex animate-bounce justify-center">
       <svg class="h-6 w-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
