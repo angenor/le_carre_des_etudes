@@ -4,19 +4,44 @@ interface ContentItem {
   type: string
   title: string
   description: string
+  content: string | null
+  subtitle: string | null
+  eventDate: string | null
+  eventLocation: string | null
   imagePath: string
   order: number
+  createdAt: string
+  updatedAt: string
 }
 
 type GroupedRubriques = Record<string, ContentItem[]>
 
 const { data: rubriques, status } = useFetch<GroupedRubriques>('/api/rubriques')
 
+const MAX_ITEMS = 4
+
 const sections = [
-  { key: 'portrait', label: 'Portrait' },
-  { key: 'parcours_inspirant', label: 'Parcours Inspirant' },
-  { key: 'en_vedette', label: 'En Vedette' },
-]
+  { key: 'en_vedette', label: 'En Vedette', layout: 'RubriqueLayoutVedette' },
+  { key: 'parcours_inspirant', label: 'Parcours Inspirant', layout: 'RubriqueLayoutParcours' },
+  { key: 'agenda_et_opportunites', label: 'Agenda & Opportunités', layout: 'RubriqueLayoutAgenda' },
+  { key: 'focus', label: 'Focus', layout: 'RubriqueLayoutFocus' },
+] as const
+
+function sectionItems(key: string) {
+  return rubriques.value?.[key] ?? []
+}
+
+function firstItem(key: string): ContentItem | null {
+  return sectionItems(key)[0] ?? null
+}
+
+function cardItems(key: string): ContentItem[] {
+  return sectionItems(key).slice(1, MAX_ITEMS)
+}
+
+function hasMore(key: string): boolean {
+  return sectionItems(key).length > MAX_ITEMS
+}
 
 const hasAnyContent = computed(() => {
   if (!rubriques.value) return false
@@ -121,20 +146,57 @@ useHead({
         </div>
 
         <!-- Sections par type -->
-        <div v-else class="space-y-20">
+        <div v-else class="space-y-16 md:space-y-24">
           <template v-for="section in sections" :key="section.key">
-            <div v-if="rubriques?.[section.key]?.length">
-              <h2 class="mb-8 inline-block border-b-2 border-amber-500/60 pb-2 text-2xl font-bold text-white">
-                {{ section.label }}
-              </h2>
-              <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div v-if="sectionItems(section.key).length">
+              <!-- En-tête de section -->
+              <div class="mb-8 flex items-end justify-between">
+                <h2 class="inline-block border-b-2 border-amber-500/60 pb-2 text-2xl font-bold text-white">
+                  {{ section.label }}
+                </h2>
+                <NuxtLink
+                  v-if="hasMore(section.key)"
+                  to="/rubriques"
+                  class="text-sm font-medium text-amber-400 transition-colors hover:text-amber-300"
+                >
+                  Voir tout &rarr;
+                </NuxtLink>
+              </div>
+
+              <!-- Premier item : layout magazine -->
+              <RubriqueLayoutVedette
+                v-if="section.layout === 'RubriqueLayoutVedette' && firstItem(section.key)"
+                v-bind="firstItem(section.key)!"
+              />
+              <RubriqueLayoutParcours
+                v-else-if="section.layout === 'RubriqueLayoutParcours' && firstItem(section.key)"
+                v-bind="firstItem(section.key)!"
+              />
+              <RubriqueLayoutAgenda
+                v-else-if="section.layout === 'RubriqueLayoutAgenda' && firstItem(section.key)"
+                v-bind="firstItem(section.key)!"
+              />
+              <RubriqueLayoutFocus
+                v-else-if="section.layout === 'RubriqueLayoutFocus' && firstItem(section.key)"
+                v-bind="firstItem(section.key)!"
+              />
+
+              <!-- Items suivants : cards stylisées -->
+              <div
+                v-if="cardItems(section.key).length"
+                class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              >
                 <RubriqueCard
-                  v-for="item in rubriques[section.key]"
+                  v-for="item in cardItems(section.key)"
                   :key="item.id"
                   :id="item.id"
+                  :type="item.type"
                   :title="item.title"
                   :description="item.description"
                   :image-path="item.imagePath"
+                  :subtitle="item.subtitle"
+                  :event-date="item.eventDate"
+                  :event-location="item.eventLocation"
                 />
               </div>
             </div>

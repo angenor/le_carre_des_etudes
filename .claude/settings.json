@@ -7,7 +7,10 @@
       "Bash(.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
       "Bash(lsof -ti :3000 -ti :3001)",
       "Bash(bash .specify/scripts/bash/create-new-feature.sh --json --number 2 --short-name \"magazine-backend-sync\" \"Adapter la structure de données backend et backOffice aux informations de AlaUneSection.vue et magazine/[id].vue pour cohérence. Ajouter la possibilité de mettre une édition à la une dans le back office et de définir la prochaine date de sortie pour le décompteur.\")",
-      "Bash(.specify/scripts/bash/create-new-feature.sh --json --number 3 --short-name \"rubriques-redesign\" \"Refonte du système de rubriques avec affichage spécialisé par type \\(Parcours Inspirant, En Vedette, Agenda & Opportunités, Focus\\)\")"
+      "Bash(.specify/scripts/bash/create-new-feature.sh --json --number 3 --short-name \"rubriques-redesign\" \"Refonte du système de rubriques avec affichage spécialisé par type \\(Parcours Inspirant, En Vedette, Agenda & Opportunités, Focus\\)\")",
+      "Bash(else)",
+      "Bash(fi)",
+      "Bash(__NEW_LINE_639d91fabf362586__ echo \"\")"
     ],
     "additionalDirectories": [
       "/tmp"

@@ -19,8 +19,8 @@
 
 **Purpose**: Extension du modèle de données pour supporter les 4 types de rubriques
 
-- [ ] T001 Ajouter 4 champs optionnels (`content String?`, `subtitle String?`, `eventDate DateTime?`, `eventLocation String?`) au modèle ContentItem dans `prisma/schema.prisma`
-- [ ] T002 Exécuter la migration Prisma (`pnpm prisma migrate dev`) et régénérer le client (`pnpm prisma generate`)
+- [x] T001 Ajouter 4 champs optionnels (`content String?`, `subtitle String?`, `eventDate DateTime?`, `eventLocation String?`) au modèle ContentItem dans `prisma/schema.prisma`
+- [x] T002 Exécuter la migration Prisma (`pnpm prisma migrate dev`) et régénérer le client (`pnpm prisma generate`)
 
 ---
 
@@ -30,10 +30,10 @@
 
 **⚠️ CRITICAL**: Aucun travail sur les user stories ne peut commencer avant la fin de cette phase.
 
-- [ ] T003 [P] Modifier GET /api/rubriques : retourner 4 groupes (`en_vedette`, `parcours_inspirant`, `agenda_et_opportunites`, `focus`), mapper `portrait` → `parcours_inspirant`, inclure les nouveaux champs dans la réponse, trier par `order` ASC dans `server/api/rubriques/index.get.ts`
-- [ ] T004 [P] Modifier POST /api/rubriques : valider les 4 types (`parcours_inspirant`, `en_vedette`, `agenda_et_opportunites`, `focus`), accepter les nouveaux champs (`content`, `subtitle`, `eventDate`, `eventLocation`) avec validation contextuelle par type dans `server/api/rubriques/index.post.ts`
-- [ ] T005 [P] Modifier PUT /api/rubriques/:id : supporter les nouveaux champs (`content`, `subtitle`, `eventDate`, `eventLocation`) dans la mise à jour partielle dans `server/api/rubriques/[id].put.ts`
-- [ ] T006 [P] Créer GET /api/rubriques/:id : endpoint de détail retournant un ContentItem unique avec mapping `portrait` → `parcours_inspirant`, réponse 404 si non trouvé dans `server/api/rubriques/[id].get.ts`
+- [x] T003 [P] Modifier GET /api/rubriques : retourner 4 groupes (`en_vedette`, `parcours_inspirant`, `agenda_et_opportunites`, `focus`), mapper `portrait` → `parcours_inspirant`, inclure les nouveaux champs dans la réponse, trier par `order` ASC dans `server/api/rubriques/index.get.ts`
+- [x] T004 [P] Modifier POST /api/rubriques : valider les 4 types (`parcours_inspirant`, `en_vedette`, `agenda_et_opportunites`, `focus`), accepter les nouveaux champs (`content`, `subtitle`, `eventDate`, `eventLocation`) avec validation contextuelle par type dans `server/api/rubriques/index.post.ts`
+- [x] T005 [P] Modifier PUT /api/rubriques/:id : supporter les nouveaux champs (`content`, `subtitle`, `eventDate`, `eventLocation`) dans la mise à jour partielle dans `server/api/rubriques/[id].put.ts`
+- [x] T006 [P] Créer GET /api/rubriques/:id : endpoint de détail retournant un ContentItem unique avec mapping `portrait` → `parcours_inspirant`, réponse 404 si non trouvé dans `server/api/rubriques/[id].get.ts`
 
 **Checkpoint**: Tous les endpoints API sont fonctionnels — les user stories frontend peuvent commencer.
 
@@ -49,7 +49,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T007 [US2] Modifier le formulaire admin : remplacer le sélecteur de type par les 4 nouveaux types (`parcours_inspirant`, `en_vedette`, `agenda_et_opportunites`, `focus`), afficher dynamiquement les champs `subtitle` (pour parcours_inspirant), `eventDate` et `eventLocation` (pour agenda_et_opportunites) selon le type sélectionné dans `app/pages/admin/rubriques.vue`
+- [x] T007 [US2] Modifier le formulaire admin : remplacer le sélecteur de type par les 4 nouveaux types (`parcours_inspirant`, `en_vedette`, `agenda_et_opportunites`, `focus`), afficher dynamiquement les champs `subtitle` (pour parcours_inspirant), `eventDate` et `eventLocation` (pour agenda_et_opportunites) selon le type sélectionné dans `app/pages/admin/rubriques.vue`
 
 **Checkpoint**: L'admin peut créer et éditer des rubriques des 4 types avec les champs adaptés.
 
@@ -65,12 +65,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T008 [P] [US1] Créer le composant LayoutParcours — thème sombre brun/noir, portrait photo à gauche, sous-titre (nom/titre personne), texte en colonnes, typographie serif, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutParcours.vue`
-- [ ] T009 [P] [US1] Créer le composant LayoutVedette — style journal/presse, titre « EN VEDETTE » imposant, photo d'article, disposition 2 colonnes, accents orange sur fond clair, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutVedette.vue`
-- [ ] T010 [P] [US1] Créer le composant LayoutAgenda — style événementiel/promotionnel, image de couverture grande, date et lieu mis en valeur, tons orange vifs, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutAgenda.vue`
-- [ ] T011 [P] [US1] Créer le composant LayoutFocus — style informatif/académique structuré, titre « FOCUS » en gras, listes à puces, photo de groupe, disposition 2 colonnes, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutFocus.vue`
-- [ ] T012 [US1] Modifier RubriqueCard avec des variantes de card stylisées par type (couleurs, typographie, disposition différentes selon le type) dans `app/components/RubriqueCard.vue`
-- [ ] T013 [US1] Refondre la page listing des rubriques : 4 sections dans l'ordre (En Vedette → Parcours Inspirant → Agenda & Opportunités → Focus), premier item de chaque section en layout magazine (composant Layout* correspondant), 3 items suivants en cards stylisées (RubriqueCard), maximum 4 items par section, lien « Voir tout » si plus d'items existent, sections vides masquées dans `app/pages/rubriques.vue`
+- [x] T008 [P] [US1] Créer le composant LayoutParcours — thème sombre brun/noir, portrait photo à gauche, sous-titre (nom/titre personne), texte en colonnes, typographie serif, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutParcours.vue`
+- [x] T009 [P] [US1] Créer le composant LayoutVedette — style journal/presse, titre « EN VEDETTE » imposant, photo d'article, disposition 2 colonnes, accents orange sur fond clair, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutVedette.vue`
+- [x] T010 [P] [US1] Créer le composant LayoutAgenda — style événementiel/promotionnel, image de couverture grande, date et lieu mis en valeur, tons orange vifs, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutAgenda.vue`
+- [x] T011 [P] [US1] Créer le composant LayoutFocus — style informatif/académique structuré, titre « FOCUS » en gras, listes à puces, photo de groupe, disposition 2 colonnes, rendu du contenu riche via ToastViewer dans `app/components/rubrique/LayoutFocus.vue`
+- [x] T012 [US1] Modifier RubriqueCard avec des variantes de card stylisées par type (couleurs, typographie, disposition différentes selon le type) dans `app/components/RubriqueCard.vue`
+- [x] T013 [US1] Refondre la page listing des rubriques : 4 sections dans l'ordre (En Vedette → Parcours Inspirant → Agenda & Opportunités → Focus), premier item de chaque section en layout magazine (composant Layout* correspondant), 3 items suivants en cards stylisées (RubriqueCard), maximum 4 items par section, lien « Voir tout » si plus d'items existent, sections vides masquées dans `app/pages/rubriques.vue`
 
 **Checkpoint**: La page publique affiche les 4 types de rubriques avec des layouts visuellement distincts et identifiables.
 
@@ -86,7 +86,7 @@
 
 ### Implementation for User Story 3
 
-- [ ] T014 [US3] Intégrer le composant ToastEditor pour l'édition du champ `content` (Markdown) dans le formulaire admin : ajout de l'éditeur avec chargement du contenu existant en mode édition, récupération du Markdown via `getMarkdown()` à la soumission dans `app/pages/admin/rubriques.vue`
+- [x] T014 [US3] Intégrer le composant ToastEditor pour l'édition du champ `content` (Markdown) dans le formulaire admin : ajout de l'éditeur avec chargement du contenu existant en mode édition, récupération du Markdown via `getMarkdown()` à la soumission dans `app/pages/admin/rubriques.vue`
 
 **Checkpoint**: L'admin peut créer et éditer du contenu riche, rendu fidèlement sur la page publique via les layouts de la Phase 4.
 
@@ -102,7 +102,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T015 [US4] Créer la page de détail rubrique : fetch via `/api/rubriques/:id`, sélection dynamique du composant Layout* selon le type, affichage du contenu complet (titre, image, description, contenu riche, champs spécifiques par type), lien retour vers le listing dans `app/pages/rubriques/[id].vue`
+- [x] T015 [US4] Créer la page de détail rubrique : fetch via `/api/rubriques/:id`, sélection dynamique du composant Layout* selon le type, affichage du contenu complet (titre, image, description, contenu riche, champs spécifiques par type), lien retour vers le listing dans `app/pages/rubriques/[id].vue`
 
 **Checkpoint**: Navigation complète listing → détail → retour, avec mise en page type-spécifique sur la page de détail.
 
@@ -112,8 +112,8 @@
 
 **Purpose**: Vérifications finales et ajustements transversaux
 
-- [ ] T016 Vérifier et ajuster le responsive design sur les 3 formats (mobile 375px, tablette 768px, desktop 1280px+) pour tous les layouts et cards dans `app/components/rubrique/Layout*.vue` et `app/components/RubriqueCard.vue`
-- [ ] T017 Exécuter la validation quickstart.md : vérifier le workflow complet (migration → admin création → listing affichage → détail navigation)
+- [x] T016 Vérifier et ajuster le responsive design sur les 3 formats (mobile 375px, tablette 768px, desktop 1280px+) pour tous les layouts et cards dans `app/components/rubrique/Layout*.vue` et `app/components/RubriqueCard.vue`
+- [x] T017 Exécuter la validation quickstart.md : vérifier le workflow complet (migration → admin création → listing affichage → détail navigation)
 
 ---
 

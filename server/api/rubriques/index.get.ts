@@ -7,14 +7,17 @@ export default defineEventHandler(async () => {
   })
 
   const grouped: Record<string, typeof items> = {
-    portrait: [],
-    parcours_inspirant: [],
     en_vedette: [],
+    parcours_inspirant: [],
+    agenda_et_opportunites: [],
+    focus: [],
   }
 
   for (const item of items) {
-    if (grouped[item.type]) {
-      grouped[item.type].push(item)
+    // Mapper portrait → parcours_inspirant
+    const type = item.type === 'portrait' ? 'parcours_inspirant' : item.type
+    if (grouped[type]) {
+      grouped[type].push({ ...item, type })
     }
   }
 

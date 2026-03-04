@@ -8,6 +8,10 @@ interface ContentItem {
   type: string
   title: string
   description: string
+  content: string | null
+  subtitle: string | null
+  eventDate: string | null
+  eventLocation: string | null
   imagePath: string
   order: number
   createdAt: string
@@ -15,9 +19,10 @@ interface ContentItem {
 }
 
 const TYPES = [
-  { value: 'portrait', label: 'Portrait' },
   { value: 'parcours_inspirant', label: 'Parcours Inspirant' },
   { value: 'en_vedette', label: 'En Vedette' },
+  { value: 'agenda_et_opportunites', label: 'Agenda & Opportunités' },
+  { value: 'focus', label: 'Focus' },
 ]
 
 const items = ref<ContentItem[]>([])
@@ -28,9 +33,13 @@ const saving = ref(false)
 const errorMessage = ref('')
 
 const form = reactive({
-  type: 'portrait',
+  type: 'parcours_inspirant',
   title: '',
   description: '',
+  content: '',
+  subtitle: '',
+  eventDate: '',
+  eventLocation: '',
   imagePath: '',
   order: 0,
 })
@@ -51,9 +60,13 @@ async function fetchItems() {
 }
 
 function resetForm() {
-  form.type = 'portrait'
+  form.type = 'parcours_inspirant'
   form.title = ''
   form.description = ''
+  form.content = ''
+  form.subtitle = ''
+  form.eventDate = ''
+  form.eventLocation = ''
   form.imagePath = ''
   form.order = 0
   editingItem.value = null
@@ -70,6 +83,10 @@ function openEditForm(item: ContentItem) {
   form.type = item.type
   form.title = item.title
   form.description = item.description
+  form.content = item.content ?? ''
+  form.subtitle = item.subtitle ?? ''
+  form.eventDate = item.eventDate ? item.eventDate.slice(0, 10) : ''
+  form.eventLocation = item.eventLocation ?? ''
   form.imagePath = item.imagePath
   form.order = item.order
   errorMessage.value = ''
@@ -104,12 +121,21 @@ async function saveItem() {
   errorMessage.value = ''
 
   try {
-    const payload = {
+    const payload: Record<string, unknown> = {
       type: form.type,
       title: form.title,
       description: form.description,
+      content: form.content || null,
       imagePath: form.imagePath,
       order: form.order,
+    }
+
+    if (form.type === 'parcours_inspirant') {
+      payload.subtitle = form.subtitle || null
+    }
+    if (form.type === 'agenda_et_opportunites') {
+      payload.eventDate = form.eventDate || null
+      payload.eventLocation = form.eventLocation || null
     }
 
     if (editingItem.value) {
@@ -147,6 +173,16 @@ async function deleteItem(item: ContentItem) {
 
 function typeLabel(type: string): string {
   return TYPES.find((t) => t.value === type)?.label ?? type
+}
+
+function typeBadgeClass(type: string): string {
+  switch (type) {
+    case 'parcours_inspirant': return 'bg-amber-100 text-amber-700'
+    case 'en_vedette': return 'bg-purple-100 text-purple-700'
+    case 'agenda_et_opportunites': return 'bg-orange-100 text-orange-700'
+    case 'focus': return 'bg-blue-100 text-blue-700'
+    default: return 'bg-gray-100 text-gray-700'
+  }
 }
 
 onMounted(fetchItems)
@@ -208,16 +244,61 @@ onMounted(fetchItems)
           />
         </div>
 
+        <!-- Sous-titre (Parcours Inspirant uniquement) -->
+        <div v-if="form.type === 'parcours_inspirant'">
+          <label for="subtitle" class="block text-sm font-medium text-gray-700">Sous-titre (nom/titre de la personne)</label>
+          <input
+            id="subtitle"
+            v-model="form.subtitle"
+            type="text"
+            class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            placeholder="Ex : Par Sucrey Corporates"
+          />
+        </div>
+
+        <!-- Date et lieu (Agenda & Opportunités uniquement) -->
+        <div v-if="form.type === 'agenda_et_opportunites'" class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="eventDate" class="block text-sm font-medium text-gray-700">Date de l'événement</label>
+            <input
+              id="eventDate"
+              v-model="form.eventDate"
+              type="date"
+              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            />
+          </div>
+          <div>
+            <label for="eventLocation" class="block text-sm font-medium text-gray-700">Lieu</label>
+            <input
+              id="eventLocation"
+              v-model="form.eventLocation"
+              type="text"
+              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              placeholder="Ex : Noom Hotel, Abidjan Plateau"
+            />
+          </div>
+        </div>
+
         <div>
-          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+          <label for="description" class="block text-sm font-medium text-gray-700">Description (résumé court)</label>
           <textarea
             id="description"
             v-model="form.description"
             required
             rows="3"
             class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            placeholder="Description de la rubrique..."
+            placeholder="Résumé court de la rubrique..."
           ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Contenu riche (corps de l'article)</label>
+          <div class="mt-1 rounded-lg border border-gray-300 overflow-hidden">
+            <ClientOnly>
+              <ToastEditor v-model="form.content" height="350px" />
+            </ClientOnly>
+          </div>
+          <p class="mt-1 text-xs text-gray-400">Optionnel. Utilisez l'éditeur pour formater le contenu avec titres, gras, listes, images...</p>
         </div>
 
         <div>
@@ -303,11 +384,7 @@ onMounted(fetchItems)
             <p class="text-sm text-gray-500 truncate">{{ item.description }}</p>
             <span
               class="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium"
-              :class="{
-                'bg-blue-100 text-blue-700': item.type === 'portrait',
-                'bg-amber-100 text-amber-700': item.type === 'parcours_inspirant',
-                'bg-purple-100 text-purple-700': item.type === 'en_vedette',
-              }"
+              :class="typeBadgeClass(item.type)"
             >
               {{ typeLabel(item.type) }}
             </span>
