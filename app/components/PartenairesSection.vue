@@ -52,11 +52,13 @@ const hasContent = computed(() => (partenaires.value?.length ?? 0) > 0)
           :rel="partner.url ? 'noopener noreferrer' : undefined"
           class="flex flex-col items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <img
-            :src="partner.logoPath"
-            :alt="`Logo ${partner.name}`"
-            class="h-16 w-auto object-contain sm:h-20"
-          />
+          <div class="flex h-20 w-20 items-center justify-center rounded-xl bg-white/90 p-3 sm:h-24 sm:w-24">
+            <img
+              :src="partner.logoPath"
+              :alt="`Logo ${partner.name}`"
+              class="max-h-full max-w-full object-contain"
+            />
+          </div>
           <span class="text-xs font-medium text-gray-400">{{ partner.name }}</span>
         </component>
       </div>

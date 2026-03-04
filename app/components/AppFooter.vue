@@ -143,21 +143,21 @@ const socialLinks = [
               </NuxtLink>
             </li>
             <li>
+              <NuxtLink to="/magazine" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
+                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
+                Magazine
+              </NuxtLink>
+            </li>
+            <li>
               <NuxtLink to="/rubriques" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
                 <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
                 Rubriques
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/a-propos" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
+              <NuxtLink to="/partenaires" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
                 <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
-                À propos
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/contact" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
-                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
-                Contact
+                Partenaires
               </NuxtLink>
             </li>
           </ul>
