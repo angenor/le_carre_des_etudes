@@ -17,6 +17,8 @@ const navItems = [
   { label: 'Magazines', to: '/admin/magazines', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
   { label: 'Rubriques', to: '/admin/rubriques', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
   { label: 'Partenaires', to: '/admin/partenaires', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+  { label: 'Téléchargements', to: '/admin/telechargements', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' },
+  { label: 'Newsletter', to: '/admin/newsletter', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
 ]
 
 function isActive(to: string) {
@@ -36,16 +38,16 @@ function isActive(to: string) {
 
     <!-- Sidebar -->
     <aside
-      class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-white shadow-lg transition-transform duration-200 lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-gray-950 shadow-lg transition-transform duration-200 lg:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <!-- Logo -->
-      <div class="flex h-16 items-center gap-3 border-b border-gray-200 px-5">
-        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white">
+      <div class="flex h-16 items-center gap-3 border-b border-gray-800 px-5">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-sm font-bold text-amber-400">
           CE
         </div>
         <div>
-          <p class="text-sm font-bold text-gray-900">Le Carré des Études</p>
+          <p class="text-sm font-bold text-white">Le Carré des Études</p>
           <p class="text-xs text-gray-500">Administration</p>
         </div>
       </div>
@@ -58,13 +60,13 @@ function isActive(to: string) {
           :to="item.to"
           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
           :class="isActive(item.to)
-            ? 'bg-emerald-50 text-emerald-700'
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            ? 'bg-gray-800 text-amber-400'
+            : 'text-gray-400 hover:bg-gray-800 hover:text-white'"
           @click="sidebarOpen = false"
         >
           <svg
             class="h-5 w-5 shrink-0"
-            :class="isActive(item.to) ? 'text-emerald-600' : 'text-gray-400'"
+            :class="isActive(item.to) ? 'text-amber-400' : 'text-gray-500'"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -77,12 +79,12 @@ function isActive(to: string) {
       </nav>
 
       <!-- Déconnexion -->
-      <div class="border-t border-gray-200 px-3 py-4">
+      <div class="border-t border-gray-800 px-3 py-4">
         <button
           @click="logout"
-          class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
         >
-          <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <svg class="h-5 w-5 shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
           Déconnexion
@@ -93,16 +95,16 @@ function isActive(to: string) {
     <!-- Contenu principal -->
     <div class="lg:pl-64">
       <!-- Header mobile -->
-      <header class="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-4 lg:hidden">
+      <header class="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-gray-800 bg-gray-900 px-4 lg:hidden">
         <button
           @click="sidebarOpen = true"
-          class="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          class="rounded-md p-2 text-gray-400 hover:bg-gray-800 hover:text-white"
         >
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
         </button>
-        <p class="text-sm font-bold text-gray-900">Administration</p>
+        <p class="text-sm font-bold text-white">Administration</p>
       </header>
 
       <!-- Slot page -->

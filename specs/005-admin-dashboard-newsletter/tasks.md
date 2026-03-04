@@ -32,7 +32,7 @@
 **⚠️ CRITIQUE**: Le dashboard (US1) a besoin des données de visite pour le graphique de fréquentation
 
 - [x] T004 [P] [US6] Créer l'endpoint POST `/api/visits` dans `server/api/visits/index.post.ts` — valider que `path` est présent et commence par `/`, créer un enregistrement PageVisit, retourner `{ success: true }` (201) ou `{ message: "..." }` (400). Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T005 [P] [US6] Créer le plugin client `app/plugins/track-visit.client.ts` — envoyer un POST fire-and-forget à `/api/visits` avec le `path` courant à chaque navigation (utiliser le hook `useRouter().afterEach` ou `watch` sur `useRoute().fullPath`)
+- [x] T005 [P] [US6] Créer le plugin client `app/plugins/track-visit.client.ts` — envoyer un POST fire-and-forget à `/api/visits` avec le `path` courant à chaque navigation (utiliser le hook `useRouter().afterEach` ou `watch` sur `useRoute().fullPath`)
 
 **Checkpoint**: Les visites de pages sont enregistrées en base à chaque navigation côté client
 
@@ -46,10 +46,10 @@
 
 ### Implementation
 
-- [ ] T006 [P] [US1] Créer l'endpoint GET `/api/stats/summary` dans `server/api/stats/summary.get.ts` — retourner `{ totalDownloads, totalVisits, totalSubscribers, totalMagazines }` via `prisma.download.count()`, `prisma.pageVisit.count()`, `prisma.newsletterSubscriber.count()`, `prisma.magazine.count()`. Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T007 [P] [US1] Créer l'endpoint GET `/api/stats/downloads` dans `server/api/stats/downloads.get.ts` — accepter query param `period` (7d|30d|90d|12m, défaut 30d), retourner `{ labels, datasets, byMagazine, byStudyLevel }`. Agréger les données Download par jour/mois côté serveur (JS car SQLite n'a pas DATE_TRUNC). Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T008 [P] [US1] Créer l'endpoint GET `/api/stats/visits` dans `server/api/stats/visits.get.ts` — accepter query param `period` (7d|30d|90d|12m, défaut 30d), retourner `{ labels, datasets }`. Agréger les PageVisit par jour/mois côté serveur. Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T009 [US1] Refaire `app/pages/admin/index.vue` avec le dashboard Chart.js — importer et enregistrer les composants Chart.js nécessaires (Line, Bar, Doughnut de vue-chartjs + CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Tooltip, Legend de chart.js). Afficher : (1) cartes de chiffres clés (totalDownloads, totalVisits, totalSubscribers, totalMagazines) via `/api/stats/summary`, (2) courbe téléchargements via `/api/stats/downloads` avec sélecteur de période, (3) doughnut répartition par magazine, (4) barres répartition par niveau d'étude, (5) courbe visites via `/api/stats/visits`. Gérer les états vides (message « Aucune donnée disponible »)
+- [x] T006 [P] [US1] Créer l'endpoint GET `/api/stats/summary` dans `server/api/stats/summary.get.ts` — retourner `{ totalDownloads, totalVisits, totalSubscribers, totalMagazines }` via `prisma.download.count()`, `prisma.pageVisit.count()`, `prisma.newsletterSubscriber.count()`, `prisma.magazine.count()`. Voir contrat dans `contracts/api-endpoints.md`
+- [x] T007 [P] [US1] Créer l'endpoint GET `/api/stats/downloads` dans `server/api/stats/downloads.get.ts` — accepter query param `period` (7d|30d|90d|12m, défaut 30d), retourner `{ labels, datasets, byMagazine, byStudyLevel }`. Agréger les données Download par jour/mois côté serveur (JS car SQLite n'a pas DATE_TRUNC). Voir contrat dans `contracts/api-endpoints.md`
+- [x] T008 [P] [US1] Créer l'endpoint GET `/api/stats/visits` dans `server/api/stats/visits.get.ts` — accepter query param `period` (7d|30d|90d|12m, défaut 30d), retourner `{ labels, datasets }`. Agréger les PageVisit par jour/mois côté serveur. Voir contrat dans `contracts/api-endpoints.md`
+- [x] T009 [US1] Refaire `app/pages/admin/index.vue` avec le dashboard Chart.js — importer et enregistrer les composants Chart.js nécessaires (Line, Bar, Doughnut de vue-chartjs + CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Tooltip, Legend de chart.js). Afficher : (1) cartes de chiffres clés (totalDownloads, totalVisits, totalSubscribers, totalMagazines) via `/api/stats/summary`, (2) courbe téléchargements via `/api/stats/downloads` avec sélecteur de période, (3) doughnut répartition par magazine, (4) barres répartition par niveau d'étude, (5) courbe visites via `/api/stats/visits`. Gérer les états vides (message « Aucune donnée disponible »)
 
 **Checkpoint**: Le dashboard admin affiche les graphiques interactifs et les chiffres clés. Changement de période met à jour les courbes. Les états vides sont gérés.
 
@@ -63,9 +63,9 @@
 
 ### Implementation
 
-- [ ] T010 [P] [US2] Créer l'endpoint GET `/api/downloads` dans `server/api/downloads/index.get.ts` — accepter query params `page` (défaut 1), `limit` (défaut 20, max 100), `search` (filtre sur fullName, contact, fieldOfStudy via `contains`), `sortBy` (fullName|contact|age|studyLevel|fieldOfStudy|createdAt, défaut createdAt), `sortOrder` (asc|desc, défaut desc). Retourner `{ data, total, page, limit }` avec relation `magazine` incluse. Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T011 [P] [US2] Créer l'endpoint GET `/api/downloads/export` dans `server/api/downloads/export.get.ts` — exporter TOUS les téléchargements en CSV (ignorer pagination). Headers : `Content-Type: text/csv; charset=utf-8`, `Content-Disposition: attachment; filename="telechargements-YYYY-MM-DD.csv"`. Colonnes : Nom complet, Contact, Âge, Niveau d'étude, Filière, Magazine, Date. Entourer de guillemets les champs contenant des virgules. Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T012 [US2] Créer la page `app/pages/admin/telechargements.vue` — tableau avec colonnes (Nom, Contact, Âge, Niveau d'étude, Filière, Magazine, Date), pagination (boutons précédent/suivant + info page), barre de recherche avec debounce, tri par clic sur en-tête de colonne (indicateur visuel de direction), bouton « Exporter CSV » qui déclenche le téléchargement via `/api/downloads/export`. Ajouter le lien « Téléchargements » dans la sidebar de `app/layouts/admin.vue`
+- [x] T010 [P] [US2] Créer l'endpoint GET `/api/downloads` dans `server/api/downloads/index.get.ts` — accepter query params `page` (défaut 1), `limit` (défaut 20, max 100), `search` (filtre sur fullName, contact, fieldOfStudy via `contains`), `sortBy` (fullName|contact|age|studyLevel|fieldOfStudy|createdAt, défaut createdAt), `sortOrder` (asc|desc, défaut desc). Retourner `{ data, total, page, limit }` avec relation `magazine` incluse. Voir contrat dans `contracts/api-endpoints.md`
+- [x] T011 [P] [US2] Créer l'endpoint GET `/api/downloads/export` dans `server/api/downloads/export.get.ts` — exporter TOUS les téléchargements en CSV (ignorer pagination). Headers : `Content-Type: text/csv; charset=utf-8`, `Content-Disposition: attachment; filename="telechargements-YYYY-MM-DD.csv"`. Colonnes : Nom complet, Contact, Âge, Niveau d'étude, Filière, Magazine, Date. Entourer de guillemets les champs contenant des virgules. Voir contrat dans `contracts/api-endpoints.md`
+- [x] T012 [US2] Créer la page `app/pages/admin/telechargements.vue` — tableau avec colonnes (Nom, Contact, Âge, Niveau d'étude, Filière, Magazine, Date), pagination (boutons précédent/suivant + info page), barre de recherche avec debounce, tri par clic sur en-tête de colonne (indicateur visuel de direction), bouton « Exporter CSV » qui déclenche le téléchargement via `/api/downloads/export`. Ajouter le lien « Téléchargements » dans la sidebar de `app/layouts/admin.vue`
 
 **Checkpoint**: La page téléchargements affiche la liste paginée, la recherche filtre les résultats, le tri fonctionne, et l'export CSV télécharge un fichier complet.
 
@@ -79,8 +79,8 @@
 
 ### Implementation
 
-- [ ] T013 [P] [US3] Créer l'endpoint POST `/api/newsletter` dans `server/api/newsletter/index.post.ts` — valider le format email (RFC 5322 basique, max 254 chars), vérifier l'unicité, créer un NewsletterSubscriber. Réponses : 201 (inscription réussie), 400 (email invalide), 409 (déjà inscrit). Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T014 [US3] Ajouter le formulaire newsletter dans `app/components/AppFooter.vue` — champ email avec placeholder, bouton « S'inscrire », validation côté client avant soumission, affichage des messages de retour (succès en vert, erreur en rouge, déjà inscrit en jaune/orange), état de chargement pendant la requête. Intégrer dans la section existante du footer en respectant le thème sombre/ambré
+- [x] T013 [P] [US3] Créer l'endpoint POST `/api/newsletter` dans `server/api/newsletter/index.post.ts` — valider le format email (RFC 5322 basique, max 254 chars), vérifier l'unicité, créer un NewsletterSubscriber. Réponses : 201 (inscription réussie), 400 (email invalide), 409 (déjà inscrit). Voir contrat dans `contracts/api-endpoints.md`
+- [x] T014 [US3] Ajouter le formulaire newsletter dans `app/components/AppFooter.vue` — champ email avec placeholder, bouton « S'inscrire », validation côté client avant soumission, affichage des messages de retour (succès en vert, erreur en rouge, déjà inscrit en jaune/orange), état de chargement pendant la requête. Intégrer dans la section existante du footer en respectant le thème sombre/ambré
 
 **Checkpoint**: Le formulaire newsletter dans le footer permet l'inscription, gère les doublons et les emails invalides avec des messages explicites.
 
@@ -94,10 +94,10 @@
 
 ### Implementation
 
-- [ ] T015 [P] [US4] Créer l'endpoint GET `/api/newsletter` dans `server/api/newsletter/index.get.ts` — accepter query params `page` (défaut 1), `limit` (défaut 20, max 100). Retourner `{ data: [{ id, email, createdAt }], total, page, limit }`. Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T016 [P] [US4] Créer l'endpoint GET `/api/newsletter/export` dans `server/api/newsletter/export.get.ts` — exporter TOUS les abonnés en CSV. Headers : `Content-Type: text/csv; charset=utf-8`, `Content-Disposition: attachment; filename="newsletter-YYYY-MM-DD.csv"`. Colonnes : Email, Date d'inscription. Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T017 [P] [US4] Créer l'endpoint DELETE `/api/newsletter/:id` dans `server/api/newsletter/[id].delete.ts` — supprimer l'abonné par ID. Réponses : 200 (supprimé), 404 (non trouvé). Voir contrat dans `contracts/api-endpoints.md`
-- [ ] T018 [US4] Créer la page `app/pages/admin/newsletter.vue` — tableau avec colonnes (Email, Date d'inscription, Actions), pagination, bouton « Exporter CSV » via `/api/newsletter/export`, bouton de suppression par abonné avec confirmation (dialogue ou clic double). Ajouter le lien « Newsletter » dans la sidebar de `app/layouts/admin.vue`
+- [x] T015 [P] [US4] Créer l'endpoint GET `/api/newsletter` dans `server/api/newsletter/index.get.ts` — accepter query params `page` (défaut 1), `limit` (défaut 20, max 100). Retourner `{ data: [{ id, email, createdAt }], total, page, limit }`. Voir contrat dans `contracts/api-endpoints.md`
+- [x] T016 [P] [US4] Créer l'endpoint GET `/api/newsletter/export` dans `server/api/newsletter/export.get.ts` — exporter TOUS les abonnés en CSV. Headers : `Content-Type: text/csv; charset=utf-8`, `Content-Disposition: attachment; filename="newsletter-YYYY-MM-DD.csv"`. Colonnes : Email, Date d'inscription. Voir contrat dans `contracts/api-endpoints.md`
+- [x] T017 [P] [US4] Créer l'endpoint DELETE `/api/newsletter/:id` dans `server/api/newsletter/[id].delete.ts` — supprimer l'abonné par ID. Réponses : 200 (supprimé), 404 (non trouvé). Voir contrat dans `contracts/api-endpoints.md`
+- [x] T018 [US4] Créer la page `app/pages/admin/newsletter.vue` — tableau avec colonnes (Email, Date d'inscription, Actions), pagination, bouton « Exporter CSV » via `/api/newsletter/export`, bouton de suppression par abonné avec confirmation (dialogue ou clic double). Ajouter le lien « Newsletter » dans la sidebar de `app/layouts/admin.vue`
 
 **Checkpoint**: La page admin newsletter affiche les abonnés, permet l'export CSV et la suppression individuelle.
 
@@ -111,7 +111,7 @@
 
 ### Implementation
 
-- [ ] T019 [US5] Re-thématiser `app/layouts/admin.vue` — remplacer les classes Tailwind emerald/white par le thème sombre/ambré : fond sidebar `bg-gray-950`, items actifs `bg-gray-800 text-amber-400`, items hover `hover:bg-gray-800`, texte secondaire `text-gray-400`, accents `text-amber-400`/`amber-500`, header mobile `bg-gray-900`. Conserver la structure HTML et la logique existante (menu mobile toggle, navigation, logout). Ne PAS modifier les styles des pages internes
+- [x] T019 [US5] Re-thématiser `app/layouts/admin.vue` — remplacer les classes Tailwind emerald/white par le thème sombre/ambré : fond sidebar `bg-gray-950`, items actifs `bg-gray-800 text-amber-400`, items hover `hover:bg-gray-800`, texte secondaire `text-gray-400`, accents `text-amber-400`/`amber-500`, header mobile `bg-gray-900`. Conserver la structure HTML et la logique existante (menu mobile toggle, navigation, logout). Ne PAS modifier les styles des pages internes
 
 **Checkpoint**: Le layout admin utilise le thème sombre/ambré. Les pages internes restent inchangées.
 
@@ -121,9 +121,9 @@
 
 **Purpose**: Validation finale et vérifications transversales
 
-- [ ] T020 Vérifier les états vides sur toutes les pages : dashboard sans données (graphiques à zéro ou message), liste téléchargements vide, liste newsletter vide, export CSV vide (en-tête uniquement)
-- [ ] T021 Vérifier les edge cases : email > 254 caractères rejeté, path de visite invalide rejeté, pagination avec page > nombre total de pages, tri sur toutes les colonnes disponibles
-- [ ] T022 Exécuter le scénario complet de `quickstart.md` : inscription newsletter, vérification dashboard, liste téléchargements avec export, liste newsletter avec export et suppression, thème admin
+- [x] T020 Vérifier les états vides sur toutes les pages : dashboard sans données (graphiques à zéro ou message), liste téléchargements vide, liste newsletter vide, export CSV vide (en-tête uniquement)
+- [x] T021 Vérifier les edge cases : email > 254 caractères rejeté, path de visite invalide rejeté, pagination avec page > nombre total de pages, tri sur toutes les colonnes disponibles
+- [x] T022 Exécuter le scénario complet de `quickstart.md` : inscription newsletter, vérification dashboard, liste téléchargements avec export, liste newsletter avec export et suppression, thème admin
 
 ---
 

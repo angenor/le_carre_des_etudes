@@ -2,6 +2,40 @@
 const currentYear = new Date().getFullYear()
 
 const facebookUrl = 'https://www.facebook.com/profile.php?id=61588510360890'
+
+const newsletterEmail = ref('')
+const newsletterStatus = ref<'idle' | 'loading' | 'success' | 'error' | 'duplicate'>('idle')
+const newsletterMessage = ref('')
+
+async function subscribeNewsletter() {
+  const email = newsletterEmail.value.trim()
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    newsletterStatus.value = 'error'
+    newsletterMessage.value = 'Veuillez saisir une adresse email valide.'
+    return
+  }
+
+  newsletterStatus.value = 'loading'
+  try {
+    const res = await $fetch<{ success: boolean; message: string }>('/api/newsletter', {
+      method: 'POST',
+      body: { email },
+    })
+    newsletterStatus.value = 'success'
+    newsletterMessage.value = res.message
+    newsletterEmail.value = ''
+  } catch (err: any) {
+    const status = err?.response?.status
+    const message = err?.data?.message
+    if (status === 409) {
+      newsletterStatus.value = 'duplicate'
+      newsletterMessage.value = message || 'Cette adresse est déjà inscrite.'
+    } else {
+      newsletterStatus.value = 'error'
+      newsletterMessage.value = message || 'Une erreur est survenue. Veuillez réessayer.'
+    }
+  }
+}
 </script>
 
 <template>
@@ -157,6 +191,41 @@ const facebookUrl = 'https://www.facebook.com/profile.php?id=61588510360890'
           </ul>
         </div>
       </div>
+
+      <!-- Newsletter -->
+      <div class="mt-12 rounded-xl border border-gray-800/80 bg-white/3 px-6 py-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div class="mb-4 sm:mb-0">
+          <h3 class="text-sm font-semibold text-white">Restez informé</h3>
+          <p class="mt-1 text-xs text-gray-400">Recevez une alerte lors de la sortie de nos prochaines éditions.</p>
+        </div>
+        <form @submit.prevent="subscribeNewsletter" class="flex w-full max-w-md gap-2">
+          <input
+            v-model="newsletterEmail"
+            type="email"
+            placeholder="Votre adresse email"
+            :disabled="newsletterStatus === 'loading'"
+            class="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white placeholder-gray-500 transition focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 disabled:opacity-50"
+          />
+          <button
+            type="submit"
+            :disabled="newsletterStatus === 'loading'"
+            class="shrink-0 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-medium text-gray-950 transition-colors hover:bg-amber-400 disabled:opacity-50"
+          >
+            {{ newsletterStatus === 'loading' ? '...' : "S'inscrire" }}
+          </button>
+        </form>
+      </div>
+      <p
+        v-if="newsletterStatus !== 'idle' && newsletterStatus !== 'loading'"
+        class="mt-3 text-center text-sm"
+        :class="{
+          'text-emerald-400': newsletterStatus === 'success',
+          'text-red-400': newsletterStatus === 'error',
+          'text-amber-400': newsletterStatus === 'duplicate',
+        }"
+      >
+        {{ newsletterMessage }}
+      </p>
 
       <!-- Séparateur décoratif -->
       <div class="relative mt-12">

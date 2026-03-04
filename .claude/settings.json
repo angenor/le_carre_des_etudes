@@ -13,7 +13,8 @@
       "Bash(__NEW_LINE_639d91fabf362586__ echo \"\")",
       "Bash(sqlite3 dev.db \"SELECT id, version, slug FROM Magazine;\")",
       "Bash(sqlite3 dev.db \"UPDATE Magazine SET slug = ''n-1'' WHERE id = 1;\")",
-      "WebFetch(domain:miningobs.mg)"
+      "WebFetch(domain:miningobs.mg)",
+      "Bash(lsof -i :3000 -i :3001 -i :3007 -P -n)"
     ],
     "additionalDirectories": [
       "/tmp"
