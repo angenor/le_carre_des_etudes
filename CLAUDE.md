@@ -84,6 +84,8 @@ Use multiple sub-agents in parallel for efficiency:
 - Prisma 7.4.2 with SQLite (`dev.db`), generated client in `app/generated/prisma/` (003-rubriques-redesign)
 - TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3.5.28 + Nuxt 4, Vue 3, Tailwind CSS v4.2.1 (`@tailwindcss/vite`), Prisma 7.4.2, @toast-ui/editor 3.2.2 (004-rubriques-simplify)
 - Prisma 7 avec SQLite (`dev.db` à la racine) ; client généré dans `app/generated/prisma/` (004-rubriques-simplify)
+- TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3.5.28 + Nuxt 4, Vue 3, Tailwind CSS v4.2.1 (`@tailwindcss/vite`), Chart.js 4.5.1, vue-chartjs 5.3.3, Prisma 7.4.2 (005-admin-dashboard-newsletter)
+- SQLite via Prisma 7 (`dev.db` à la racine) ; client généré dans `app/generated/prisma/` (005-admin-dashboard-newsletter)
 
 ## Recent Changes
 - 001-magazine-landing-site: Added TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7

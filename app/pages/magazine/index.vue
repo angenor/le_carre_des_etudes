@@ -195,7 +195,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Grille de magazines -->
-        <div v-else ref="gridRef" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-else ref="gridRef" class="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 items-start lg:gap-16">
           <MagazineCard
             v-for="magazine in magazines"
             :key="magazine.id"

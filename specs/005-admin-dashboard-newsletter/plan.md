@@ -1,104 +1,91 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Dashboard Admin, Newsletter & Embellissement
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
-
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Branch**: `005-admin-dashboard-newsletter` | **Date**: 2026-03-04 | **Spec**: [spec.md](spec.md)
+**Input**: Feature specification from `/specs/005-admin-dashboard-newsletter/spec.md`
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+Transformer le tableau de bord admin avec des graphiques Chart.js/vue-chartjs (téléchargements par période, répartition par magazine/niveau d'étude, visites), ajouter une page de consultation des téléchargements avec recherche/tri/export CSV, implémenter une newsletter simple (capture emails en base sans SMTP, formulaire dans le footer), une page admin de gestion des abonnés avec export CSV, et embellir le layout admin (sidebar/header) avec le thème sombre/ambré du front office.
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
-
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3.5.28
+**Primary Dependencies**: Nuxt 4, Vue 3, Tailwind CSS v4.2.1 (`@tailwindcss/vite`), Chart.js 4.5.1, vue-chartjs 5.3.3, Prisma 7.4.2
+**Storage**: SQLite via Prisma 7 (`dev.db` à la racine) ; client généré dans `app/generated/prisma/`
+**Testing**: Aucun test runner configuré
+**Target Platform**: Application web SSR (serveur Nitro)
+**Project Type**: Web application fullstack (Nuxt)
+**Performance Goals**: Dashboard < 3s de chargement, recherche téléchargements < 5s, newsletter < 15s d'inscription
+**Constraints**: Pas de SMTP (newsletter en mode capture uniquement), SQLite (écritures séquentielles), admin mono-utilisateur protégé par mot de passe
+**Scale/Scope**: Petite plateforme, ~500+ téléchargements, croissance modérée des visites
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+| Principe | Statut | Justification |
+|----------|--------|---------------|
+| I. Nuxt Conventions First | PASS | Routage fichier (`app/pages/admin/`), routes serveur dans `server/api/`, auto-imports, composables |
+| II. Simplicity & YAGNI | PASS | Compteur de pages vues simple (1 row par vue), newsletter basique (email uniquement), pas de système de notification automatique |
+| III. Data Integrity via Prisma | PASS | Nouveaux modèles (`NewsletterSubscriber`, `PageVisit`) via Prisma avec migrations, accès via singleton `server/utils/prisma.ts` |
+| IV. Consistent Toolchain | PASS | pnpm exclusivement, Tailwind via `@tailwindcss/vite`, Chart.js/vue-chartjs déjà installés via pnpm |
+| V. Content-Centric UX | PASS | Dashboard admin = outil interne (pas de SSR requis). Newsletter footer = léger, pas de JS lourd côté public. Suivi des visites = appel serveur non-bloquant |
+
+**Résultat** : Tous les gates passent. Aucune violation à justifier.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+specs/005-admin-dashboard-newsletter/
+├── plan.md              # This file
+├── research.md          # Phase 0 output
+├── data-model.md        # Phase 1 output
+├── quickstart.md        # Phase 1 output
+├── contracts/           # Phase 1 output
+│   └── api-endpoints.md
+└── tasks.md             # Phase 2 output (/speckit.tasks)
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+prisma/
+└── schema.prisma                    # +2 modèles : NewsletterSubscriber, PageVisit
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+server/
+├── api/
+│   ├── newsletter/
+│   │   ├── index.get.ts             # Liste abonnés (admin, GET paginé)
+│   │   ├── index.post.ts            # Inscription newsletter (public, POST)
+│   │   ├── [id].delete.ts           # Suppression abonné (admin, DELETE)
+│   │   └── export.get.ts            # Export CSV abonnés (admin, GET)
+│   ├── downloads/
+│   │   ├── index.get.ts             # Liste téléchargements (admin, GET paginé)
+│   │   └── export.get.ts            # Export CSV téléchargements (admin, GET)
+│   ├── stats/
+│   │   ├── summary.get.ts           # Chiffres clés (totaux)
+│   │   ├── downloads.get.ts         # Données graphique téléchargements par période
+│   │   └── visits.get.ts            # Données graphique visites par période
+│   └── visits/
+│       └── index.post.ts            # Enregistrement visite (public, POST)
+├── middleware/
+│   └── admin.ts                     # Mise à jour : protéger nouvelles routes admin
+└── utils/
+    └── prisma.ts                    # Inchangé (singleton Prisma)
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+app/
+├── layouts/
+│   └── admin.vue                    # Re-thème sidebar/header (sombre + ambré)
+├── pages/admin/
+│   ├── index.vue                    # Dashboard refait avec graphiques Chart.js
+│   ├── telechargements.vue          # Nouvelle page : liste des téléchargements
+│   └── newsletter.vue               # Nouvelle page : gestion abonnés newsletter
+├── components/
+│   └── AppFooter.vue                # Ajout formulaire newsletter
+└── plugins/
+    └── track-visit.client.ts        # Plugin client pour enregistrer les visites
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
-
-## Complexity Tracking
-
-> **Fill ONLY if Constitution Check has violations that must be justified**
-
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+**Structure Decision**: Structure Nuxt existante conservée. Ajout de routes API suivant le pattern CRUD existant (ex: `magazines/`). Nouvelles pages admin dans `app/pages/admin/`. Plugin client pour le tracking des visites (non-bloquant).

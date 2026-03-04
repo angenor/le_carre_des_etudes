@@ -23,61 +23,74 @@ function formatDate(dateStr: string): string {
 </script>
 
 <template>
-  <div class="group overflow-hidden rounded-2xl border border-gray-800 bg-gray-900 transition-all hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5">
-    <!-- Couverture -->
-    <NuxtLink :to="`/magazine/${id}`" class="block">
-      <div class="aspect-3/4 overflow-hidden bg-gray-800">
+  <article class="group">
+    <div class="relative">
+      <!-- Couverture -->
+      <NuxtLink :to="`/magazine/${id}`" class="block">
         <img
           v-if="coverImage"
           :src="coverImage"
           :alt="`Couverture ${name} — ${version}`"
-          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+          class="w-full h-auto shadow-lg rounded-sm"
         />
         <div
           v-else
-          class="flex h-full w-full items-center justify-center bg-linear-to-br from-gray-800 to-gray-900"
+          class="w-full h-80 shadow-lg rounded-sm flex items-center justify-center bg-linear-to-br from-gray-800 to-gray-900"
         >
           <div class="text-center">
             <div class="text-4xl font-bold text-amber-400">{{ version }}</div>
             <div class="mt-2 text-sm text-gray-500">{{ name }}</div>
           </div>
         </div>
-      </div>
-    </NuxtLink>
+      </NuxtLink>
 
-    <!-- Infos -->
-    <div class="p-5">
-      <div class="flex items-start justify-between gap-2">
-        <h3 class="text-lg font-semibold text-white">{{ name }}</h3>
-        <span class="shrink-0 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+      <!-- Panneau d'infos superposé -->
+      <div class="lg:rounded-l-[20px] lg:rounded-t-[20px] bg-gray-900 border border-gray-800 lg:absolute bottom-6 -right-10 lg:w-52 px-5 pt-4 pb-6 lg:h-72 shadow-xl flex flex-col transition-all group-hover:border-amber-500/30 group-hover:shadow-amber-500/5">
+        <span class="inline-block text-xs text-gray-500">
+          {{ formatDate(publishedAt) }}
+        </span>
+
+        <NuxtLink :to="`/magazine/${id}`" class="block">
+          <h2 class="text-lg font-bold leading-tight mt-1 mb-1.5 text-white line-clamp-2 hover:text-amber-400 transition-colors">
+            {{ name }}
+          </h2>
+        </NuxtLink>
+
+        <span class="inline-block text-amber-400 text-xs">
           {{ version }}
         </span>
-      </div>
-      <p class="mt-2 text-sm leading-relaxed text-gray-400">{{ description }}</p>
-      <p class="mt-2 text-xs text-gray-600">
-        Publié le {{ formatDate(publishedAt) }}
-      </p>
 
-      <!-- Actions -->
-      <div class="mt-4 flex items-center gap-3">
-        <button
-          type="button"
-          class="flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors"
-          :class="pdfPath
-            ? 'bg-amber-500 text-gray-900 hover:bg-amber-400'
-            : 'cursor-not-allowed bg-white/5 text-gray-600'"
-          :disabled="!pdfPath"
-          @click="pdfPath && $emit('download', id)"
-        >
-          {{ pdfPath ? 'Télécharger' : 'Bientôt disponible' }}
-        </button>
-        <NuxtLink
-          :to="`/magazine/${id}`"
-          class="rounded-lg border border-gray-700 px-4 py-2.5 text-sm font-medium text-gray-400 transition-colors hover:border-gray-600 hover:text-white"
-        >
-          Détails
-        </NuxtLink>
+        <p class="text-gray-400 mt-4 leading-relaxed text-xs line-clamp-3 flex-1">
+          {{ description }}
+        </p>
+
+        <!-- Actions -->
+        <div class="flex justify-end items-center gap-3 mt-auto">
+          <!-- Voir détails -->
+          <NuxtLink
+            :to="`/magazine/${id}`"
+            class="text-gray-500 hover:text-amber-400 transition-colors"
+            title="Voir les détails"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 576 512">
+              <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6-46.8 43.5-78.1 95.4-93 131.1-3.3 7.9-3.3 16.7 0 24.6 14.9 35.7 46.2 87.7 93 131.1 47.1 43.7 111.8 80.6 192.6 80.6s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1 3.3-7.9 3.3-16.7 0-24.6-14.9-35.7-46.2-87.7-93-131.1-47.1-43.7-111.8-80.6-192.6-80.6zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64-11.5 0-22.3-3-31.7-8.4-1 10.9-.1 22.1 2.9 33.2 13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-12.2-45.7-55.5-74.8-101.1-70.8 5.3 9.3 8.4 20.1 8.4 31.7z" />
+            </svg>
+          </NuxtLink>
+
+          <!-- Télécharger -->
+          <button
+            v-if="pdfPath"
+            type="button"
+            class="flex items-center uppercase text-amber-500 font-semibold text-xs hover:underline cursor-pointer"
+            @click="$emit('download', id)"
+          >
+            <span class="mr-3 block w-8 h-0.5 bg-amber-500" />
+            télécharger
+          </button>
+          <span v-else class="text-xs text-gray-600 italic">Bientôt</span>
+        </div>
       </div>
     </div>
-  </div>
+  </article>
 </template>
