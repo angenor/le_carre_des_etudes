@@ -27,6 +27,58 @@ function openDownloadModal(magazineId: number) {
 function closeDownloadModal() {
   selectedMagazine.value = null
 }
+
+// Refs GSAP
+const heroContentRef = ref<HTMLElement>()
+const losange1 = ref<HTMLElement>()
+const losange2 = ref<HTMLElement>()
+const gridRef = ref<HTMLElement>()
+
+onMounted(() => {
+  // Hero — stagger des enfants (badge, titre, description, séparateur)
+  if (heroContentRef.value) {
+    useGsap.from(heroContentRef.value.children, {
+      y: 40,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.12,
+      ease: 'power3.out',
+    })
+  }
+
+  // Losanges décoratifs — rotation flottante continue
+  if (losange1.value) {
+    useGsap.fromTo(losange1.value,
+      { rotation: 45, y: 0 },
+      { rotation: 55, y: -10, duration: 4, ease: 'sine.inOut', repeat: -1, yoyo: true },
+    )
+  }
+  if (losange2.value) {
+    useGsap.fromTo(losange2.value,
+      { rotation: 12, y: 0 },
+      { rotation: 0, y: 10, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true },
+    )
+  }
+
+  // Grille de magazines — stagger en vague
+  if (gridRef.value) {
+    useGsap.from(gridRef.value.children, {
+      y: 60,
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.6,
+      stagger: {
+        each: 0.1,
+        from: 'start',
+      },
+      ease: 'back.out(1.4)',
+      scrollTrigger: {
+        trigger: gridRef.value,
+        start: 'top 85%',
+      },
+    })
+  }
+})
 </script>
 
 <template>
@@ -61,15 +113,15 @@ function closeDownloadModal() {
       <div class="absolute -bottom-10 -left-10 h-60 w-60 rounded-full bg-amber-400/5 blur-3xl" />
 
       <!-- Losanges décoratifs -->
-      <svg class="absolute right-10 top-32 h-20 w-20 rotate-45 text-amber-500/10 sm:right-20 sm:h-32 sm:w-32" aria-hidden="true">
+      <svg ref="losange1" class="absolute right-10 top-32 h-20 w-20 rotate-45 text-amber-500/10 sm:right-20 sm:h-32 sm:w-32" aria-hidden="true">
         <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
       </svg>
-      <svg class="absolute bottom-20 left-8 h-14 w-14 rotate-12 text-amber-400/8 sm:left-16 sm:h-20 sm:w-20" aria-hidden="true">
+      <svg ref="losange2" class="absolute bottom-20 left-8 h-14 w-14 rotate-12 text-amber-400/8 sm:left-16 sm:h-20 sm:w-20" aria-hidden="true">
         <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1" />
       </svg>
 
       <!-- Contenu hero -->
-      <div class="relative mx-auto max-w-5xl px-6 text-center">
+      <div ref="heroContentRef" class="relative mx-auto max-w-5xl px-6 text-center">
         <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
           Collection
         </span>
@@ -125,7 +177,7 @@ function closeDownloadModal() {
         </div>
 
         <!-- Grille de magazines -->
-        <div v-else class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-else ref="gridRef" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <MagazineCard
             v-for="magazine in magazines"
             :key="magazine.id"

@@ -12,6 +12,58 @@ const { data: partners, status } = useFetch<Partner[]>('/api/partenaires')
 useHead({
   title: 'Partenaires — Le Carré des Études',
 })
+
+// Refs GSAP
+const heroContentRef = ref<HTMLElement>()
+const losange1 = ref<HTMLElement>()
+const losange2 = ref<HTMLElement>()
+const logosRef = ref<HTMLElement>()
+
+onMounted(() => {
+  // Hero — stagger des enfants
+  if (heroContentRef.value) {
+    useGsap.from(heroContentRef.value.children, {
+      y: 40,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.12,
+      ease: 'power3.out',
+    })
+  }
+
+  // Losanges flottants
+  if (losange1.value) {
+    useGsap.fromTo(losange1.value,
+      { rotation: 45, y: 0 },
+      { rotation: 55, y: -10, duration: 4, ease: 'sine.inOut', repeat: -1, yoyo: true },
+    )
+  }
+  if (losange2.value) {
+    useGsap.fromTo(losange2.value,
+      { rotation: 12, y: 0 },
+      { rotation: 0, y: 10, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true },
+    )
+  }
+
+  // Logos partenaires — elastic bounce depuis le centre
+  if (logosRef.value) {
+    useGsap.from(logosRef.value.children, {
+      scale: 0,
+      opacity: 0,
+      rotation: -15,
+      duration: 0.8,
+      stagger: {
+        each: 0.1,
+        from: 'center',
+      },
+      ease: 'elastic.out(1, 0.5)',
+      scrollTrigger: {
+        trigger: logosRef.value,
+        start: 'top 85%',
+      },
+    })
+  }
+})
 </script>
 
 <template>
@@ -46,15 +98,15 @@ useHead({
       <div class="absolute -bottom-10 -left-10 h-60 w-60 rounded-full bg-amber-400/5 blur-3xl" />
 
       <!-- Losanges décoratifs -->
-      <svg class="absolute right-10 top-32 h-20 w-20 rotate-45 text-amber-500/10 sm:right-20 sm:h-32 sm:w-32" aria-hidden="true">
+      <svg ref="losange1" class="absolute right-10 top-32 h-20 w-20 rotate-45 text-amber-500/10 sm:right-20 sm:h-32 sm:w-32" aria-hidden="true">
         <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
       </svg>
-      <svg class="absolute bottom-20 left-8 h-14 w-14 rotate-12 text-amber-400/8 sm:left-16 sm:h-20 sm:w-20" aria-hidden="true">
+      <svg ref="losange2" class="absolute bottom-20 left-8 h-14 w-14 rotate-12 text-amber-400/8 sm:left-16 sm:h-20 sm:w-20" aria-hidden="true">
         <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1" />
       </svg>
 
       <!-- Contenu hero -->
-      <div class="relative mx-auto max-w-5xl px-6 text-center">
+      <div ref="heroContentRef" class="relative mx-auto max-w-5xl px-6 text-center">
         <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
           Ensemble
         </span>
@@ -107,7 +159,7 @@ useHead({
         </div>
 
         <!-- Logos partenaires -->
-        <div v-else class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <div v-else ref="logosRef" class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
           <component
             :is="partner.url ? 'a' : 'div'"
             v-for="partner in partners"

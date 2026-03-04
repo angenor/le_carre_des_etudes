@@ -60,6 +60,77 @@ const hasAnyContent = computed(() => {
 useHead({
   title: 'Rubriques — Le Carré des Études',
 })
+
+// Refs GSAP
+const heroContentRef = ref<HTMLElement>()
+const losange1 = ref<HTMLElement>()
+const losange2 = ref<HTMLElement>()
+const sectionsContainer = ref<HTMLElement>()
+
+onMounted(() => {
+  // Hero — stagger des enfants
+  if (heroContentRef.value) {
+    useGsap.from(heroContentRef.value.children, {
+      y: 40,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.12,
+      ease: 'power3.out',
+    })
+  }
+
+  // Losanges flottants
+  if (losange1.value) {
+    useGsap.fromTo(losange1.value,
+      { rotation: 45, y: 0 },
+      { rotation: 55, y: -10, duration: 4, ease: 'sine.inOut', repeat: -1, yoyo: true },
+    )
+  }
+  if (losange2.value) {
+    useGsap.fromTo(losange2.value,
+      { rotation: 12, y: 0 },
+      { rotation: 0, y: 10, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true },
+    )
+  }
+
+  // Sections de rubriques — observer chaque bloc de section
+  if (sectionsContainer.value) {
+    const sectionBlocs = sectionsContainer.value.children
+    Array.from(sectionBlocs).forEach((bloc) => {
+      // Titre de section — slide depuis la gauche
+      const header = bloc.querySelector('.section-header')
+      if (header) {
+        useGsap.from(header, {
+          x: -50,
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: header,
+            start: 'top 85%',
+          },
+        })
+      }
+
+      // Grille de cartes — stagger
+      const grid = bloc.querySelector('.section-grid')
+      if (grid) {
+        useGsap.from(grid.children, {
+          y: 50,
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: 'back.out(1.3)',
+          scrollTrigger: {
+            trigger: grid,
+            start: 'top 85%',
+          },
+        })
+      }
+    })
+  }
+})
 </script>
 
 <template>
@@ -94,15 +165,15 @@ useHead({
       <div class="absolute -bottom-10 -left-10 h-60 w-60 rounded-full bg-amber-400/5 blur-3xl" />
 
       <!-- Losanges décoratifs -->
-      <svg class="absolute right-10 top-32 h-20 w-20 rotate-45 text-amber-500/10 sm:right-20 sm:h-32 sm:w-32" aria-hidden="true">
+      <svg ref="losange1" class="absolute right-10 top-32 h-20 w-20 rotate-45 text-amber-500/10 sm:right-20 sm:h-32 sm:w-32" aria-hidden="true">
         <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
       </svg>
-      <svg class="absolute bottom-20 left-8 h-14 w-14 rotate-12 text-amber-400/8 sm:left-16 sm:h-20 sm:w-20" aria-hidden="true">
+      <svg ref="losange2" class="absolute bottom-20 left-8 h-14 w-14 rotate-12 text-amber-400/8 sm:left-16 sm:h-20 sm:w-20" aria-hidden="true">
         <rect width="100%" height="100%" rx="4" fill="none" stroke="currentColor" stroke-width="1" />
       </svg>
 
       <!-- Contenu hero -->
-      <div class="relative mx-auto max-w-5xl px-6 text-center">
+      <div ref="heroContentRef" class="relative mx-auto max-w-5xl px-6 text-center">
         <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
           Éditorial
         </span>
@@ -155,18 +226,18 @@ useHead({
         </div>
 
         <!-- Sections par type -->
-        <div v-else class="space-y-16 md:space-y-24">
+        <div v-else ref="sectionsContainer" class="space-y-16 md:space-y-24">
           <template v-for="section in sections" :key="section.key">
             <div v-if="sectionItems(section.key).length">
               <!-- En-tête de section -->
-              <div class="mb-8">
+              <div class="section-header mb-8">
                 <h2 class="inline-block border-b-2 border-amber-500/60 pb-2 text-2xl font-bold text-white">
                   {{ section.label }}
                 </h2>
               </div>
 
               <!-- Grille d'images A4 vertical -->
-              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div class="section-grid grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <RubriqueCard
                   v-for="item in visibleItems(section.key)"
                   :key="item.id"
