@@ -67,3 +67,15 @@ model Partner {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model NewsletterSubscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model PageVisit {
+  id        Int      @id @default(autoincrement())
+  path      String
+  visitedAt DateTime @default(now())
+}

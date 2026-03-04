@@ -19,9 +19,9 @@
 
 **Purpose**: Ajout des nouveaux modèles Prisma et mise à jour du middleware d'authentification admin
 
-- [ ] T001 Ajouter les modèles `NewsletterSubscriber` et `PageVisit` dans `prisma/schema.prisma` — NewsletterSubscriber (id, email @unique, createdAt), PageVisit (id, path, visitedAt)
-- [ ] T002 Exécuter la migration Prisma : `pnpm prisma migrate dev --name add-newsletter-and-visits` puis `pnpm prisma generate`
-- [ ] T003 Mettre à jour `server/middleware/admin.ts` pour protéger les nouvelles routes admin : GET/DELETE `/api/newsletter`, GET `/api/downloads`, GET `/api/stats/*`, GET `/api/newsletter/export`, GET `/api/downloads/export` — les POST `/api/newsletter` et `/api/visits` restent publics
+- [x] T001 Ajouter les modèles `NewsletterSubscriber` et `PageVisit` dans `prisma/schema.prisma` — NewsletterSubscriber (id, email @unique, createdAt), PageVisit (id, path, visitedAt)
+- [x] T002 Exécuter la migration Prisma : `pnpm prisma migrate dev --name add-newsletter-and-visits` puis `pnpm prisma generate`
+- [x] T003 Mettre à jour `server/middleware/admin.ts` pour protéger les nouvelles routes admin : GET/DELETE `/api/newsletter`, GET `/api/downloads`, GET `/api/stats/*`, GET `/api/newsletter/export`, GET `/api/downloads/export` — les POST `/api/newsletter` et `/api/visits` restent publics
 
 ---
 
@@ -31,7 +31,7 @@
 
 **⚠️ CRITIQUE**: Le dashboard (US1) a besoin des données de visite pour le graphique de fréquentation
 
-- [ ] T004 [P] [US6] Créer l'endpoint POST `/api/visits` dans `server/api/visits/index.post.ts` — valider que `path` est présent et commence par `/`, créer un enregistrement PageVisit, retourner `{ success: true }` (201) ou `{ message: "..." }` (400). Voir contrat dans `contracts/api-endpoints.md`
+- [x] T004 [P] [US6] Créer l'endpoint POST `/api/visits` dans `server/api/visits/index.post.ts` — valider que `path` est présent et commence par `/`, créer un enregistrement PageVisit, retourner `{ success: true }` (201) ou `{ message: "..." }` (400). Voir contrat dans `contracts/api-endpoints.md`
 - [ ] T005 [P] [US6] Créer le plugin client `app/plugins/track-visit.client.ts` — envoyer un POST fire-and-forget à `/api/visits` avec le `path` courant à chaque navigation (utiliser le hook `useRouter().afterEach` ou `watch` sur `useRoute().fullPath`)
 
 **Checkpoint**: Les visites de pages sont enregistrées en base à chaque navigation côté client

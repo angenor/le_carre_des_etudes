@@ -5,6 +5,9 @@ const SESSION_SECRET = process.env.NUXT_SESSION_SECRET || 'dev-secret-at-least-3
 const PROTECTED_PREFIXES = ['/api/magazines', '/api/rubriques', '/api/partenaires']
 const PROTECTED_METHODS = ['POST', 'PUT', 'DELETE']
 
+// Routes protégées en lecture (GET) uniquement — les POST restent publics
+const ADMIN_READ_PREFIXES = ['/api/stats/', '/api/downloads', '/api/newsletter']
+
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)
   const path = url.pathname
@@ -18,8 +21,13 @@ export default defineEventHandler(async (event) => {
     PROTECTED_PREFIXES.some((prefix) => path.startsWith(prefix)) &&
     PROTECTED_METHODS.includes(method)
 
+  // Routes stats/downloads/newsletter : GET et DELETE protégés, POST public
+  const isAdminReadRoute =
+    ADMIN_READ_PREFIXES.some((prefix) => path.startsWith(prefix)) &&
+    (method === 'GET' || method === 'DELETE')
+
   // Si la route ne nécessite pas d'authentification, laisser passer
-  if (!isUploadRoute && !isProtectedWriteRoute) {
+  if (!isUploadRoute && !isProtectedWriteRoute && !isAdminReadRoute) {
     return
   }
 
