@@ -46,10 +46,47 @@ useSeoMeta({
 
 const showDownloadModal = ref(false)
 
+// Compte à rebours
+const now = useState(`countdown-detail-${route.params.id}`, () => new Date())
+let timer: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  timer = setInterval(() => {
+    now.value = new Date()
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+
+const countdown = computed(() => {
+  if (!magazine.value?.availableAt) return null
+
+  const diff = new Date(magazine.value.availableAt).getTime() - now.value.getTime()
+  if (diff <= 0) return null
+
+  const jours = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const heures = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const secondes = Math.floor((diff % (1000 * 60)) / 1000)
+
+  return { jours, heures, minutes, secondes }
+})
+
 const estDisponible = computed(() => {
   if (!magazine.value) return false
   if (!magazine.value.availableAt) return true
-  return new Date(magazine.value.availableAt).getTime() <= Date.now()
+  return new Date(magazine.value.availableAt).getTime() <= now.value.getTime()
+})
+
+const dateDisponibiliteFormatee = computed(() => {
+  if (!magazine.value?.availableAt) return null
+  return new Date(magazine.value.availableAt).toLocaleDateString('fr-FR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 })
 
 function formatDate(dateStr: string): string {
@@ -177,6 +214,30 @@ function formatDate(dateStr: string): string {
               <p class="max-w-xl text-base leading-relaxed text-gray-400">
                 {{ magazine.description }}
               </p>
+
+              <!-- Compte à rebours -->
+              <div v-if="countdown" class="mt-8 w-full max-w-md">
+                <p class="mb-4 text-sm font-medium tracking-wide text-gray-500 uppercase">
+                  Disponible le {{ dateDisponibiliteFormatee }}
+                </p>
+                <div class="grid grid-cols-4 gap-3">
+                  <div
+                    v-for="bloc in [
+                      { valeur: countdown.jours, label: 'Jours' },
+                      { valeur: countdown.heures, label: 'Heures' },
+                      { valeur: countdown.minutes, label: 'Min' },
+                      { valeur: countdown.secondes, label: 'Sec' },
+                    ]"
+                    :key="bloc.label"
+                    class="flex flex-col items-center gap-1.5 rounded-2xl border border-amber-500/15 bg-white/4 px-2 py-3"
+                  >
+                    <span class="bg-linear-to-b from-amber-400 to-amber-600 bg-clip-text text-[28px] font-bold leading-none tracking-tight text-transparent">
+                      {{ String(bloc.valeur).padStart(2, '0') }}
+                    </span>
+                    <span class="text-[11px] font-medium uppercase tracking-wider text-white/40">{{ bloc.label }}</span>
+                  </div>
+                </div>
+              </div>
 
               <!-- Actions -->
               <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
