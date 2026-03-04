@@ -1,5 +1,5 @@
 <template>
-  <section class="relative h-dvh min-h-150 overflow-hidden bg-gray-900">
+  <section class="relative aspect-9/16 w-full overflow-hidden bg-gray-900 md:aspect-auto md:h-dvh md:min-h-150">
     <!-- Image desktop 16:9 -->
     <img
       src="/images/hero/hero_section.jpg"
@@ -10,7 +10,7 @@
     <img
       src="/images/hero/magazine.png"
       alt="Couverture du magazine Le Carré des Études"
-      class="absolute inset-0 block h-full w-full object-cover object-top md:hidden"
+      class="absolute inset-0 block h-full w-full object-cover object-center md:hidden"
     />
     <!-- H1 accessible (masqué car le titre est sur l'image) -->
     <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
