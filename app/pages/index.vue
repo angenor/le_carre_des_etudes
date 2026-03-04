@@ -8,5 +8,6 @@ useHead({
   <div>
     <HeroSection />
     <AlaUneSection />
+    <RubriquesSection />
   </div>
 </template>
