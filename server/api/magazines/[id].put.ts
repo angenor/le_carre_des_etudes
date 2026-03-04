@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, getRouterParam, createError } from 'h3'
 import { prisma } from '../../utils/prisma'
+import { slugify } from '../../utils/slugify'
 
 export default defineEventHandler(async (event) => {
   const id = Number(getRouterParam(event, 'id'))
@@ -25,12 +26,29 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  // Déterminer le slug
+  let newSlug: string | undefined
+  if (body.slug !== undefined) {
+    newSlug = body.slug?.trim() ? slugify(body.slug.trim()) : undefined
+  } else if (body.version && body.version.trim() !== existing.version) {
+    newSlug = slugify(body.version.trim())
+  }
+
+  // Vérifier l'unicité du slug si changé
+  if (newSlug && newSlug !== existing.slug) {
+    const slugDuplicate = await prisma.magazine.findUnique({ where: { slug: newSlug } })
+    if (slugDuplicate) {
+      throw createError({ statusCode: 400, message: 'Un magazine avec ce slug existe déjà' })
+    }
+  }
+
   const magazine = await prisma.magazine.update({
     where: { id },
     data: {
       ...(body.name && { name: body.name.trim() }),
       ...(body.description && { description: body.description.trim() }),
       ...(body.version && { version: body.version.trim() }),
+      ...(newSlug && { slug: newSlug }),
       ...(body.pdfPath && { pdfPath: body.pdfPath.trim() }),
       ...(body.coverImage !== undefined && { coverImage: body.coverImage?.trim() || null }),
       ...(body.coverImageOg !== undefined && { coverImageOg: body.coverImageOg?.trim() || null }),

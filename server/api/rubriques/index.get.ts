@@ -4,6 +4,11 @@ import { prisma } from '../../utils/prisma'
 export default defineEventHandler(async () => {
   const items = await prisma.contentItem.findMany({
     orderBy: { order: 'asc' },
+    include: {
+      magazine: {
+        select: { id: true, slug: true, name: true },
+      },
+    },
   })
 
   const grouped: Record<string, typeof items> = {

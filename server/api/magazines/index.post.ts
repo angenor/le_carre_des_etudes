@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { prisma } from '../../utils/prisma'
+import { slugify } from '../../utils/slugify'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -27,11 +28,19 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Un magazine avec cette version existe déjà' })
   }
 
+  const slug = body.slug?.trim() ? slugify(body.slug.trim()) : slugify(body.version.trim())
+
+  const slugExists = await prisma.magazine.findUnique({ where: { slug } })
+  if (slugExists) {
+    throw createError({ statusCode: 400, message: 'Un magazine avec ce slug existe déjà' })
+  }
+
   const magazine = await prisma.magazine.create({
     data: {
       name: body.name.trim(),
       description: body.description.trim(),
       version: body.version.trim(),
+      slug,
       pdfPath: body.pdfPath.trim(),
       coverImage: body.coverImage?.trim() || null,
       coverImageOg: body.coverImageOg?.trim() || null,

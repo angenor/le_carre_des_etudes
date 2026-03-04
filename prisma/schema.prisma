@@ -11,20 +11,22 @@ datasource db {
 }
 
 model Magazine {
-  id          Int        @id @default(autoincrement())
-  name        String
-  description String
-  version     String     @unique
-  subtitle    String?
-  pdfPath     String
-  coverImage    String?
-  coverImageOg  String?
-  publishedAt DateTime
-  availableAt DateTime?
-  isFeatured  Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  downloads   Download[]
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String
+  version      String        @unique
+  slug         String        @unique
+  subtitle     String?
+  pdfPath      String
+  coverImage   String?
+  coverImageOg String?
+  publishedAt  DateTime
+  availableAt  DateTime?
+  isFeatured   Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  downloads    Download[]
+  contentItems ContentItem[]
 }
 
 model Download {
@@ -42,14 +44,16 @@ model Download {
 model ContentItem {
   id            Int       @id @default(autoincrement())
   type          String
-  title         String
-  description   String
+  title         String    @default("")
+  description   String    @default("")
   content       String?
   subtitle      String?
   eventDate     DateTime?
   eventLocation String?
   imagePath     String
   order         Int       @default(0)
+  magazineId    Int?
+  magazine      Magazine? @relation(fields: [magazineId], references: [id], onDelete: SetNull)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }

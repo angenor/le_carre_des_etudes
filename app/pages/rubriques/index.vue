@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface ContentItem {
+interface ContentItemWithMagazine {
   id: number
   type: string
   title: string
@@ -10,37 +10,46 @@ interface ContentItem {
   eventLocation: string | null
   imagePath: string
   order: number
+  magazineId: number | null
+  magazine: { id: number; slug: string; name: string } | null
   createdAt: string
   updatedAt: string
 }
 
-type GroupedRubriques = Record<string, ContentItem[]>
+type GroupedRubriques = Record<string, ContentItemWithMagazine[]>
 
 const { data: rubriques, status } = useFetch<GroupedRubriques>('/api/rubriques')
 
-const MAX_ITEMS = 4
+const ITEMS_PER_PAGE = 4
 
 const sections = [
-  { key: 'en_vedette', label: 'En Vedette', layout: 'RubriqueLayoutVedette' },
-  { key: 'parcours_inspirant', label: 'Parcours Inspirant', layout: 'RubriqueLayoutParcours' },
-  { key: 'agenda_et_opportunites', label: 'Agenda & Opportunités', layout: 'RubriqueLayoutAgenda' },
-  { key: 'focus', label: 'Focus', layout: 'RubriqueLayoutFocus' },
+  { key: 'en_vedette', label: 'En Vedette' },
+  { key: 'parcours_inspirant', label: 'Parcours Inspirant' },
+  { key: 'agenda_et_opportunites', label: 'Agenda & Opportunités' },
+  { key: 'focus', label: 'Focus' },
 ] as const
+
+const visibleCounts = reactive<Record<string, number>>({
+  en_vedette: ITEMS_PER_PAGE,
+  parcours_inspirant: ITEMS_PER_PAGE,
+  agenda_et_opportunites: ITEMS_PER_PAGE,
+  focus: ITEMS_PER_PAGE,
+})
 
 function sectionItems(key: string) {
   return rubriques.value?.[key] ?? []
 }
 
-function firstItem(key: string): ContentItem | null {
-  return sectionItems(key)[0] ?? null
-}
-
-function cardItems(key: string): ContentItem[] {
-  return sectionItems(key).slice(1, MAX_ITEMS)
+function visibleItems(key: string) {
+  return sectionItems(key).slice(0, visibleCounts[key])
 }
 
 function hasMore(key: string): boolean {
-  return sectionItems(key).length > MAX_ITEMS
+  return sectionItems(key).length > visibleCounts[key]
+}
+
+function loadMore(key: string) {
+  visibleCounts[key] += ITEMS_PER_PAGE
 }
 
 const hasAnyContent = computed(() => {
@@ -150,54 +159,34 @@ useHead({
           <template v-for="section in sections" :key="section.key">
             <div v-if="sectionItems(section.key).length">
               <!-- En-tête de section -->
-              <div class="mb-8 flex items-end justify-between">
+              <div class="mb-8">
                 <h2 class="inline-block border-b-2 border-amber-500/60 pb-2 text-2xl font-bold text-white">
                   {{ section.label }}
                 </h2>
-                <NuxtLink
-                  v-if="hasMore(section.key)"
-                  to="/rubriques"
-                  class="text-sm font-medium text-amber-400 transition-colors hover:text-amber-300"
-                >
-                  Voir tout &rarr;
-                </NuxtLink>
               </div>
 
-              <!-- Premier item : layout magazine -->
-              <RubriqueLayoutVedette
-                v-if="section.layout === 'RubriqueLayoutVedette' && firstItem(section.key)"
-                v-bind="firstItem(section.key)!"
-              />
-              <RubriqueLayoutParcours
-                v-else-if="section.layout === 'RubriqueLayoutParcours' && firstItem(section.key)"
-                v-bind="firstItem(section.key)!"
-              />
-              <RubriqueLayoutAgenda
-                v-else-if="section.layout === 'RubriqueLayoutAgenda' && firstItem(section.key)"
-                v-bind="firstItem(section.key)!"
-              />
-              <RubriqueLayoutFocus
-                v-else-if="section.layout === 'RubriqueLayoutFocus' && firstItem(section.key)"
-                v-bind="firstItem(section.key)!"
-              />
-
-              <!-- Items suivants : cards stylisées -->
-              <div
-                v-if="cardItems(section.key).length"
-                class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-              >
+              <!-- Grille d'images A4 vertical -->
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <RubriqueCard
-                  v-for="item in cardItems(section.key)"
+                  v-for="item in visibleItems(section.key)"
                   :key="item.id"
-                  :id="item.id"
-                  :type="item.type"
-                  :title="item.title"
-                  :description="item.description"
                   :image-path="item.imagePath"
-                  :subtitle="item.subtitle"
-                  :event-date="item.eventDate"
-                  :event-location="item.eventLocation"
+                  :magazine-slug="item.magazine?.slug"
                 />
+              </div>
+
+              <!-- Bouton Charger plus -->
+              <div v-if="hasMore(section.key)" class="mt-8 text-center">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-6 py-2.5 text-sm font-medium text-amber-400 transition-colors hover:bg-amber-500/20"
+                  @click="loadMore(section.key)"
+                >
+                  Charger plus
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                  </svg>
+                </button>
               </div>
             </div>
           </template>

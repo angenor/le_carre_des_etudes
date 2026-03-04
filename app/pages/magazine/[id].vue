@@ -4,6 +4,7 @@ interface Magazine {
   name: string
   description: string
   version: string
+  slug: string
   subtitle: string | null
   pdfPath: string | null
   coverImage: string | null
@@ -14,8 +15,11 @@ interface Magazine {
 }
 
 const route = useRoute()
+const param = route.params.id as string
+const isNumeric = /^\d+$/.test(param)
+const apiUrl = isNumeric ? `/api/magazines/${param}` : `/api/magazines/by-slug/${param}`
 
-const { data: magazine, status } = useFetch<Magazine>(`/api/magazines/${route.params.id}`)
+const { data: magazine, status } = useFetch<Magazine>(apiUrl)
 
 useHead({
   title: computed(() =>
@@ -169,8 +173,69 @@ function formatDate(dateStr: string): string {
           <!-- Layout 2 colonnes -->
           <div class="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-16">
             <!-- Couverture -->
-            <div class="w-full max-w-sm shrink-0 lg:w-80">
-              <div class="overflow-hidden rounded-2xl border border-gray-800 shadow-2xl shadow-black/50">
+            <div class="relative flex w-full max-w-sm shrink-0 justify-center lg:w-80">
+              <!-- Electric border (si à la une) -->
+              <template v-if="magazine.isFeatured">
+                <svg class="absolute h-0 w-0" aria-hidden="true">
+                  <defs>
+                    <filter id="detail-turbulent-displace" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+                      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+                      <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+                        <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                      </feOffset>
+                      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
+                      <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+                        <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                      </feOffset>
+                      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2" />
+                      <feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+                        <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                      </feOffset>
+                      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2" />
+                      <feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
+                        <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
+                      </feOffset>
+                      <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+                      <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+                      <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+                      <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
+                    </filter>
+                  </defs>
+                </svg>
+
+                <div class="electric-card">
+                  <div class="electric-inner">
+                    <div class="electric-border-outer">
+                      <div class="electric-main-border" />
+                    </div>
+                    <div class="electric-glow-1" />
+                    <div class="electric-glow-2" />
+                  </div>
+                  <div class="electric-overlay-1" />
+                  <div class="electric-overlay-2" />
+                  <div class="electric-bg-glow" />
+                  <div class="electric-content">
+                    <img
+                      v-if="magazine.coverImage"
+                      :src="magazine.coverImage"
+                      :alt="`Couverture ${magazine.name} — ${magazine.version}`"
+                      class="h-full w-full rounded-[22px] object-cover"
+                    />
+                    <div
+                      v-else
+                      class="flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-gray-800 to-gray-900"
+                    >
+                      <div class="text-center">
+                        <div class="text-5xl font-bold text-amber-400">{{ magazine.version }}</div>
+                        <div class="mt-3 text-base text-gray-500">{{ magazine.name }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Couverture normale (pas à la une) -->
+              <div v-else class="w-full overflow-hidden rounded-2xl border border-gray-800 shadow-2xl shadow-black/50">
                 <img
                   v-if="magazine.coverImage"
                   :src="magazine.coverImage"
@@ -290,3 +355,132 @@ function formatDate(dateStr: string): string {
     />
   </div>
 </template>
+
+<style scoped>
+/* Electric border — identique à AlaUneSection */
+.electric-card {
+  padding: 2px;
+  border-radius: 24px;
+  position: relative;
+  background: linear-gradient(
+      -30deg,
+      oklch(from #dd8448 0.3 calc(c / 2) h / 0.4),
+      transparent,
+      oklch(from #dd8448 0.3 calc(c / 2) h / 0.4)
+    ),
+    linear-gradient(to bottom, oklch(0.185 0 0), oklch(0.185 0 0));
+}
+
+.electric-inner {
+  position: relative;
+}
+
+.electric-border-outer {
+  border: 2px solid rgba(221, 132, 72, 0.5);
+  border-radius: 24px;
+  padding-right: 4px;
+  padding-bottom: 4px;
+}
+
+.electric-main-border {
+  width: 280px;
+  aspect-ratio: 583 / 828;
+  border-radius: 24px;
+  border: 2px solid #dd8448;
+  margin-top: -4px;
+  margin-left: -4px;
+  filter: url(#detail-turbulent-displace);
+}
+
+@media (min-width: 640px) {
+  .electric-main-border {
+    width: 320px;
+  }
+}
+
+.electric-glow-1 {
+  border: 2px solid rgba(221, 132, 72, 0.6);
+  border-radius: 24px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  filter: blur(1px);
+}
+
+.electric-glow-2 {
+  border: 2px solid #dd8448;
+  border-radius: 24px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  filter: blur(4px);
+}
+
+.electric-overlay-1 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  mix-blend-mode: overlay;
+  transform: scale(1.1);
+  filter: blur(16px);
+  background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
+}
+
+.electric-overlay-2 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  transform: scale(1.1);
+  filter: blur(16px);
+  background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
+}
+
+.electric-bg-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  filter: blur(32px);
+  transform: scale(1.1);
+  opacity: 0.3;
+  z-index: -1;
+  background: linear-gradient(-30deg, #dd8448, transparent, #dd8448);
+}
+
+.electric-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+</style>

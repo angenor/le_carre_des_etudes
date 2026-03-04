@@ -3,6 +3,13 @@ definePageMeta({
   layout: 'admin',
 })
 
+interface Magazine {
+  id: number
+  name: string
+  version: string
+  slug: string
+}
+
 interface ContentItem {
   id: number
   type: string
@@ -14,6 +21,8 @@ interface ContentItem {
   eventLocation: string | null
   imagePath: string
   order: number
+  magazineId: number | null
+  magazine: { id: number; slug: string; name: string } | null
   createdAt: string
   updatedAt: string
 }
@@ -26,11 +35,13 @@ const TYPES = [
 ]
 
 const items = ref<ContentItem[]>([])
+const magazines = ref<Magazine[]>([])
 const loading = ref(true)
 const showForm = ref(false)
 const editingItem = ref<ContentItem | null>(null)
 const saving = ref(false)
 const errorMessage = ref('')
+const showAdvanced = ref(false)
 
 const form = reactive({
   type: 'parcours_inspirant',
@@ -42,16 +53,21 @@ const form = reactive({
   eventLocation: '',
   imagePath: '',
   order: 0,
+  magazineId: null as number | null,
 })
 
 async function fetchItems() {
   loading.value = true
   try {
-    const grouped = await $fetch<Record<string, ContentItem[]>>('/api/rubriques')
+    const [grouped, mags] = await Promise.all([
+      $fetch<Record<string, ContentItem[]>>('/api/rubriques'),
+      $fetch<Magazine[]>('/api/magazines'),
+    ])
     items.value = Object.values(grouped).flat().sort((a, b) => {
       if (a.type !== b.type) return a.type.localeCompare(b.type)
       return a.order - b.order
     })
+    magazines.value = mags
   } catch {
     errorMessage.value = 'Erreur lors du chargement des rubriques'
   } finally {
@@ -69,8 +85,10 @@ function resetForm() {
   form.eventLocation = ''
   form.imagePath = ''
   form.order = 0
+  form.magazineId = null
   editingItem.value = null
   errorMessage.value = ''
+  showAdvanced.value = false
 }
 
 function openCreateForm() {
@@ -89,7 +107,10 @@ function openEditForm(item: ContentItem) {
   form.eventLocation = item.eventLocation ?? ''
   form.imagePath = item.imagePath
   form.order = item.order
+  form.magazineId = item.magazineId
   errorMessage.value = ''
+  // Afficher les champs avancés si des données existent
+  showAdvanced.value = !!(item.title || item.description || item.content || item.subtitle || item.eventDate || item.eventLocation)
   showForm.value = true
 }
 
@@ -123,11 +144,12 @@ async function saveItem() {
   try {
     const payload: Record<string, unknown> = {
       type: form.type,
-      title: form.title,
-      description: form.description,
-      content: form.content || null,
       imagePath: form.imagePath,
       order: form.order,
+      magazineId: form.magazineId || null,
+      title: form.title || '',
+      description: form.description || '',
+      content: form.content || null,
     }
 
     if (form.type === 'parcours_inspirant') {
@@ -161,7 +183,7 @@ async function saveItem() {
 }
 
 async function deleteItem(item: ContentItem) {
-  if (!confirm(`Supprimer "${item.title}" ?`)) return
+  if (!confirm(`Supprimer cette rubrique ?`)) return
 
   try {
     await $fetch(`/api/rubriques/${item.id}`, { method: 'DELETE' })
@@ -206,6 +228,7 @@ onMounted(fetchItems)
       </h2>
 
       <form class="space-y-4" @submit.prevent="saveItem">
+        <!-- Champs essentiels -->
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
@@ -233,75 +256,6 @@ onMounted(fetchItems)
         </div>
 
         <div>
-          <label for="title" class="block text-sm font-medium text-gray-700">Titre</label>
-          <input
-            id="title"
-            v-model="form.title"
-            type="text"
-            required
-            class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            placeholder="Titre de la rubrique"
-          />
-        </div>
-
-        <!-- Sous-titre (Parcours Inspirant uniquement) -->
-        <div v-if="form.type === 'parcours_inspirant'">
-          <label for="subtitle" class="block text-sm font-medium text-gray-700">Sous-titre (nom/titre de la personne)</label>
-          <input
-            id="subtitle"
-            v-model="form.subtitle"
-            type="text"
-            class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            placeholder="Ex : Par Sucrey Corporates"
-          />
-        </div>
-
-        <!-- Date et lieu (Agenda & Opportunités uniquement) -->
-        <div v-if="form.type === 'agenda_et_opportunites'" class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label for="eventDate" class="block text-sm font-medium text-gray-700">Date de l'événement</label>
-            <input
-              id="eventDate"
-              v-model="form.eventDate"
-              type="date"
-              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
-          </div>
-          <div>
-            <label for="eventLocation" class="block text-sm font-medium text-gray-700">Lieu</label>
-            <input
-              id="eventLocation"
-              v-model="form.eventLocation"
-              type="text"
-              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              placeholder="Ex : Noom Hotel, Abidjan Plateau"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label for="description" class="block text-sm font-medium text-gray-700">Description (résumé court)</label>
-          <textarea
-            id="description"
-            v-model="form.description"
-            required
-            rows="3"
-            class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            placeholder="Résumé court de la rubrique..."
-          ></textarea>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Contenu riche (corps de l'article)</label>
-          <div class="mt-1 rounded-lg border border-gray-300 overflow-hidden">
-            <ClientOnly>
-              <ToastEditor v-model="form.content" height="350px" />
-            </ClientOnly>
-          </div>
-          <p class="mt-1 text-xs text-gray-400">Optionnel. Utilisez l'éditeur pour formater le contenu avec titres, gras, listes, images...</p>
-        </div>
-
-        <div>
           <label class="block text-sm font-medium text-gray-700">Image</label>
           <input
             type="file"
@@ -313,6 +267,109 @@ onMounted(fetchItems)
             {{ form.imagePath }}
           </p>
         </div>
+
+        <!-- Sélection du magazine -->
+        <div>
+          <label for="magazineId" class="block text-sm font-medium text-gray-700">Magazine associé</label>
+          <select
+            id="magazineId"
+            v-model="form.magazineId"
+            class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          >
+            <option :value="null">— Aucun magazine —</option>
+            <option v-for="mag in magazines" :key="mag.id" :value="mag.id">
+              {{ mag.name }} — {{ mag.version }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Toggle champs avancés -->
+        <div class="border-t border-gray-200 pt-4">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+            @click="showAdvanced = !showAdvanced"
+          >
+            <svg
+              class="h-4 w-4 transition-transform"
+              :class="showAdvanced ? 'rotate-90' : ''"
+              fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+            {{ showAdvanced ? 'Masquer' : 'Afficher' }} les champs avancés
+          </button>
+        </div>
+
+        <!-- Champs avancés -->
+        <template v-if="showAdvanced">
+          <div>
+            <label for="title" class="block text-sm font-medium text-gray-700">Titre</label>
+            <input
+              id="title"
+              v-model="form.title"
+              type="text"
+              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              placeholder="Titre de la rubrique (optionnel)"
+            />
+          </div>
+
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description (résumé court)</label>
+            <textarea
+              id="description"
+              v-model="form.description"
+              rows="3"
+              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              placeholder="Résumé court de la rubrique... (optionnel)"
+            ></textarea>
+          </div>
+
+          <!-- Sous-titre (Parcours Inspirant uniquement) -->
+          <div v-if="form.type === 'parcours_inspirant'">
+            <label for="subtitle" class="block text-sm font-medium text-gray-700">Sous-titre (nom/titre de la personne)</label>
+            <input
+              id="subtitle"
+              v-model="form.subtitle"
+              type="text"
+              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              placeholder="Ex : Par Sucrey Corporates"
+            />
+          </div>
+
+          <!-- Date et lieu (Agenda & Opportunités uniquement) -->
+          <div v-if="form.type === 'agenda_et_opportunites'" class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="eventDate" class="block text-sm font-medium text-gray-700">Date de l'événement</label>
+              <input
+                id="eventDate"
+                v-model="form.eventDate"
+                type="date"
+                class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              />
+            </div>
+            <div>
+              <label for="eventLocation" class="block text-sm font-medium text-gray-700">Lieu</label>
+              <input
+                id="eventLocation"
+                v-model="form.eventLocation"
+                type="text"
+                class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                placeholder="Ex : Noom Hotel, Abidjan Plateau"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Contenu riche (corps de l'article)</label>
+            <div class="mt-1 rounded-lg border border-gray-300 overflow-hidden">
+              <ClientOnly>
+                <ToastEditor v-model="form.content" height="350px" />
+              </ClientOnly>
+            </div>
+            <p class="mt-1 text-xs text-gray-400">Optionnel. Utilisez l'éditeur pour formater le contenu avec titres, gras, listes, images...</p>
+          </div>
+        </template>
 
         <div class="flex gap-3 pt-2">
           <button
@@ -370,24 +427,29 @@ onMounted(fetchItems)
         class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
       >
         <div class="flex items-center gap-4 min-w-0">
-          <div class="h-16 w-16 shrink-0 overflow-hidden rounded bg-gray-100">
+          <div class="h-16 w-12 shrink-0 overflow-hidden rounded bg-gray-100">
             <img
               :src="item.imagePath"
-              :alt="item.title"
+              alt="Rubrique"
               class="h-full w-full object-cover"
             />
           </div>
           <div class="min-w-0">
-            <h3 class="font-semibold text-gray-900 truncate">
+            <div class="flex items-center gap-2">
+              <span
+                class="inline-block rounded-full px-2 py-0.5 text-xs font-medium"
+                :class="typeBadgeClass(item.type)"
+              >
+                {{ typeLabel(item.type) }}
+              </span>
+              <span class="text-xs text-gray-400">Ordre: {{ item.order }}</span>
+            </div>
+            <p v-if="item.magazine" class="mt-1 text-xs text-gray-500">
+              {{ item.magazine.name }} — {{ item.magazine.slug }}
+            </p>
+            <p v-if="item.title" class="mt-0.5 text-sm font-medium text-gray-900 truncate">
               {{ item.title }}
-            </h3>
-            <p class="text-sm text-gray-500 truncate">{{ item.description }}</p>
-            <span
-              class="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium"
-              :class="typeBadgeClass(item.type)"
-            >
-              {{ typeLabel(item.type) }}
-            </span>
+            </p>
           </div>
         </div>
         <div class="flex shrink-0 gap-2">

@@ -21,6 +21,14 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Type invalide. Valeurs autorisées : parcours_inspirant, en_vedette, agenda_et_opportunites, focus' })
   }
 
+  // Valider que le magazine existe si magazineId est fourni (non null)
+  if (body.magazineId !== undefined && body.magazineId !== null) {
+    const magazine = await prisma.magazine.findUnique({ where: { id: body.magazineId } })
+    if (!magazine) {
+      throw createError({ statusCode: 400, message: 'Magazine non trouvé' })
+    }
+  }
+
   const type = body.type ?? existing.type
 
   const contentItem = await prisma.contentItem.update({
@@ -35,6 +43,10 @@ export default defineEventHandler(async (event) => {
       eventLocation: type === 'agenda_et_opportunites' ? (body.eventLocation !== undefined ? body.eventLocation : existing.eventLocation) : null,
       imagePath: body.imagePath?.trim() ?? existing.imagePath,
       order: body.order ?? existing.order,
+      ...(body.magazineId !== undefined && { magazineId: body.magazineId }),
+    },
+    include: {
+      magazine: { select: { id: true, slug: true, name: true } },
     },
   })
 
