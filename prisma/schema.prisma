@@ -82,3 +82,11 @@ model PageVisit {
 
   @@index([visitorId, path, visitedAt])
 }
+
+model HomepageImage {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  label     String
+  imagePath String
+  updatedAt DateTime @updatedAt
+}

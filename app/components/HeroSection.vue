@@ -1,8 +1,14 @@
 <script setup lang="ts">
+const emit = defineEmits<{ imageLoaded: [] }>()
+
 const heroRef = ref<HTMLElement>()
 const desktopImg = ref<HTMLImageElement>()
 const mobileImg = ref<HTMLImageElement>()
 const scrollIndicator = ref<HTMLElement>()
+
+function onImageLoad() {
+  emit('imageLoaded')
+}
 
 let ctx: ReturnType<typeof useGsap.context> | null = null
 
@@ -117,12 +123,14 @@ onUnmounted(() => {
       src="/images/hero/hero_section.jpg"
       alt="Couverture du magazine Le Carré des Études"
       class="absolute inset-0 hidden h-full w-full object-cover md:block will-change-transform"
+      @load="onImageLoad"
     />
     <img
       ref="mobileImg"
       src="/images/hero/magazine.png"
       alt="Couverture du magazine Le Carré des Études"
       class="block w-full md:hidden will-change-transform"
+      @load="onImageLoad"
     />
     <h1 class="sr-only">Le Carré des Études — Guider, Informer, Inspirer</h1>
     <div ref="scrollIndicator" class="absolute inset-x-0 bottom-8 z-10 hidden flex-col items-center gap-3 md:flex">
