@@ -77,5 +77,8 @@ model NewsletterSubscriber {
 model PageVisit {
   id        Int      @id @default(autoincrement())
   path      String
+  visitorId String?
   visitedAt DateTime @default(now())
+
+  @@index([visitorId, path, visitedAt])
 }

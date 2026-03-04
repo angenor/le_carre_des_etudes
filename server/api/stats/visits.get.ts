@@ -58,24 +58,36 @@ export default defineEventHandler(async (event) => {
 
   const visits = await prisma.pageVisit.findMany({
     where: { visitedAt: { gte: startDate } },
-    select: { visitedAt: true },
+    select: { visitedAt: true, visitorId: true },
   })
 
   const countsByDate = new Map<string, number>()
+  const uniqueByDate = new Map<string, Set<string>>()
+
   for (const v of visits) {
     const key = formatDateKey(v.visitedAt, period)
     countsByDate.set(key, (countsByDate.get(key) || 0) + 1)
+
+    if (v.visitorId) {
+      if (!uniqueByDate.has(key)) uniqueByDate.set(key, new Set())
+      uniqueByDate.get(key)!.add(v.visitorId)
+    }
   }
 
   const labels = generateLabels(startDate, period)
-  const data = labels.map((label) => countsByDate.get(label) || 0)
+  const pageViews = labels.map((label) => countsByDate.get(label) || 0)
+  const uniqueVisitors = labels.map((label) => uniqueByDate.get(label)?.size || 0)
 
   return {
     labels,
     datasets: [
       {
-        label: 'Visites',
-        data,
+        label: 'Pages vues',
+        data: pageViews,
+      },
+      {
+        label: 'Visiteurs uniques',
+        data: uniqueVisitors,
       },
     ],
   }

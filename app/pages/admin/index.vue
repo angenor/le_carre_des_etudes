@@ -53,7 +53,8 @@ const { data: visitsStats } = await useFetch('/api/stats/visits', {
 
 const summaryCards = computed(() => [
   { label: 'Téléchargements', value: summary.value?.totalDownloads ?? 0, icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', color: 'text-blue-600 bg-blue-50' },
-  { label: 'Visites', value: summary.value?.totalVisits ?? 0, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'text-emerald-600 bg-emerald-50' },
+  { label: 'Visiteurs uniques', value: summary.value?.uniqueVisitors ?? 0, icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z', color: 'text-violet-600 bg-violet-50' },
+  { label: 'Pages vues', value: summary.value?.totalVisits ?? 0, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'text-emerald-600 bg-emerald-50' },
   { label: 'Abonnés newsletter', value: summary.value?.totalSubscribers ?? 0, icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', color: 'text-amber-600 bg-amber-50' },
   { label: 'Magazines publiés', value: summary.value?.totalMagazines ?? 0, icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z', color: 'text-purple-600 bg-purple-50' },
 ])
@@ -80,10 +81,18 @@ const visitsChartData = computed(() => ({
   labels: visitsStats.value?.labels ?? [],
   datasets: [
     {
-      label: 'Visites',
+      label: 'Pages vues',
       data: visitsStats.value?.datasets?.[0]?.data ?? [],
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      fill: true,
+      tension: 0.3,
+    },
+    {
+      label: 'Visiteurs uniques',
+      data: visitsStats.value?.datasets?.[1]?.data ?? [],
+      borderColor: '#8b5cf6',
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
       fill: true,
       tension: 0.3,
     },
@@ -128,6 +137,17 @@ const lineOptions = {
   },
 }
 
+const visitsLineOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: true, position: 'top' as const },
+  },
+  scales: {
+    y: { beginAtZero: true, ticks: { precision: 0 } },
+  },
+}
+
 const doughnutOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -154,7 +174,7 @@ const barOptions = {
     <h1 class="text-xl font-semibold text-gray-800 mb-6">Tableau de bord</h1>
 
     <!-- Cartes chiffres clés -->
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-8">
       <div
         v-for="card in summaryCards"
         :key="card.label"
@@ -256,7 +276,7 @@ const barOptions = {
         <Line
           v-if="visitsStats?.datasets?.[0]?.data?.length"
           :data="visitsChartData"
-          :options="lineOptions"
+          :options="visitsLineOptions"
         />
         <p v-else class="flex h-full items-center justify-center text-sm text-gray-400">
           Aucune donnée disponible
