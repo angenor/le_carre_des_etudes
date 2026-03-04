@@ -21,6 +21,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  console.log('[LOGIN DEBUG] reçu:', JSON.stringify(body.password), 'attendu:', JSON.stringify(adminPassword))
+
   if (body.password !== adminPassword) {
     throw createError({
       statusCode: 401,
