@@ -31,6 +31,7 @@ onMounted(() => {
       scrollTrigger: {
         trigger: headerRef.value,
         start: 'top 85%',
+        toggleActions: 'play none none reset',
       },
     })
   }
@@ -50,6 +51,7 @@ onMounted(() => {
       scrollTrigger: {
         trigger: logosRef.value,
         start: 'top 80%',
+        toggleActions: 'play none none reset',
       },
     })
   }
@@ -64,6 +66,7 @@ onMounted(() => {
       scrollTrigger: {
         trigger: ctaRef.value,
         start: 'top 90%',
+        toggleActions: 'play none none reset',
       },
     })
   }

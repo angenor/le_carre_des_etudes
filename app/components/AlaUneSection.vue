@@ -80,6 +80,7 @@ onMounted(() => {
       scrollTrigger: {
         trigger: sectionRef.value,
         start: 'top 80%',
+        toggleActions: 'play none none reset',
       },
     })
   }
@@ -95,6 +96,7 @@ onMounted(() => {
       scrollTrigger: {
         trigger: sectionRef.value,
         start: 'top 70%',
+        toggleActions: 'play none none reset',
       },
     })
   }
@@ -110,6 +112,7 @@ onMounted(() => {
       scrollTrigger: {
         trigger: sectionRef.value,
         start: 'top 65%',
+        toggleActions: 'play none none reset',
       },
     })
   }
