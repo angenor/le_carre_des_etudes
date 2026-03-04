@@ -8,9 +8,12 @@ interface Magazine {
   name: string
   description: string
   version: string
+  subtitle: string | null
   pdfPath: string
   coverImage: string | null
   publishedAt: string
+  availableAt: string | null
+  isFeatured: boolean
   createdAt: string
   updatedAt: string
 }
@@ -26,9 +29,11 @@ const form = reactive({
   name: '',
   description: '',
   version: '',
+  subtitle: '',
   pdfPath: '',
   coverImage: '',
   publishedAt: '',
+  availableAt: '',
 })
 
 async function fetchMagazines() {
@@ -46,9 +51,11 @@ function resetForm() {
   form.name = ''
   form.description = ''
   form.version = ''
+  form.subtitle = ''
   form.pdfPath = ''
   form.coverImage = ''
   form.publishedAt = ''
+  form.availableAt = ''
   editingMagazine.value = null
   errorMessage.value = ''
 }
@@ -63,9 +70,11 @@ function openEditForm(magazine: Magazine) {
   form.name = magazine.name
   form.description = magazine.description
   form.version = magazine.version
+  form.subtitle = magazine.subtitle || ''
   form.pdfPath = magazine.pdfPath
   form.coverImage = magazine.coverImage || ''
   form.publishedAt = magazine.publishedAt.slice(0, 10)
+  form.availableAt = magazine.availableAt ? magazine.availableAt.slice(0, 16) : ''
   errorMessage.value = ''
   showForm.value = true
 }
@@ -120,9 +129,11 @@ async function saveMagazine() {
           name: form.name,
           description: form.description,
           version: form.version,
+          subtitle: form.subtitle || null,
           pdfPath: form.pdfPath,
           coverImage: form.coverImage || null,
           publishedAt: form.publishedAt,
+          availableAt: form.availableAt || null,
         },
       })
     } else {
@@ -132,9 +143,11 @@ async function saveMagazine() {
           name: form.name,
           description: form.description,
           version: form.version,
+          subtitle: form.subtitle || null,
           pdfPath: form.pdfPath,
           coverImage: form.coverImage || null,
           publishedAt: form.publishedAt,
+          availableAt: form.availableAt || null,
         },
       })
     }
@@ -159,6 +172,39 @@ async function deleteMagazine(magazine: Magazine) {
     errorMessage.value = 'Erreur lors de la suppression'
   }
 }
+
+async function toggleFeatured(magazine: Magazine) {
+  try {
+    if (magazine.isFeatured) {
+      await $fetch(`/api/magazines/${magazine.id}/featured`, { method: 'DELETE' })
+    } else {
+      await $fetch(`/api/magazines/${magazine.id}/featured`, { method: 'PUT' })
+    }
+    await fetchMagazines()
+  } catch {
+    errorMessage.value = 'Erreur lors de la mise à jour du statut à la une'
+  } finally {
+    openMenuId.value = null
+  }
+}
+
+const openMenuId = ref<number | null>(null)
+
+function toggleMenu(id: number) {
+  openMenuId.value = openMenuId.value === id ? null : id
+}
+
+function handleClickOutside() {
+  openMenuId.value = null
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('fr-FR', {
@@ -215,6 +261,17 @@ onMounted(fetchMagazines)
         </div>
 
         <div>
+          <label for="subtitle" class="block text-sm font-medium text-gray-700">Sous-titre (optionnel)</label>
+          <input
+            id="subtitle"
+            v-model="form.subtitle"
+            type="text"
+            class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            placeholder="Édition inaugurale"
+          />
+        </div>
+
+        <div>
           <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
           <textarea
             id="description"
@@ -226,15 +283,26 @@ onMounted(fetchMagazines)
           ></textarea>
         </div>
 
-        <div>
-          <label for="publishedAt" class="block text-sm font-medium text-gray-700">Date de publication</label>
-          <input
-            id="publishedAt"
-            v-model="form.publishedAt"
-            type="date"
-            required
-            class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-          />
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="publishedAt" class="block text-sm font-medium text-gray-700">Date de publication</label>
+            <input
+              id="publishedAt"
+              v-model="form.publishedAt"
+              type="date"
+              required
+              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            />
+          </div>
+          <div>
+            <label for="availableAt" class="block text-sm font-medium text-gray-700">Date de disponibilité (optionnel)</label>
+            <input
+              id="availableAt"
+              v-model="form.availableAt"
+              type="datetime-local"
+              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            />
+          </div>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">
@@ -337,28 +405,66 @@ onMounted(fetchMagazines)
             {{ magazine.version }}
           </div>
           <div class="min-w-0">
-            <h3 class="font-semibold text-gray-900 truncate">
-              {{ magazine.name }} — {{ magazine.version }}
-            </h3>
+            <div class="flex items-center gap-2">
+              <h3 class="font-semibold text-gray-900 truncate">
+                {{ magazine.name }} — {{ magazine.version }}
+              </h3>
+              <span
+                v-if="magazine.isFeatured"
+                class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
+              >
+                À la une
+              </span>
+            </div>
             <p class="text-sm text-gray-500 truncate">{{ magazine.description }}</p>
             <p class="text-xs text-gray-400">
               Publié le {{ formatDate(magazine.publishedAt) }}
             </p>
           </div>
         </div>
-        <div class="flex shrink-0 gap-2">
+        <div class="relative shrink-0">
           <button
-            @click="openEditForm(magazine)"
-            class="rounded-md px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-50 transition-colors"
+            @click.stop="toggleMenu(magazine.id)"
+            class="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
           >
-            Modifier
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+            </svg>
           </button>
-          <button
-            @click="deleteMagazine(magazine)"
-            class="rounded-md px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+          <div
+            v-if="openMenuId === magazine.id"
+            class="absolute right-0 top-full z-10 mt-1 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
           >
-            Supprimer
-          </button>
+            <button
+              @click.stop="toggleFeatured(magazine)"
+              class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors"
+              :class="magazine.isFeatured ? 'text-amber-600 hover:bg-amber-50' : 'text-gray-700 hover:bg-gray-50'"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+              </svg>
+              {{ magazine.isFeatured ? 'Retirer de la une' : 'Mettre à la une' }}
+            </button>
+            <button
+              @click.stop="openMenuId = null; openEditForm(magazine)"
+              class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+              Modifier
+            </button>
+            <div class="my-1 h-px bg-gray-100" />
+            <button
+              @click.stop="openMenuId = null; deleteMagazine(magazine)"
+              class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+              Supprimer
+            </button>
+          </div>
         </div>
       </div>
     </div>

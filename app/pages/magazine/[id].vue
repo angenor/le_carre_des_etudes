@@ -4,9 +4,12 @@ interface Magazine {
   name: string
   description: string
   version: string
+  subtitle: string | null
   pdfPath: string | null
   coverImage: string | null
   publishedAt: string
+  availableAt: string | null
+  isFeatured: boolean
 }
 
 const route = useRoute()
@@ -22,6 +25,12 @@ useHead({
 })
 
 const showDownloadModal = ref(false)
+
+const estDisponible = computed(() => {
+  if (!magazine.value) return false
+  if (!magazine.value.availableAt) return true
+  return new Date(magazine.value.availableAt).getTime() <= Date.now()
+})
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('fr-FR', {
@@ -134,6 +143,10 @@ function formatDate(dateStr: string): string {
                 {{ magazine.name }}
               </h1>
 
+              <p v-if="magazine.subtitle" class="mt-2 text-lg font-medium text-amber-400/80">
+                {{ magazine.subtitle }}
+              </p>
+
               <p class="mt-2 text-sm text-gray-500">
                 Publié le {{ formatDate(magazine.publishedAt) }}
               </p>
@@ -149,7 +162,7 @@ function formatDate(dateStr: string): string {
               <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <!-- Télécharger -->
                 <button
-                  v-if="magazine.pdfPath"
+                  v-if="estDisponible && magazine.pdfPath"
                   type="button"
                   class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-amber-400/30"
                   @click="showDownloadModal = true"

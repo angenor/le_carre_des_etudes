@@ -19,8 +19,8 @@
 
 **Purpose**: Ajouter les 3 nouveaux champs au modèle Magazine et appliquer la migration
 
-- [ ] T001 Ajouter les champs `subtitle` (String?), `availableAt` (DateTime?), `isFeatured` (Boolean @default(false)) au modèle Magazine dans `prisma/schema.prisma`
-- [ ] T002 Appliquer la migration Prisma (`pnpm prisma migrate dev --name add-magazine-featured-fields`) et régénérer le client (`pnpm prisma generate`)
+- [x] T001 Ajouter les champs `subtitle` (String?), `availableAt` (DateTime?), `isFeatured` (Boolean @default(false)) au modèle Magazine dans `prisma/schema.prisma`
+- [x] T002 Appliquer la migration Prisma (`pnpm prisma migrate dev --name add-magazine-featured-fields`) et régénérer le client (`pnpm prisma generate`)
 
 ---
 
@@ -30,9 +30,9 @@
 
 **CRITICAL**: Doit être complété avant toute implémentation de user story
 
-- [ ] T003 [P] Modifier `server/api/magazines/index.post.ts` pour accepter `subtitle` (String optionnel → null si absent) et `availableAt` (DateTime ISO optionnel → null si absent) dans le body. Ne PAS accepter `isFeatured`.
-- [ ] T004 [P] Modifier `server/api/magazines/[id].put.ts` pour accepter `subtitle` et `availableAt` dans le body avec logique de mise à jour conditionnelle. Ne PAS accepter `isFeatured`.
-- [ ] T005 Modifier `server/middleware/admin.ts` pour protéger les endpoints d'écriture `PUT /api/magazines/:id/featured` et `DELETE /api/magazines/:id/featured`
+- [x] T003 [P] Modifier `server/api/magazines/index.post.ts` pour accepter `subtitle` (String optionnel → null si absent) et `availableAt` (DateTime ISO optionnel → null si absent) dans le body. Ne PAS accepter `isFeatured`.
+- [x] T004 [P] Modifier `server/api/magazines/[id].put.ts` pour accepter `subtitle` et `availableAt` dans le body avec logique de mise à jour conditionnelle. Ne PAS accepter `isFeatured`.
+- [x] T005 Modifier `server/middleware/admin.ts` pour protéger les endpoints d'écriture `PUT /api/magazines/:id/featured` et `DELETE /api/magazines/:id/featured`
 
 **Checkpoint**: Les endpoints existants acceptent les nouveaux champs, le middleware protège les futurs endpoints admin.
 
@@ -46,11 +46,11 @@
 
 ### Implementation for User Story 1
 
-- [ ] T006 [P] [US1] Créer `server/api/magazines/featured.get.ts` — retourne le magazine avec `isFeatured: true` via `prisma.magazine.findFirst({ where: { isFeatured: true } })`, ou `null` si aucun
-- [ ] T007 [P] [US1] Créer `server/api/magazines/[id]/featured.put.ts` — dans une transaction Prisma : (1) `updateMany({ where: { isFeatured: true }, data: { isFeatured: false } })` (2) `update({ where: { id }, data: { isFeatured: true } })`. Retourne 404 si magazine introuvable.
-- [ ] T008 [P] [US1] Créer `server/api/magazines/[id]/featured.delete.ts` — met `isFeatured: false` sur le magazine ciblé. Retourne 404 si magazine introuvable.
-- [ ] T009 [US1] Modifier `app/components/AlaUneSection.vue` — remplacer les données en dur par `useFetch('/api/magazines/featured')`. Si `data` est null, ne rien rendre (v-if). Mapper les champs API vers les variables du template (version→numero, name→titre, subtitle→sousTitre, description, availableAt→dateDisponibilite, pdfPath→pdfUrl, coverImage).
-- [ ] T010 [US1] Modifier `app/pages/admin/magazines.vue` — ajouter un bouton « Mettre à la une » / « Retirer de la une » dans la liste des magazines. Utiliser `$fetch` vers `PUT /api/magazines/:id/featured` ou `DELETE /api/magazines/:id/featured`. Afficher un badge visuel sur le magazine actuellement à la une.
+- [x] T006 [P] [US1] Créer `server/api/magazines/featured.get.ts` — retourne le magazine avec `isFeatured: true` via `prisma.magazine.findFirst({ where: { isFeatured: true } })`, ou `null` si aucun
+- [x] T007 [P] [US1] Créer `server/api/magazines/[id]/featured.put.ts` — dans une transaction Prisma : (1) `updateMany({ where: { isFeatured: true }, data: { isFeatured: false } })` (2) `update({ where: { id }, data: { isFeatured: true } })`. Retourne 404 si magazine introuvable.
+- [x] T008 [P] [US1] Créer `server/api/magazines/[id]/featured.delete.ts` — met `isFeatured: false` sur le magazine ciblé. Retourne 404 si magazine introuvable.
+- [x] T009 [US1] Modifier `app/components/AlaUneSection.vue` — remplacer les données en dur par `useFetch('/api/magazines/featured')`. Si `data` est null, ne rien rendre (v-if). Mapper les champs API vers les variables du template (version→numero, name→titre, subtitle→sousTitre, description, availableAt→dateDisponibilite, pdfPath→pdfUrl, coverImage).
+- [x] T010 [US1] Modifier `app/pages/admin/magazines.vue` — ajouter un bouton « Mettre à la une » / « Retirer de la une » dans la liste des magazines. Utiliser `$fetch` vers `PUT /api/magazines/:id/featured` ou `DELETE /api/magazines/:id/featured`. Afficher un badge visuel sur le magazine actuellement à la une.
 
 **Checkpoint**: US1 complète — la section « À la une » affiche dynamiquement le magazine sélectionné par l'admin.
 
@@ -64,9 +64,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] Modifier `app/pages/admin/magazines.vue` — ajouter un champ `<input type="datetime-local">` pour `availableAt` dans le formulaire de création/modification. Envoyer la valeur en ISO 8601 dans le body du POST/PUT.
-- [ ] T012 [US2] Modifier `app/components/AlaUneSection.vue` — adapter la logique du décompteur pour utiliser `data.availableAt` de l'API au lieu de la date en dur. Si `availableAt` est null, pas de décompteur.
-- [ ] T013 [US2] Modifier `app/components/AlaUneSection.vue` — le bouton « Télécharger » est actif uniquement si `availableAt` est passée (ou null) ET `pdfPath` existe. Sinon afficher « Bientôt disponible » (désactivé).
+- [x] T011 [US2] Modifier `app/pages/admin/magazines.vue` — ajouter un champ `<input type="datetime-local">` pour `availableAt` dans le formulaire de création/modification. Envoyer la valeur en ISO 8601 dans le body du POST/PUT.
+- [x] T012 [US2] Modifier `app/components/AlaUneSection.vue` — adapter la logique du décompteur pour utiliser `data.availableAt` de l'API au lieu de la date en dur. Si `availableAt` est null, pas de décompteur.
+- [x] T013 [US2] Modifier `app/components/AlaUneSection.vue` — le bouton « Télécharger » est actif uniquement si `availableAt` est passée (ou null) ET `pdfPath` existe. Sinon afficher « Bientôt disponible » (désactivé).
 
 **Checkpoint**: US2 complète — le décompteur et le bouton de téléchargement reflètent la date de disponibilité.
 
@@ -80,8 +80,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T014 [US3] Modifier `app/pages/admin/magazines.vue` — ajouter un champ texte pour `subtitle` dans le formulaire de création/modification. Envoyer la valeur dans le body du POST/PUT.
-- [ ] T015 [US3] Modifier `app/components/AlaUneSection.vue` — afficher `subtitle` sous le titre si défini. Utiliser `v-if` pour ne pas rendre l'élément si `subtitle` est null/vide (pas d'espace résiduel).
+- [x] T014 [US3] Modifier `app/pages/admin/magazines.vue` — ajouter un champ texte pour `subtitle` dans le formulaire de création/modification. Envoyer la valeur dans le body du POST/PUT.
+- [x] T015 [US3] Modifier `app/components/AlaUneSection.vue` — afficher `subtitle` sous le titre si défini. Utiliser `v-if` pour ne pas rendre l'élément si `subtitle` est null/vide (pas d'espace résiduel).
 
 **Checkpoint**: US3 complète — le sous-titre s'affiche dans la section « À la une » quand il est défini.
 
@@ -95,8 +95,8 @@
 
 ### Implementation for User Story 4
 
-- [ ] T016 [US4] Modifier `app/pages/magazine/[id].vue` — mettre à jour l'interface TypeScript `Magazine` pour inclure `subtitle`, `availableAt`, `isFeatured`. Afficher le sous-titre sous le titre (v-if sur subtitle).
-- [ ] T017 [US4] Modifier `app/pages/magazine/[id].vue` — afficher la date de disponibilité si définie. Si date future et pas de PDF, désactiver le bouton de téléchargement avec « Bientôt disponible ».
+- [x] T016 [US4] Modifier `app/pages/magazine/[id].vue` — mettre à jour l'interface TypeScript `Magazine` pour inclure `subtitle`, `availableAt`, `isFeatured`. Afficher le sous-titre sous le titre (v-if sur subtitle).
+- [x] T017 [US4] Modifier `app/pages/magazine/[id].vue` — afficher la date de disponibilité si définie. Si date future et pas de PDF, désactiver le bouton de téléchargement avec « Bientôt disponible ».
 
 **Checkpoint**: US4 complète — la page de détail affiche toutes les informations de façon cohérente avec la section « À la une ».
 
@@ -106,8 +106,8 @@
 
 **Purpose**: Validation globale et edge cases
 
-- [ ] T018 Exécuter les scénarios de vérification de `quickstart.md` — tester tous les chemins (back office, API, page d'accueil, page de détail)
-- [ ] T019 Vérifier les edge cases : suppression d'un magazine à la une, magazine sans image de couverture, magazine sans PDF avec date passée, changement de date de disponibilité sur un magazine à la une
+- [x] T018 Exécuter les scénarios de vérification de `quickstart.md` — tester tous les chemins (back office, API, page d'accueil, page de détail)
+- [x] T019 Vérifier les edge cases : suppression d'un magazine à la une, magazine sans image de couverture, magazine sans PDF avec date passée, changement de date de disponibilité sur un magazine à la une
 
 ---
 

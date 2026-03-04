@@ -1,14 +1,18 @@
 <script setup lang="ts">
-// Données placeholder — à remplacer par un fetch API
-const edition = {
-  numero: 'N°01',
-  titre: 'Le Carré des Études',
-  sousTitre: 'Édition inaugurale',
-  description:
-    'Découvrez notre tout premier numéro : orientation post-bac, bourses disponibles, conseils de réussite et portraits d\'étudiants inspirants de Côte d\'Ivoire.',
-  dateDisponibilite: new Date('2026-03-13T00:00:00'),
-  pdfUrl: '#',
+interface FeaturedMagazine {
+  id: number
+  name: string
+  description: string
+  version: string
+  subtitle: string | null
+  pdfPath: string | null
+  coverImage: string | null
+  publishedAt: string
+  availableAt: string | null
+  isFeatured: boolean
 }
+
+const { data: magazine } = useFetch<FeaturedMagazine | null>('/api/magazines/featured')
 
 // Compte à rebours
 const now = useState('countdown-now', () => new Date())
@@ -25,7 +29,9 @@ onUnmounted(() => {
 })
 
 const countdown = computed(() => {
-  const diff = edition.dateDisponibilite.getTime() - now.value.getTime()
+  if (!magazine.value?.availableAt) return null
+
+  const diff = new Date(magazine.value.availableAt).getTime() - now.value.getTime()
   if (diff <= 0) return null
 
   const jours = Math.floor(diff / (1000 * 60 * 60 * 24))
@@ -36,11 +42,25 @@ const countdown = computed(() => {
   return { jours, heures, minutes, secondes }
 })
 
-const estDisponible = computed(() => !countdown.value)
+const estDisponible = computed(() => {
+  if (!magazine.value) return false
+  // Disponible si pas de date de disponibilité OU date passée
+  if (!magazine.value.availableAt) return true
+  return new Date(magazine.value.availableAt).getTime() <= now.value.getTime()
+})
+
+const dateDisponibiliteFormatee = computed(() => {
+  if (!magazine.value?.availableAt) return null
+  return new Date(magazine.value.availableAt).toLocaleDateString('fr-FR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+})
 </script>
 
 <template>
-  <section class="relative overflow-hidden bg-gray-950 py-20 sm:py-28">
+  <section v-if="magazine" class="relative overflow-hidden bg-gray-950 py-20 sm:py-28">
     <!-- Fond subtil -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(221,132,72,0.08),transparent_60%)]" />
 
@@ -106,10 +126,20 @@ const estDisponible = computed(() => !countdown.value)
             <!-- Image du magazine -->
             <div class="electric-content">
               <img
-                src="/images/hero/magazine.png"
-                alt="Couverture du magazine Le Carré des Études — Édition N°01"
+                v-if="magazine.coverImage"
+                :src="magazine.coverImage"
+                :alt="`Couverture du magazine ${magazine.name} — ${magazine.version}`"
                 class="h-full w-full rounded-[22px] object-cover"
               />
+              <div
+                v-else
+                class="flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-gray-800 to-gray-900"
+              >
+                <div class="text-center">
+                  <div class="text-4xl font-bold text-amber-400">{{ magazine.version }}</div>
+                  <div class="mt-2 text-sm text-gray-500">{{ magazine.name }}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -118,26 +148,26 @@ const estDisponible = computed(() => !countdown.value)
         <div class="flex flex-col items-center text-center lg:items-start lg:text-left">
           <!-- Badge numéro -->
           <span class="inline-block rounded-full bg-amber-500/15 px-4 py-1 text-sm font-bold tracking-wider text-amber-400">
-            {{ edition.numero }}
+            {{ magazine.version }}
           </span>
 
           <!-- Titre -->
           <h2 class="mt-5 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
-            {{ edition.titre }}
+            {{ magazine.name }}
           </h2>
-          <p class="mt-2 text-lg font-medium text-amber-400/80">
-            {{ edition.sousTitre }}
+          <p v-if="magazine.subtitle" class="mt-2 text-lg font-medium text-amber-400/80">
+            {{ magazine.subtitle }}
           </p>
 
           <!-- Description -->
           <p class="mt-6 max-w-lg text-base leading-relaxed text-gray-400">
-            {{ edition.description }}
+            {{ magazine.description }}
           </p>
 
           <!-- Compte à rebours -->
           <div v-if="countdown" class="mt-8 w-full max-w-md">
             <p class="mb-4 text-sm font-medium tracking-wide text-gray-500 uppercase">
-              Disponible le 13 mars 2026
+              Disponible le {{ dateDisponibiliteFormatee }}
             </p>
             <div class="grid grid-cols-4 gap-3">
               <div v-for="bloc in [
@@ -158,8 +188,8 @@ const estDisponible = computed(() => !countdown.value)
           <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <!-- Bouton principal : Télécharger (actif seulement si disponible) -->
             <a
-              v-if="estDisponible"
-              :href="edition.pdfUrl"
+              v-if="estDisponible && magazine.pdfPath"
+              :href="magazine.pdfPath"
               class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-amber-400/30"
             >
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -168,7 +198,7 @@ const estDisponible = computed(() => !countdown.value)
               Télécharger
             </a>
 
-            <!-- Bouton désactivé avant la date -->
+            <!-- Bouton désactivé avant la date ou sans PDF -->
             <span
               v-else
               class="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-full bg-white/5 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-500 uppercase"
@@ -181,7 +211,7 @@ const estDisponible = computed(() => !countdown.value)
 
             <!-- Bouton secondaire : Voir les détails -->
             <NuxtLink
-              to="/magazine"
+              :to="`/magazine/${magazine.id}`"
               class="inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3.5 text-sm font-medium text-gray-400 transition-colors hover:text-white"
             >
               Voir les détails

@@ -15,9 +15,12 @@ model Magazine {
   name        String
   description String
   version     String     @unique
+  subtitle    String?
   pdfPath     String
   coverImage  String?
   publishedAt DateTime
+  availableAt DateTime?
+  isFeatured  Boolean    @default(false)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   downloads   Download[]

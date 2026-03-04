@@ -34,6 +34,8 @@ export default defineEventHandler(async (event) => {
       ...(body.pdfPath && { pdfPath: body.pdfPath.trim() }),
       ...(body.coverImage !== undefined && { coverImage: body.coverImage?.trim() || null }),
       ...(body.publishedAt && { publishedAt: new Date(body.publishedAt) }),
+      ...(body.subtitle !== undefined && { subtitle: body.subtitle?.trim() || null }),
+      ...(body.availableAt !== undefined && { availableAt: body.availableAt ? new Date(body.availableAt) : null }),
     },
   })
 
