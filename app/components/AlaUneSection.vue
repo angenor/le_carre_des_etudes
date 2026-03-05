@@ -78,6 +78,9 @@ function onScroll() {
   }, 150)
 }
 
+const foudreContainerRef = ref<HTMLElement>()
+let foudreTimer: ReturnType<typeof setTimeout> | null = null
+
 let gsapCtx: ReturnType<typeof useGsap.context> | null = null
 
 function initAnimations() {
@@ -113,6 +116,36 @@ function initAnimations() {
     )
   }, sectionRef.value)
 
+  // Éclairs qui percutent le titre (desktop uniquement)
+  if (window.matchMedia('(min-width: 1024px)').matches && foudreContainerRef.value) {
+    const foudres = foudreContainerRef.value.querySelectorAll<SVGSVGElement>('.foudre')
+    const titre = infosRef.value?.querySelector('h2')
+
+    function lancerFoudre() {
+      const idx = Math.floor(Math.random() * foudres.length)
+      const bolt = foudres[idx]
+      if (!bolt) return
+
+      const tl = useGsap.timeline()
+      tl.set(bolt, { opacity: 0, scaleX: 0.3, transformOrigin: 'left center' })
+        .to(bolt, { opacity: 1, scaleX: 1, duration: 0.06, ease: 'power4.out' })
+        .to(bolt, { opacity: 0.15, duration: 0.04 })
+        .to(bolt, { opacity: 0.9, duration: 0.05 })
+        .to(bolt, { opacity: 0, duration: 0.3 })
+
+      // Flash ambre sur le titre au moment de l'impact
+      if (titre) {
+        useGsap.timeline()
+          .to(titre, { textShadow: '0 0 30px rgba(221,132,72,0.7), 0 0 60px rgba(221,132,72,0.3)', duration: 0.08, delay: 0.06 })
+          .to(titre, { textShadow: '0 0 0px transparent', duration: 0.5, ease: 'power2.out' })
+      }
+
+      foudreTimer = setTimeout(lancerFoudre, 2500 + Math.random() * 5000)
+    }
+
+    foudreTimer = setTimeout(lancerFoudre, 1500 + Math.random() * 2000)
+  }
+
   useScrollTrigger.refresh()
 }
 
@@ -139,6 +172,7 @@ onUnmounted(() => {
   gsapCtx?.revert()
   window.removeEventListener('scroll', onScroll)
   if (scrollTimeout) clearTimeout(scrollTimeout)
+  if (foudreTimer) clearTimeout(foudreTimer)
 })
 </script>
 
@@ -156,7 +190,42 @@ onUnmounted(() => {
       </div>
 
       <!-- Contenu principal -->
-      <div class="flex flex-col items-center gap-12 lg:flex-row lg:gap-20">
+      <div class="relative flex flex-col items-center gap-12 lg:flex-row lg:gap-20">
+        <!-- Éclairs qui s'échappent vers le titre (desktop) -->
+        <div ref="foudreContainerRef" class="pointer-events-none absolute inset-0 z-10 hidden lg:block" aria-hidden="true">
+          <!-- Gradient pour les éclairs -->
+          <svg class="absolute h-0 w-0">
+            <defs>
+              <linearGradient id="foudre-grad" x1="0%" y1="50%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#dd8448" />
+                <stop offset="40%" stop-color="#fbbf24" />
+                <stop offset="100%" stop-color="#dd8448" stop-opacity="0.3" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <!-- Éclair 1 — trajectoire haute -->
+          <svg class="foudre foudre-1" viewBox="0 0 300 60" fill="none">
+            <path d="M 0,35 L 45,22 L 38,30 L 90,12 L 82,24 L 140,8 L 130,20 L 185,14 L 175,26 L 235,18 L 270,28 L 300,25" stroke="url(#foudre-grad)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 0,35 L 45,22 L 38,30 L 90,12 L 82,24 L 140,8 L 130,20 L 185,14 L 175,26 L 235,18 L 270,28 L 300,25" stroke="#fbbf24" stroke-width="1" stroke-linecap="round" />
+            <!-- Branche secondaire -->
+            <path d="M 140,8 L 155,0 L 148,6" stroke="url(#foudre-grad)" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+
+          <!-- Éclair 2 — trajectoire médiane -->
+          <svg class="foudre foudre-2" viewBox="0 0 300 60" fill="none">
+            <path d="M 0,30 L 55,24 L 48,32 L 110,18 L 102,28 L 165,32 L 158,26 L 220,20 L 255,30 L 300,28" stroke="url(#foudre-grad)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 0,30 L 55,24 L 48,32 L 110,18 L 102,28 L 165,32 L 158,26 L 220,20 L 255,30 L 300,28" stroke="#fbbf24" stroke-width="1" stroke-linecap="round" />
+            <path d="M 110,18 L 120,8 L 114,14" stroke="url(#foudre-grad)" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+
+          <!-- Éclair 3 — trajectoire basse -->
+          <svg class="foudre foudre-3" viewBox="0 0 300 60" fill="none">
+            <path d="M 0,25 L 40,38 L 35,30 L 85,45 L 78,35 L 130,48 L 122,38 L 180,44 L 230,36 L 265,42 L 300,35" stroke="url(#foudre-grad)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 0,25 L 40,38 L 35,30 L 85,45 L 78,35 L 130,48 L 122,38 L 180,44 L 230,36 L 265,42 L 300,35" stroke="#fbbf24" stroke-width="1" stroke-linecap="round" />
+            <path d="M 85,45 L 92,55 L 88,48" stroke="url(#foudre-grad)" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </div>
         <!-- Gauche : magazine avec electric border -->
         <div ref="magazineCoverRef" class="relative flex shrink-0 justify-center">
           <!-- SVG Filter -->
@@ -187,7 +256,7 @@ onUnmounted(() => {
                 <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
                 <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
 
-                <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
+                <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="50" xChannelSelector="R" yChannelSelector="B" />
               </filter>
             </defs>
           </svg>
@@ -474,6 +543,29 @@ onUnmounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: rgba(255, 255, 255, 0.4);
+}
+
+/* Éclairs — positionnement et glow */
+.foudre {
+  position: absolute;
+  opacity: 0;
+  width: 55%;
+  height: 40px;
+  left: 28%;
+  filter: drop-shadow(0 0 8px rgba(221, 132, 72, 0.8))
+    drop-shadow(0 0 20px rgba(251, 191, 36, 0.4));
+}
+
+.foudre-1 {
+  top: 18%;
+}
+
+.foudre-2 {
+  top: 42%;
+}
+
+.foudre-3 {
+  top: 65%;
 }
 
 /* Content (image) container */
