@@ -11,6 +11,7 @@ interface Magazine {
   pdfPath: string | null
   coverImage: string | null
   publishedAt: string
+  availableAt: string | null
 }
 
 const { data: magazines, status } = useFetch<Magazine[]>('/api/magazines')
@@ -205,6 +206,7 @@ onUnmounted(() => {
             :version="magazine.version"
             :cover-image="magazine.coverImage"
             :published-at="magazine.publishedAt"
+            :available-at="magazine.availableAt"
             :pdf-path="magazine.pdfPath"
             @download="openDownloadModal"
           />
