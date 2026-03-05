@@ -1,6 +1,5 @@
 import { defineEventHandler, getRequestURL, getMethod, useSession, createError } from 'h3'
-
-const SESSION_SECRET = process.env.NUXT_SESSION_SECRET || 'dev-secret-at-least-32-characters-long!'
+import { sessionConfig } from '../utils/session'
 
 const PROTECTED_PREFIXES = ['/api/magazines', '/api/rubriques', '/api/partenaires']
 const PROTECTED_METHODS = ['POST', 'PUT', 'DELETE']
@@ -31,9 +30,7 @@ export default defineEventHandler(async (event) => {
     return
   }
 
-  const session = await useSession(event, {
-    password: SESSION_SECRET,
-  })
+  const session = await useSession(event, sessionConfig)
 
   if (!session.data.admin) {
     throw createError({

@@ -7,6 +7,7 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/data/production.db
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin-secret}
+      - NUXT_SESSION_SECURE=${NUXT_SESSION_SECURE:-false}
     volumes:
       - sqlite-data:/app/data
       - uploads:/app/public/uploads
