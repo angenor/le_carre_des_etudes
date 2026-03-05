@@ -80,7 +80,7 @@ const countdown = computed(() => {
       </NuxtLink>
 
       <!-- Panneau d'infos superposé -->
-      <div class="animated-border lg:rounded-l-[20px] lg:rounded-t-[20px] lg:absolute bottom-6 -right-10 lg:w-52 px-5 pt-4 pb-6 lg:h-72 shadow-xl flex flex-col">
+      <div class="animated-border rounded-l-[20px] rounded-t-[20px] absolute bottom-4 -right-6 w-52 h-72 sm:bottom-6 sm:-right-10 sm:w-52 sm:h-72 px-5 pt-4 pb-6 shadow-xl flex flex-col">
         <span class="inline-block text-xs text-gray-500">
           {{ formatDate(publishedAt) }}
         </span>
