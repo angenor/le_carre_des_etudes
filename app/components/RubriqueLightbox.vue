@@ -8,7 +8,7 @@ const props = defineProps<{
 const emit = defineEmits<{ close: [] }>()
 
 const overlayRef = ref<HTMLElement>()
-const contentRef = ref<HTMLElement>()
+const viewportRef = ref<HTMLElement>()
 const imgRef = ref<HTMLImageElement>()
 
 // Zoom
@@ -28,20 +28,17 @@ let translateStart = { x: 0, y: 0 }
 let initialPinchDistance = 0
 let initialPinchScale = 1
 
-const imageStyle = computed(() => ({
-  transform: `scale(${scale.value}) translate(${translateX.value}px, ${translateY.value}px)`,
-  cursor: scale.value > 1 ? (isPanning.value ? 'grabbing' : 'grab') : 'default',
-}))
+const imageTransform = computed(() =>
+  `scale(${scale.value}) translate(${translateX.value}px, ${translateY.value}px)`,
+)
 
 function zoomIn() {
   scale.value = Math.min(scale.value + ZOOM_STEP, MAX_SCALE)
-  clampTranslate()
 }
 
 function zoomOut() {
   scale.value = Math.max(scale.value - ZOOM_STEP, MIN_SCALE)
   if (scale.value <= 1) resetPosition()
-  else clampTranslate()
 }
 
 function resetZoom() {
@@ -54,15 +51,7 @@ function resetPosition() {
   translateY.value = 0
 }
 
-function clampTranslate() {
-  if (!imgRef.value) return
-  const maxX = (imgRef.value.offsetWidth * (scale.value - 1)) / (2 * scale.value)
-  const maxY = (imgRef.value.offsetHeight * (scale.value - 1)) / (2 * scale.value)
-  translateX.value = Math.max(-maxX, Math.min(maxX, translateX.value))
-  translateY.value = Math.max(-maxY, Math.min(maxY, translateY.value))
-}
-
-// Mouse pan
+// Mouse / pointer pan
 function onPointerDown(e: PointerEvent) {
   if (scale.value <= 1) return
   isPanning.value = true
@@ -73,11 +62,8 @@ function onPointerDown(e: PointerEvent) {
 
 function onPointerMove(e: PointerEvent) {
   if (!isPanning.value) return
-  const dx = (e.clientX - panStart.x) / scale.value
-  const dy = (e.clientY - panStart.y) / scale.value
-  translateX.value = translateStart.x + dx
-  translateY.value = translateStart.y + dy
-  clampTranslate()
+  translateX.value = translateStart.x + (e.clientX - panStart.x) / scale.value
+  translateY.value = translateStart.y + (e.clientY - panStart.y) / scale.value
 }
 
 function onPointerUp() {
@@ -87,7 +73,6 @@ function onPointerUp() {
 // Touch pinch-to-zoom
 function onTouchStart(e: TouchEvent) {
   if (e.touches.length === 2) {
-    e.preventDefault()
     initialPinchDistance = getDistance(e.touches[0], e.touches[1])
     initialPinchScale = scale.value
   }
@@ -97,10 +82,8 @@ function onTouchMove(e: TouchEvent) {
   if (e.touches.length === 2) {
     e.preventDefault()
     const dist = getDistance(e.touches[0], e.touches[1])
-    const ratio = dist / initialPinchDistance
-    scale.value = Math.max(MIN_SCALE, Math.min(MAX_SCALE, initialPinchScale * ratio))
+    scale.value = Math.max(MIN_SCALE, Math.min(MAX_SCALE, initialPinchScale * (dist / initialPinchDistance)))
     if (scale.value <= 1) resetPosition()
-    else clampTranslate()
   }
 }
 
@@ -110,11 +93,13 @@ function getDistance(t1: Touch, t2: Touch): number {
 
 // Double-tap to zoom/reset
 let lastTap = 0
-function onDoubleTap() {
+function onDoubleTap(e: MouseEvent) {
+  // Ne pas traiter si c'est un clic sur les boutons
+  if ((e.target as HTMLElement).closest('button, a')) return
   const now = Date.now()
   if (now - lastTap < 300) {
     if (scale.value > 1) resetZoom()
-    else { scale.value = 2.5; clampTranslate() }
+    else { scale.value = 2.5 }
   }
   lastTap = now
 }
@@ -142,8 +127,8 @@ onMounted(() => {
     )
   }
 
-  if (contentRef.value) {
-    useGsap.fromTo(contentRef.value,
+  if (imgRef.value) {
+    useGsap.fromTo(imgRef.value,
       { scale: 0.85, opacity: 0 },
       { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.4)', delay: 0.1 },
     )
@@ -159,8 +144,8 @@ onUnmounted(() => {
 function animateClose() {
   const tl = useGsap.timeline({ onComplete: () => emit('close') })
 
-  if (contentRef.value) {
-    tl.to(contentRef.value, {
+  if (imgRef.value) {
+    tl.to(imgRef.value, {
       scale: 0.9, opacity: 0, duration: 0.25, ease: 'power3.in',
     }, 0)
   }
@@ -173,7 +158,11 @@ function animateClose() {
 }
 
 function handleOverlayClick(e: MouseEvent) {
-  if (e.target === e.currentTarget) animateClose()
+  // Fermer seulement si on clique sur l'overlay (pas sur l'image ni les boutons)
+  const target = e.target as HTMLElement
+  if (target === overlayRef.value || target === viewportRef.value) {
+    if (scale.value <= 1) animateClose()
+  }
 }
 </script>
 
@@ -181,27 +170,28 @@ function handleOverlayClick(e: MouseEvent) {
   <Teleport to="body">
     <div
       ref="overlayRef"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+      class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm"
       @click="handleOverlayClick"
+      @wheel.prevent="onWheel"
     >
-      <div ref="contentRef" class="relative flex max-h-[90dvh] max-w-3xl flex-col items-center">
-        <!-- Barre d'outils -->
-        <div class="absolute -top-12 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-full bg-gray-900/90 px-2 py-1 ring-1 ring-white/10">
+      <!-- Barre d'outils fixe en haut -->
+      <div class="absolute inset-x-0 top-4 z-20 flex justify-center">
+        <div class="flex items-center gap-1 rounded-full bg-gray-900/90 px-2 py-1 ring-1 ring-white/10 shadow-lg">
           <button
             type="button"
-            class="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-30"
+            class="rounded-full p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-30"
             aria-label="Dézoomer"
             :disabled="scale <= MIN_SCALE"
             @click="zoomOut"
           >
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607zM13.5 10.5h-6" />
             </svg>
           </button>
 
           <button
             type="button"
-            class="min-w-10 rounded-full px-2 py-1 text-center text-xs font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
+            class="min-w-12 rounded-full px-2 py-1 text-center text-xs font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
             aria-label="Réinitialiser le zoom"
             @click="resetZoom"
           >
@@ -210,58 +200,59 @@ function handleOverlayClick(e: MouseEvent) {
 
           <button
             type="button"
-            class="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-30"
+            class="rounded-full p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-30"
             aria-label="Zoomer"
             :disabled="scale >= MAX_SCALE"
             @click="zoomIn"
           >
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607zM10.5 7.5v6m3-3h-6" />
             </svg>
           </button>
 
-          <div class="mx-1 h-4 w-px bg-white/15" />
+          <div class="mx-1 h-5 w-px bg-white/15" />
 
-          <!-- Bouton fermer -->
           <button
             type="button"
-            class="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+            class="rounded-full p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
             aria-label="Fermer"
             @click="animateClose"
           >
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
+      </div>
 
-        <!-- Image zoomable -->
-        <div
-          class="overflow-hidden rounded-xl"
-          @wheel.prevent="onWheel"
-          @touchstart.passive="onTouchStart"
-          @touchmove="onTouchMove"
-          @click="onDoubleTap"
-        >
-          <img
-            ref="imgRef"
-            :src="imagePath"
-            :alt="sectionLabel ? `Rubrique ${sectionLabel}` : 'Rubrique'"
-            :style="imageStyle"
-            class="max-h-[80dvh] select-none rounded-xl object-contain shadow-2xl transition-transform duration-150 ease-out"
-            draggable="false"
-            @pointerdown="onPointerDown"
-            @pointermove="onPointerMove"
-            @pointerup="onPointerUp"
-            @pointercancel="onPointerUp"
-          />
-        </div>
+      <!-- Zone de l'image — occupe tout l'écran -->
+      <div
+        ref="viewportRef"
+        class="flex h-full w-full items-center justify-center"
+        :class="scale > 1 ? (isPanning ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-zoom-in'"
+        @touchstart.passive="onTouchStart"
+        @touchmove="onTouchMove"
+        @click="onDoubleTap"
+      >
+        <img
+          ref="imgRef"
+          :src="imagePath"
+          :alt="sectionLabel ? `Rubrique ${sectionLabel}` : 'Rubrique'"
+          :style="{ transform: imageTransform }"
+          class="max-h-[85dvh] max-w-[90vw] select-none object-contain drop-shadow-2xl transition-transform duration-150 ease-out"
+          draggable="false"
+          @pointerdown="onPointerDown"
+          @pointermove="onPointerMove"
+          @pointerup="onPointerUp"
+          @pointercancel="onPointerUp"
+        />
+      </div>
 
-        <!-- Bouton vers le magazine -->
+      <!-- Bouton vers le magazine — fixe en bas -->
+      <div v-if="magazineSlug" class="absolute inset-x-0 bottom-6 z-20 flex justify-center">
         <NuxtLink
-          v-if="magazineSlug"
           :to="`/magazine/${magazineSlug}`"
-          class="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/15 px-5 py-2.5 text-sm font-medium text-amber-400 transition-colors hover:bg-amber-500/25 hover:text-amber-300"
+          class="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-gray-900/90 px-5 py-2.5 text-sm font-medium text-amber-400 shadow-lg ring-1 ring-white/10 transition-colors hover:bg-amber-500/20 hover:text-amber-300"
         >
           Voir le magazine
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
