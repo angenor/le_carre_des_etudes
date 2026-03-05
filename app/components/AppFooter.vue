@@ -89,6 +89,41 @@ async function subscribeNewsletter() {
 
     <!-- Contenu du footer -->
     <div class="relative z-10 mx-auto max-w-7xl px-4 pb-8 pt-16 sm:px-6 lg:px-8">
+      <!-- Newsletter -->
+      <div class="mb-12 rounded-xl border border-gray-800/80 bg-white/3 px-6 py-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div class="mb-4 sm:mb-0">
+          <h3 class="text-sm font-semibold text-white">Restez informé</h3>
+          <p class="mt-1 text-xs text-gray-400">Recevez une alerte lors de la sortie de nos prochaines éditions.</p>
+        </div>
+        <form @submit.prevent="subscribeNewsletter" class="flex w-full max-w-md gap-2">
+          <input
+            v-model="newsletterEmail"
+            type="email"
+            placeholder="Votre adresse email"
+            :disabled="newsletterStatus === 'loading'"
+            class="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white placeholder-gray-500 transition focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 disabled:opacity-50"
+          />
+          <button
+            type="submit"
+            :disabled="newsletterStatus === 'loading'"
+            class="shrink-0 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-medium text-gray-950 transition-colors hover:bg-amber-400 disabled:opacity-50"
+          >
+            {{ newsletterStatus === 'loading' ? '...' : "S'inscrire" }}
+          </button>
+        </form>
+      </div>
+      <p
+        v-if="newsletterStatus !== 'idle' && newsletterStatus !== 'loading'"
+        class="-mt-9 mb-12 text-center text-sm"
+        :class="{
+          'text-emerald-400': newsletterStatus === 'success',
+          'text-red-400': newsletterStatus === 'error',
+          'text-amber-400': newsletterStatus === 'duplicate',
+        }"
+      >
+        {{ newsletterMessage }}
+      </p>
+
       <!-- Grille principale -->
       <div class="grid gap-12 md:grid-cols-12">
         <!-- Colonne 1 : À propos du magazine -->
@@ -191,41 +226,6 @@ async function subscribeNewsletter() {
           </ul>
         </div>
       </div>
-
-      <!-- Newsletter -->
-      <div class="mt-12 rounded-xl border border-gray-800/80 bg-white/3 px-6 py-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
-        <div class="mb-4 sm:mb-0">
-          <h3 class="text-sm font-semibold text-white">Restez informé</h3>
-          <p class="mt-1 text-xs text-gray-400">Recevez une alerte lors de la sortie de nos prochaines éditions.</p>
-        </div>
-        <form @submit.prevent="subscribeNewsletter" class="flex w-full max-w-md gap-2">
-          <input
-            v-model="newsletterEmail"
-            type="email"
-            placeholder="Votre adresse email"
-            :disabled="newsletterStatus === 'loading'"
-            class="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white placeholder-gray-500 transition focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 disabled:opacity-50"
-          />
-          <button
-            type="submit"
-            :disabled="newsletterStatus === 'loading'"
-            class="shrink-0 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-medium text-gray-950 transition-colors hover:bg-amber-400 disabled:opacity-50"
-          >
-            {{ newsletterStatus === 'loading' ? '...' : "S'inscrire" }}
-          </button>
-        </form>
-      </div>
-      <p
-        v-if="newsletterStatus !== 'idle' && newsletterStatus !== 'loading'"
-        class="mt-3 text-center text-sm"
-        :class="{
-          'text-emerald-400': newsletterStatus === 'success',
-          'text-red-400': newsletterStatus === 'error',
-          'text-amber-400': newsletterStatus === 'duplicate',
-        }"
-      >
-        {{ newsletterMessage }}
-      </p>
 
       <!-- Séparateur décoratif -->
       <div class="relative mt-12">
