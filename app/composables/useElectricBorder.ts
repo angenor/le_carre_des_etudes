@@ -61,7 +61,7 @@ export function useElectricBorder(svgFilterRef: Ref<SVGSVGElement | undefined>) 
   })
 
   // Nombre d'octaves adapté à la puissance de l'appareil
-  const numOctaves = computed(() => (isMobile.value ? 3 : 10))
+  const numOctaves = computed(() => (isMobile.value ? 1 : 10))
 
   return { isMobile, numOctaves }
 }
