@@ -142,11 +142,11 @@ ENDSSH
         sleep 10
 
         echo ""
-        curl -sf http://localhost:3000 > /dev/null && echo "Application OK" || echo "Application pas encore prete"
+        curl -sf http://localhost > /dev/null && echo "Application OK" || echo "Application pas encore prete"
 ENDSSH
 
     echo -e "${GREEN}=== Deploiement termine ===${NC}"
-    echo -e "Site disponible : http://${REMOTE_HOST}:3000"
+    echo -e "Site disponible : https://lecarredesetudes.com"
 }
 
 # Mise a jour rapide
