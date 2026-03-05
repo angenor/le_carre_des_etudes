@@ -87,5 +87,27 @@ Use multiple sub-agents in parallel for efficiency:
 - TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3.5.28 + Nuxt 4, Vue 3, Tailwind CSS v4.2.1 (`@tailwindcss/vite`), Chart.js 4.5.1, vue-chartjs 5.3.3, Prisma 7.4.2 (005-admin-dashboard-newsletter)
 - SQLite via Prisma 7 (`dev.db` à la racine) ; client généré dans `app/generated/prisma/` (005-admin-dashboard-newsletter)
 
+## Deployment
+
+Production server: `root@31.220.73.105` at `/opt/le_carre_des_etudes`
+Deploy script: `deploy.sh` (Docker-based, branch `main`)
+
+```bash
+./deploy.sh setup          # Premier setup serveur (Docker, clone, .env)
+./deploy.sh deploy         # Déploiement complet (pull, build --no-cache, restart)
+./deploy.sh update         # Mise à jour rapide (pull, rebuild)
+./deploy.sh logs [service] # Voir les logs
+./deploy.sh restart        # Redémarrer les conteneurs
+./deploy.sh stop           # Arrêter les conteneurs
+./deploy.sh status         # État du serveur
+./deploy.sh ssl <domaine>  # Configurer SSL avec Let's Encrypt
+./deploy.sh backup         # Sauvegarder la base SQLite en local (dans backups/)
+./deploy.sh connect        # Se connecter en SSH au serveur
+```
+
+- Production DB: `/app/data/production.db` (dans le conteneur)
+- `.env` production généré au setup avec `ADMIN_PASSWORD` aléatoire
+- Site accessible sur `http://<IP>:3000` (ou HTTPS après `ssl`)
+
 ## Recent Changes
 - 001-magazine-landing-site: Added TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7
