@@ -107,10 +107,28 @@ function initAnimations() {
     )
   }, sectionRef.value)
 
-  // Éclairs qui percutent le titre (desktop uniquement)
-  if (window.matchMedia('(min-width: 1024px)').matches && foudreContainerRef.value) {
+  // Éclairs qui percutent les éléments à droite (desktop uniquement)
+  if (window.matchMedia('(min-width: 1024px)').matches && foudreContainerRef.value && infosRef.value) {
     const foudres = foudreContainerRef.value.querySelectorAll<SVGSVGElement>('.foudre')
-    const titre = infosRef.value?.querySelector('h2')
+    const infosChildren = Array.from(infosRef.value.children) as HTMLElement[]
+
+    // Trouver l'élément enfant de infosRef le plus proche verticalement du bolt
+    function trouverCible(bolt: SVGSVGElement): HTMLElement | null {
+      const boltRect = bolt.getBoundingClientRect()
+      const boltCenterY = boltRect.top + boltRect.height / 2
+      let closest: HTMLElement | null = null
+      let minDist = Infinity
+      for (const child of infosChildren) {
+        const childRect = child.getBoundingClientRect()
+        const childCenterY = childRect.top + childRect.height / 2
+        const dist = Math.abs(boltCenterY - childCenterY)
+        if (dist < minDist) {
+          minDist = dist
+          closest = child
+        }
+      }
+      return closest
+    }
 
     function lancerFoudre() {
       const idx = Math.floor(Math.random() * foudres.length)
@@ -126,11 +144,12 @@ function initAnimations() {
         .to(bolt, { opacity: 0.85, duration: 0.08 })
         .to(bolt, { opacity: 0, duration: 0.6 })
 
-      // Flash ambre sur le titre au moment de l'impact
-      if (titre) {
+      // Flash ambre sur l'élément touché par l'éclair
+      const cible = trouverCible(bolt)
+      if (cible) {
         useGsap.timeline()
-          .to(titre, { textShadow: '0 0 30px rgba(221,132,72,0.7), 0 0 60px rgba(221,132,72,0.3)', duration: 0.1, delay: 0.1 })
-          .to(titre, { textShadow: '0 0 0px transparent', duration: 0.8, ease: 'power2.out' })
+          .to(cible, { textShadow: '0 0 30px rgba(221,132,72,0.7), 0 0 60px rgba(221,132,72,0.3)', duration: 0.1, delay: 0.1 })
+          .to(cible, { textShadow: '0 0 0px transparent', duration: 0.8, ease: 'power2.out' })
       }
 
       foudreTimer = setTimeout(lancerFoudre, 1000 + Math.random() * 2500)
