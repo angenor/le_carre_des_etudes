@@ -30,3 +30,4 @@ volumes:
   uploads:
   letsencrypt:
     external: true
+    name: le_carre_des_etudes_letsencrypt
