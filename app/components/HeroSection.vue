@@ -9,7 +9,7 @@ const scrollIndicator = ref<HTMLElement>()
 // Images dynamiques depuis le backoffice, avec fallback sur les images statiques
 const { data: heroImages } = await useFetch<Record<string, string>>('/api/homepage-images')
 const desktopSrc = computed(() => heroImages.value?.hero_desktop || '/images/hero/hero_section.jpg')
-const mobileSrc = computed(() => heroImages.value?.hero_mobile || '/images/hero/magazine.png')
+const mobileSrc = computed(() => heroImages.value?.hero_mobile || '/images/hero/magazine.jpg')
 
 function onImageLoad() {
   emit('imageLoaded')
