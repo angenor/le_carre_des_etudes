@@ -18,6 +18,7 @@ REMOTE_USER="root"
 REMOTE_HOST="31.220.73.105"
 REMOTE_DIR="/opt/le_carre_des_etudes"
 APP_REPO="https://github.com/angenor/le_carre_des_etudes.git"
+DEPLOY_BRANCH="main"
 
 echo -e "${GREEN}=== Le Carre des Etudes - Deploiement ===${NC}"
 
@@ -109,7 +110,8 @@ deploy() {
     ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
         cd ${REMOTE_DIR}
         git fetch origin
-        git reset --hard origin/main || git reset --hard origin/master
+        git checkout ${DEPLOY_BRANCH} 2>/dev/null || git checkout -b ${DEPLOY_BRANCH} origin/${DEPLOY_BRANCH}
+        git reset --hard origin/${DEPLOY_BRANCH}
 ENDSSH
 
     echo -e "${GREEN}[2/3] Build et demarrage des conteneurs...${NC}"
@@ -152,7 +154,7 @@ update() {
     echo -e "${GREEN}Mise a jour du code et redemarrage...${NC}"
     ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
         cd ${REMOTE_DIR}
-        git pull origin main || git pull origin master
+        git pull origin ${DEPLOY_BRANCH}
         docker compose build
         docker compose up -d
 ENDSSH
