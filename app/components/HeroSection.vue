@@ -23,10 +23,23 @@ onMounted(async () => {
 
   ctx = useGsap.context(() => {
     const images = [desktopImg.value, mobileImg.value].filter(Boolean)
+    // Entrée initiale
     useGsap.fromTo(
       images,
       { scale: 1.15, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 2, ease: 'power3.out' },
+      {
+        scale: 1, opacity: 1, duration: 2, ease: 'power3.out',
+        onComplete: () => {
+          // Zoom/dézoom continu après l'entrée
+          useGsap.to(images, {
+            scale: 1.08,
+            duration: 8,
+            ease: 'sine.inOut',
+            repeat: -1,
+            yoyo: true,
+          })
+        },
+      },
     )
 
     if (desktopImg.value) {
