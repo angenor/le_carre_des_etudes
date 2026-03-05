@@ -119,22 +119,24 @@ function initAnimations() {
 
       const tl = useGsap.timeline()
       tl.set(bolt, { opacity: 0, scaleX: 0.3, transformOrigin: 'left center' })
-        .to(bolt, { opacity: 1, scaleX: 1, duration: 0.06, ease: 'power4.out' })
-        .to(bolt, { opacity: 0.15, duration: 0.04 })
-        .to(bolt, { opacity: 0.9, duration: 0.05 })
-        .to(bolt, { opacity: 0, duration: 0.3 })
+        .to(bolt, { opacity: 1, scaleX: 1, duration: 0.1, ease: 'power4.out' })
+        .to(bolt, { opacity: 0.2, duration: 0.08 })
+        .to(bolt, { opacity: 1, duration: 0.06 })
+        .to(bolt, { opacity: 0.15, duration: 0.1 })
+        .to(bolt, { opacity: 0.85, duration: 0.08 })
+        .to(bolt, { opacity: 0, duration: 0.6 })
 
       // Flash ambre sur le titre au moment de l'impact
       if (titre) {
         useGsap.timeline()
-          .to(titre, { textShadow: '0 0 30px rgba(221,132,72,0.7), 0 0 60px rgba(221,132,72,0.3)', duration: 0.08, delay: 0.06 })
-          .to(titre, { textShadow: '0 0 0px transparent', duration: 0.5, ease: 'power2.out' })
+          .to(titre, { textShadow: '0 0 30px rgba(221,132,72,0.7), 0 0 60px rgba(221,132,72,0.3)', duration: 0.1, delay: 0.1 })
+          .to(titre, { textShadow: '0 0 0px transparent', duration: 0.8, ease: 'power2.out' })
       }
 
-      foudreTimer = setTimeout(lancerFoudre, 2500 + Math.random() * 5000)
+      foudreTimer = setTimeout(lancerFoudre, 1000 + Math.random() * 2500)
     }
 
-    foudreTimer = setTimeout(lancerFoudre, 1500 + Math.random() * 2000)
+    foudreTimer = setTimeout(lancerFoudre, 800 + Math.random() * 1200)
   }
 
   useScrollTrigger.refresh()
