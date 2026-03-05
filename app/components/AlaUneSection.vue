@@ -66,7 +66,17 @@ const sectionRef = ref<HTMLElement>()
 const badgeRef = ref<HTMLElement>()
 const magazineCoverRef = ref<HTMLElement>()
 const infosRef = ref<HTMLElement>()
-const svgFilterRef = ref<SVGElement>()
+const svgFilterRef = ref<SVGSVGElement>()
+
+// Pause des animations SVG pendant le scroll sur mobile (évite le jank)
+let scrollTimeout: ReturnType<typeof setTimeout> | null = null
+function onScroll() {
+  svgFilterRef.value?.pauseAnimations()
+  if (scrollTimeout) clearTimeout(scrollTimeout)
+  scrollTimeout = setTimeout(() => {
+    svgFilterRef.value?.unpauseAnimations()
+  }, 150)
+}
 
 let gsapCtx: ReturnType<typeof useGsap.context> | null = null
 
@@ -118,10 +128,17 @@ onMounted(() => {
     },
     { immediate: true },
   )
+
+  // Pause des animations SVG pendant le scroll sur mobile
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    window.addEventListener('scroll', onScroll, { passive: true })
+  }
 })
 
 onUnmounted(() => {
   gsapCtx?.revert()
+  window.removeEventListener('scroll', onScroll)
+  if (scrollTimeout) clearTimeout(scrollTimeout)
 })
 </script>
 
@@ -342,6 +359,8 @@ onUnmounted(() => {
   margin-top: -4px;
   margin-left: -4px;
   filter: url(#turbulent-displace);
+  will-change: filter;
+  contain: strict;
 }
 
 @media (min-width: 640px) {

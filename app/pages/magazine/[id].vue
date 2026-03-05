@@ -49,6 +49,17 @@ useSeoMeta({
 })
 
 const showDownloadModal = ref(false)
+const svgFilterRef = ref<SVGSVGElement>()
+
+// Pause des animations SVG pendant le scroll sur mobile (évite le jank)
+let scrollTimeout: ReturnType<typeof setTimeout> | null = null
+function onScroll() {
+  svgFilterRef.value?.pauseAnimations()
+  if (scrollTimeout) clearTimeout(scrollTimeout)
+  scrollTimeout = setTimeout(() => {
+    svgFilterRef.value?.unpauseAnimations()
+  }, 150)
+}
 
 // Compte à rebours
 const now = useState(`countdown-detail-${route.params.id}`, () => new Date())
@@ -58,10 +69,17 @@ onMounted(() => {
   timer = setInterval(() => {
     now.value = new Date()
   }, 1000)
+
+  // Pause des animations SVG pendant le scroll sur mobile
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    window.addEventListener('scroll', onScroll, { passive: true })
+  }
 })
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
+  window.removeEventListener('scroll', onScroll)
+  if (scrollTimeout) clearTimeout(scrollTimeout)
 })
 
 const countdown = computed(() => {
@@ -176,7 +194,7 @@ function formatDate(dateStr: string): string {
             <div class="relative flex w-full max-w-sm shrink-0 justify-center lg:w-80">
               <!-- Electric border (si à la une) -->
               <template v-if="magazine.isFeatured">
-                <svg class="absolute h-0 w-0" aria-hidden="true">
+                <svg ref="svgFilterRef" class="absolute h-0 w-0" aria-hidden="true">
                   <defs>
                     <filter id="detail-turbulent-displace" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
                       <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
@@ -390,6 +408,8 @@ function formatDate(dateStr: string): string {
   margin-top: -4px;
   margin-left: -4px;
   filter: url(#detail-turbulent-displace);
+  will-change: filter;
+  contain: strict;
 }
 
 @media (min-width: 640px) {
