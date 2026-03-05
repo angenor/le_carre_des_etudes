@@ -9,7 +9,7 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin-secret}
     volumes:
       - sqlite-data:/app/data
-      - uploads:/app/.output/public/uploads
+      - uploads:/app/public/uploads
     restart: unless-stopped
 
 volumes:
