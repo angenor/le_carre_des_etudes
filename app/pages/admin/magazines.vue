@@ -25,6 +25,10 @@ const showForm = ref(false)
 const editingMagazine = ref<Magazine | null>(null)
 const saving = ref(false)
 const errorMessage = ref('')
+const pdfUploadProgress = ref(0)
+const coverUploadProgress = ref(0)
+const uploadingPdf = ref(false)
+const uploadingCover = ref(false)
 
 const form = reactive({
   name: '',
@@ -88,13 +92,34 @@ function cancelForm() {
   resetForm()
 }
 
-async function uploadFile(file: File, category: string): Promise<{ path: string; ogPath: string | null }> {
-  const formData = new FormData()
-  formData.append('file', file)
-  formData.append('category', category)
-  return await $fetch<{ path: string; ogPath: string | null }>('/api/upload', {
-    method: 'POST',
-    body: formData,
+function uploadFile(
+  file: File,
+  category: string,
+  onProgress: (percent: number) => void,
+): Promise<{ path: string; ogPath: string | null }> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('category', category)
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        onProgress(Math.round((e.loaded / e.total) * 100))
+      }
+    })
+
+    xhr.addEventListener('load', () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText))
+      } else {
+        reject(new Error(`Erreur HTTP ${xhr.status}`))
+      }
+    })
+
+    xhr.addEventListener('error', () => reject(new Error('Erreur réseau')))
+    xhr.open('POST', '/api/upload')
+    xhr.send(formData)
   })
 }
 
@@ -102,11 +127,17 @@ async function handlePdfUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
+  uploadingPdf.value = true
+  pdfUploadProgress.value = 0
   try {
-    const result = await uploadFile(file, 'magazines')
+    const result = await uploadFile(file, 'magazines', (p) => {
+      pdfUploadProgress.value = p
+    })
     form.pdfPath = result.path
   } catch {
     errorMessage.value = 'Erreur lors de l\'envoi du PDF'
+  } finally {
+    uploadingPdf.value = false
   }
 }
 
@@ -114,12 +145,18 @@ async function handleCoverUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
+  uploadingCover.value = true
+  coverUploadProgress.value = 0
   try {
-    const result = await uploadFile(file, 'magazines')
+    const result = await uploadFile(file, 'magazines', (p) => {
+      coverUploadProgress.value = p
+    })
     form.coverImage = result.path
     form.coverImageOg = result.ogPath || ''
   } catch {
     errorMessage.value = 'Erreur lors de l\'envoi de la couverture'
+  } finally {
+    uploadingCover.value = false
   }
 }
 
@@ -319,10 +356,23 @@ onMounted(fetchMagazines)
             <input
               type="file"
               accept=".pdf"
-              class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100"
+              :disabled="uploadingPdf"
+              class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100 disabled:opacity-50"
               @change="handlePdfUpload"
             />
-            <p v-if="form.pdfPath" class="mt-1 text-xs text-emerald-600">
+            <div v-if="uploadingPdf" class="mt-2">
+              <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+                <span>Téléversement du PDF...</span>
+                <span>{{ pdfUploadProgress }}%</span>
+              </div>
+              <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  class="h-full rounded-full bg-emerald-500 transition-all duration-300"
+                  :style="{ width: pdfUploadProgress + '%' }"
+                />
+              </div>
+            </div>
+            <p v-if="form.pdfPath && !uploadingPdf" class="mt-1 text-xs text-emerald-600">
               {{ form.pdfPath }}
             </p>
           </div>
@@ -331,10 +381,23 @@ onMounted(fetchMagazines)
             <input
               type="file"
               accept="image/*"
-              class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100"
+              :disabled="uploadingCover"
+              class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100 disabled:opacity-50"
               @change="handleCoverUpload"
             />
-            <p v-if="form.coverImage" class="mt-1 text-xs text-emerald-600">
+            <div v-if="uploadingCover" class="mt-2">
+              <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+                <span>Téléversement de l'image...</span>
+                <span>{{ coverUploadProgress }}%</span>
+              </div>
+              <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  class="h-full rounded-full bg-emerald-500 transition-all duration-300"
+                  :style="{ width: coverUploadProgress + '%' }"
+                />
+              </div>
+            </div>
+            <p v-if="form.coverImage && !uploadingCover" class="mt-1 text-xs text-emerald-600">
               {{ form.coverImage }}
             </p>
           </div>
@@ -343,7 +406,7 @@ onMounted(fetchMagazines)
         <div class="flex gap-3 pt-2">
           <button
             type="submit"
-            :disabled="saving || !form.pdfPath"
+            :disabled="saving || !form.pdfPath || uploadingPdf || uploadingCover"
             class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {{ saving ? 'Enregistrement...' : (editingMagazine ? 'Mettre à jour' : 'Créer') }}
