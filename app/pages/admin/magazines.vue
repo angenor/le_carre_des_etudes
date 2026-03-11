@@ -29,6 +29,7 @@ const pdfUploadProgress = ref(0)
 const coverUploadProgress = ref(0)
 const uploadingPdf = ref(false)
 const uploadingCover = ref(false)
+const MAX_FILE_SIZE = 150 * 1024 * 1024 // 150 Mo
 
 const form = reactive({
   name: '',
@@ -127,6 +128,10 @@ async function handlePdfUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
+  if (file.size > MAX_FILE_SIZE) {
+    errorMessage.value = 'Le fichier dépasse la taille maximale autorisée (150 Mo).'
+    return
+  }
   uploadingPdf.value = true
   pdfUploadProgress.value = 0
   try {
@@ -145,6 +150,10 @@ async function handleCoverUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
+  if (file.size > MAX_FILE_SIZE) {
+    errorMessage.value = 'Le fichier dépasse la taille maximale autorisée (150 Mo).'
+    return
+  }
   uploadingCover.value = true
   coverUploadProgress.value = 0
   try {

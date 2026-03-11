@@ -7,6 +7,7 @@ const ALLOWED_CATEGORIES = ['magazines', 'rubriques', 'partenaires', 'homepage']
 type Category = typeof ALLOWED_CATEGORIES[number]
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.tiff']
+const MAX_FILE_SIZE = 150 * 1024 * 1024 // 150 Mo
 
 /**
  * Nettoie un nom de fichier : supprime les caractères spéciaux,
@@ -57,6 +58,13 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       message: 'Le champ "file" est requis et doit contenir un fichier.',
+    })
+  }
+
+  if (filePart.data.length > MAX_FILE_SIZE) {
+    throw createError({
+      statusCode: 413,
+      message: `Le fichier dépasse la taille maximale autorisée (150 Mo).`,
     })
   }
 

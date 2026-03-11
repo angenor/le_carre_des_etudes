@@ -4,6 +4,11 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  nitro: {
+    routeRules: {
+      '/api/upload': { maxBodySize: 150 * 1024 * 1024 },
+    },
+  },
   modules: ['@hypernym/nuxt-gsap'],
   gsap: {
     composables: true,
