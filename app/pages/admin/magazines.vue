@@ -29,7 +29,7 @@ const pdfUploadProgress = ref(0)
 const coverUploadProgress = ref(0)
 const uploadingPdf = ref(false)
 const uploadingCover = ref(false)
-const MAX_FILE_SIZE = 150 * 1024 * 1024 // 150 Mo
+const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50 Mo
 
 const form = reactive({
   name: '',
@@ -113,6 +113,10 @@ function uploadFile(
     xhr.addEventListener('load', () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         resolve(JSON.parse(xhr.responseText))
+      } else if (xhr.status === 503) {
+        reject(new Error('Le serveur est surchargé. Veuillez réessayer dans quelques instants.'))
+      } else if (xhr.status === 413) {
+        reject(new Error('Le fichier dépasse la taille maximale autorisée (50 Mo).'))
       } else {
         reject(new Error(`Erreur HTTP ${xhr.status}`))
       }
@@ -129,7 +133,7 @@ async function handlePdfUpload(event: Event) {
   const file = input.files?.[0]
   if (!file) return
   if (file.size > MAX_FILE_SIZE) {
-    errorMessage.value = 'Le fichier dépasse la taille maximale autorisée (150 Mo).'
+    errorMessage.value = 'Le fichier dépasse la taille maximale autorisée (50 Mo).'
     return
   }
   uploadingPdf.value = true
@@ -139,8 +143,8 @@ async function handlePdfUpload(event: Event) {
       pdfUploadProgress.value = p
     })
     form.pdfPath = result.path
-  } catch {
-    errorMessage.value = 'Erreur lors de l\'envoi du PDF'
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Erreur lors de l\'envoi du PDF'
   } finally {
     uploadingPdf.value = false
   }
@@ -151,7 +155,7 @@ async function handleCoverUpload(event: Event) {
   const file = input.files?.[0]
   if (!file) return
   if (file.size > MAX_FILE_SIZE) {
-    errorMessage.value = 'Le fichier dépasse la taille maximale autorisée (150 Mo).'
+    errorMessage.value = 'Le fichier dépasse la taille maximale autorisée (50 Mo).'
     return
   }
   uploadingCover.value = true
@@ -162,8 +166,8 @@ async function handleCoverUpload(event: Event) {
     })
     form.coverImage = result.path
     form.coverImageOg = result.ogPath || ''
-  } catch {
-    errorMessage.value = 'Erreur lors de l\'envoi de la couverture'
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Erreur lors de l\'envoi de la couverture'
   } finally {
     uploadingCover.value = false
   }

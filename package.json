@@ -15,6 +15,7 @@
     "@prisma/client": "^7.4.2",
     "@tailwindcss/vite": "^4.2.1",
     "@toast-ui/editor": "^3.2.2",
+    "busboy": "^1.6.0",
     "chart.js": "^4.5.1",
     "nuxt": "^4.3.1",
     "sharp": "^0.34.5",
@@ -24,6 +25,7 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@types/busboy": "^1.5.4",
     "prisma": "^7.4.2"
   },
   "pnpm": {

@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   nitro: {
     routeRules: {
-      '/api/upload': { maxBodySize: 150 * 1024 * 1024 },
+      '/api/upload': { maxBodySize: 50 * 1024 * 1024 },
     },
   },
   modules: ['@hypernym/nuxt-gsap'],
