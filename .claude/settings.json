@@ -22,7 +22,8 @@
       "Bash(lsof -ti :3111)",
       "Bash(lsof -ti:3111)",
       "Bash(ssh-copy-id -o StrictHostKeyChecking=no root@31.220.73.105)",
-      "Bash(ssh root@31.220.73.105 \"docker compose -f /opt/le_carre_des_etudes/docker-compose.yml exec -T app sh -c \"\"sqlite3 /app/data/production.db \\\\\"\"UPDATE HomepageImage SET imagePath=''/images/hero/hero_section.jpg'' WHERE slug=''hero_mobile'';\\\\\"\"\"\"\")"
+      "Bash(ssh root@31.220.73.105 \"docker compose -f /opt/le_carre_des_etudes/docker-compose.yml exec -T app sh -c \"\"sqlite3 /app/data/production.db \\\\\"\"UPDATE HomepageImage SET imagePath=''/images/hero/hero_section.jpg'' WHERE slug=''hero_mobile'';\\\\\"\"\"\"\")",
+      "Bash(brew list:*)"
     ],
     "additionalDirectories": [
       "/tmp"
