@@ -147,6 +147,7 @@ async function handlePdfUpload(event: Event) {
     errorMessage.value = err instanceof Error ? err.message : 'Erreur lors de l\'envoi du PDF'
   } finally {
     uploadingPdf.value = false
+    input.value = ''
   }
 }
 
@@ -170,6 +171,7 @@ async function handleCoverUpload(event: Event) {
     errorMessage.value = err instanceof Error ? err.message : 'Erreur lors de l\'envoi de la couverture'
   } finally {
     uploadingCover.value = false
+    input.value = ''
   }
 }
 

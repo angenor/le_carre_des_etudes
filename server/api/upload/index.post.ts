@@ -70,6 +70,7 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
     let bytesWritten = 0
     let fileProcessed = false
     let fileLimitExceeded = false
+    let pipelinePromise: Promise<void> | null = null
 
     busboy.on('field', (name, value) => {
       if (name === 'category') {
@@ -111,7 +112,7 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
         writeStream.destroy()
       })
 
-      pipeline(stream, writeStream)
+      pipelinePromise = pipeline(stream, writeStream)
         .then(() => { fileProcessed = true })
         .catch((err) => {
           if (!fileLimitExceeded) reject(err)
@@ -119,6 +120,12 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
     })
 
     busboy.on('finish', async () => {
+      // Attendre que le fichier soit entièrement écrit sur le disque
+      // avant de vérifier fileProcessed (évite la race condition)
+      if (pipelinePromise) {
+        await pipelinePromise
+      }
+
       if (fileLimitExceeded) {
         // Nettoyer le fichier partiel
         const { unlink } = await import('node:fs/promises')
