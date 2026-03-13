@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
 
   const downloads = await prisma.download.findMany({
     where: { createdAt: { gte: startDate } },
-    select: { createdAt: true, magazineId: true },
+    select: { createdAt: true, magazineId: true, studyLevel: true },
   })
 
   // Agrégation par jour/mois
@@ -87,6 +87,18 @@ export default defineEventHandler(async (event) => {
     count: magazineCounts.get(m.id) || 0,
   })).sort((a, b) => b.count - a.count)
 
+  // Répartition par niveau d'étude
+  const levelCounts = new Map<string, number>()
+  for (const dl of downloads) {
+    if (dl.studyLevel) {
+      levelCounts.set(dl.studyLevel, (levelCounts.get(dl.studyLevel) || 0) + 1)
+    }
+  }
+
+  const byStudyLevel = Array.from(levelCounts.entries())
+    .map(([level, count]) => ({ level, count }))
+    .sort((a, b) => b.count - a.count)
+
   return {
     labels,
     datasets: [
@@ -96,5 +108,6 @@ export default defineEventHandler(async (event) => {
       },
     ],
     byMagazine,
+    byStudyLevel,
   }
 })

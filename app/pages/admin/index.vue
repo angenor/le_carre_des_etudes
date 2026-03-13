@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Line, Doughnut } from 'vue-chartjs'
+import { Line, Bar, Doughnut } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-
+  BarElement,
   ArcElement,
   Tooltip,
   Legend,
@@ -18,7 +18,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
-
+  BarElement,
   ArcElement,
   Tooltip,
   Legend,
@@ -112,6 +112,20 @@ const magazineChartData = computed(() => {
   }
 })
 
+const studyLevelChartData = computed(() => {
+  const items = downloadsStats.value?.byStudyLevel ?? []
+  return {
+    labels: items.map((s: any) => s.level),
+    datasets: [
+      {
+        label: 'Téléchargements',
+        data: items.map((s: any) => s.count),
+        backgroundColor: '#f59e0b',
+      },
+    ],
+  }
+})
+
 const lineOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -142,7 +156,17 @@ const doughnutOptions = {
   },
 }
 
-
+const barOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  indexAxis: 'y' as const,
+  plugins: {
+    legend: { display: false },
+  },
+  scales: {
+    x: { beginAtZero: true, ticks: { precision: 0 } },
+  },
+}
 </script>
 
 <template>
@@ -200,18 +224,33 @@ const doughnutOptions = {
       </div>
     </div>
 
-    <!-- Répartition par magazine -->
-    <div class="mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-      <h2 class="mb-4 text-base font-semibold text-gray-800">Par magazine</h2>
-      <div class="h-64">
-        <Doughnut
-          v-if="downloadsStats?.byMagazine?.length"
-          :data="magazineChartData"
-          :options="doughnutOptions"
-        />
-        <p v-else class="flex h-full items-center justify-center text-sm text-gray-400">
-          Aucune donnée disponible
-        </p>
+    <!-- Répartition par magazine + niveau d'étude -->
+    <div class="mb-6 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-4 text-base font-semibold text-gray-800">Par magazine</h2>
+        <div class="h-64">
+          <Doughnut
+            v-if="downloadsStats?.byMagazine?.length"
+            :data="magazineChartData"
+            :options="doughnutOptions"
+          />
+          <p v-else class="flex h-full items-center justify-center text-sm text-gray-400">
+            Aucune donnée disponible
+          </p>
+        </div>
+      </div>
+      <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-4 text-base font-semibold text-gray-800">Par niveau d'étude</h2>
+        <div class="h-64">
+          <Bar
+            v-if="downloadsStats?.byStudyLevel?.length"
+            :data="studyLevelChartData"
+            :options="barOptions"
+          />
+          <p v-else class="flex h-full items-center justify-center text-sm text-gray-400">
+            Aucune donnée disponible
+          </p>
+        </div>
       </div>
     </div>
 

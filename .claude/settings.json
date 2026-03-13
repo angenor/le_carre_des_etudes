@@ -25,7 +25,11 @@
       "Bash(ssh root@31.220.73.105 \"docker compose -f /opt/le_carre_des_etudes/docker-compose.yml exec -T app sh -c \"\"sqlite3 /app/data/production.db \\\\\"\"UPDATE HomepageImage SET imagePath=''/images/hero/hero_section.jpg'' WHERE slug=''hero_mobile'';\\\\\"\"\"\"\")",
       "Bash(brew list:*)",
       "Bash(sqlite3 dev.db \"SELECT id, name, version, pdfPath FROM Magazine;\")",
-      "Bash(sqlite3 dev.db \".schema Magazine\")"
+      "Bash(sqlite3 dev.db \".schema Magazine\")",
+      "Bash(pnpm prisma:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(./deploy.sh update:*)"
     ],
     "additionalDirectories": [
       "/tmp"
