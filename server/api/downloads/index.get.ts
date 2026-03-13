@@ -1,7 +1,7 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { prisma } from '../../utils/prisma'
 
-const VALID_SORT_FIELDS = ['fullName', 'contact', 'age', 'studyLevel', 'fieldOfStudy', 'createdAt'] as const
+const VALID_SORT_FIELDS = ['fullName', 'contact', 'studyLevel', 'createdAt'] as const
 type SortField = (typeof VALID_SORT_FIELDS)[number]
 
 export default defineEventHandler(async (event) => {
@@ -20,7 +20,6 @@ export default defineEventHandler(async (event) => {
         OR: [
           { fullName: { contains: search } },
           { contact: { contains: search } },
-          { fieldOfStudy: { contains: search } },
         ],
       }
     : {}

@@ -57,9 +57,7 @@ function exportCsv() {
 const columns = [
   { key: 'fullName', label: 'Nom' },
   { key: 'contact', label: 'Contact' },
-  { key: 'age', label: 'Âge' },
   { key: 'studyLevel', label: 'Niveau d\'étude' },
-  { key: 'fieldOfStudy', label: 'Filière' },
   { key: 'createdAt', label: 'Date' },
 ]
 </script>
@@ -85,7 +83,7 @@ const columns = [
         :value="searchInput"
         @input="onSearchInput(($event.target as HTMLInputElement).value)"
         type="text"
-        placeholder="Rechercher par nom, contact ou filière…"
+        placeholder="Rechercher par nom ou contact…"
         class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 sm:max-w-md"
       />
     </div>
@@ -110,16 +108,14 @@ const columns = [
         </thead>
         <tbody class="divide-y divide-gray-200">
           <tr v-if="!result?.data?.length">
-            <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-400">
+            <td colspan="5" class="px-4 py-8 text-center text-sm text-gray-400">
               Aucun téléchargement trouvé
             </td>
           </tr>
           <tr v-for="dl in result?.data" :key="dl.id" class="hover:bg-gray-50">
             <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">{{ dl.fullName }}</td>
             <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ dl.contact }}</td>
-            <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ dl.age }}</td>
             <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ dl.studyLevel }}</td>
-            <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ dl.fieldOfStudy }}</td>
             <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ formatDate(dl.createdAt) }}</td>
             <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ dl.magazine?.name ?? '—' }}</td>
           </tr>

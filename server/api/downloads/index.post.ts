@@ -32,17 +32,6 @@ export default defineEventHandler(async (event) => {
     errors.studyLevel = 'Niveau d\'étude invalide'
   }
 
-  const age = Number(body?.age)
-  if (!body?.age) {
-    errors.age = 'L\'âge est requis'
-  } else if (isNaN(age) || age < 15 || age > 99) {
-    errors.age = 'L\'âge doit être entre 15 et 99'
-  }
-
-  if (!body?.fieldOfStudy?.trim()) {
-    errors.fieldOfStudy = 'La filière est requise'
-  }
-
   if (!body?.magazineId) {
     errors.magazineId = 'Le magazine est requis'
   }
@@ -72,8 +61,6 @@ export default defineEventHandler(async (event) => {
       fullName: body.fullName.trim(),
       contact: body.contact.trim(),
       studyLevel: body.studyLevel,
-      age,
-      fieldOfStudy: body.fieldOfStudy.trim(),
       magazineId: magazine.id,
     },
   })

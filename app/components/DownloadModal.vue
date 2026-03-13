@@ -23,8 +23,6 @@ const form = reactive({
   fullName: '',
   contact: '',
   studyLevel: '',
-  age: '' as string | number,
-  fieldOfStudy: '',
 })
 
 const errors = reactive<Record<string, string>>({})
@@ -134,17 +132,6 @@ function validateForm(): boolean {
     errors.studyLevel = 'Le niveau d\'étude est requis'
   }
 
-  const age = Number(form.age)
-  if (!form.age) {
-    errors.age = 'L\'âge est requis'
-  } else if (isNaN(age) || age < 15 || age > 99) {
-    errors.age = 'L\'âge doit être entre 15 et 99'
-  }
-
-  if (!form.fieldOfStudy.trim()) {
-    errors.fieldOfStudy = 'La filière est requise'
-  }
-
   return Object.keys(errors).length === 0
 }
 
@@ -161,8 +148,6 @@ async function handleSubmit() {
         fullName: form.fullName.trim(),
         contact: form.contact.trim(),
         studyLevel: form.studyLevel,
-        age: Number(form.age),
-        fieldOfStudy: form.fieldOfStudy.trim(),
         magazineId: props.magazineId,
       },
     })
@@ -308,46 +293,6 @@ function handleOverlayClick(e: MouseEvent) {
                 </option>
               </select>
               <p v-if="errors.studyLevel" class="mt-1 text-xs text-red-400">{{ errors.studyLevel }}</p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <!-- Âge -->
-              <div>
-                <label for="dl-age" class="mb-1.5 block text-sm font-medium text-gray-300">
-                  Âge
-                </label>
-                <input
-                  id="dl-age"
-                  v-model="form.age"
-                  type="number"
-                  min="15"
-                  max="99"
-                  class="block w-full rounded-lg border bg-gray-800/60 px-3.5 py-2.5 text-sm text-white shadow-sm transition-all placeholder:text-gray-500 focus:outline-none focus:ring-2"
-                  :class="errors.age
-                    ? 'border-red-500/50 focus:ring-red-500/30'
-                    : 'border-white/10 focus:border-amber-500/50 focus:ring-amber-500/20'"
-                  placeholder="22"
-                />
-                <p v-if="errors.age" class="mt-1 text-xs text-red-400">{{ errors.age }}</p>
-              </div>
-
-              <!-- Filière -->
-              <div>
-                <label for="dl-fieldOfStudy" class="mb-1.5 block text-sm font-medium text-gray-300">
-                  Filière
-                </label>
-                <input
-                  id="dl-fieldOfStudy"
-                  v-model="form.fieldOfStudy"
-                  type="text"
-                  class="block w-full rounded-lg border bg-gray-800/60 px-3.5 py-2.5 text-sm text-white shadow-sm transition-all placeholder:text-gray-500 focus:outline-none focus:ring-2"
-                  :class="errors.fieldOfStudy
-                    ? 'border-red-500/50 focus:ring-red-500/30'
-                    : 'border-white/10 focus:border-amber-500/50 focus:ring-amber-500/20'"
-                  placeholder="Droit"
-                />
-                <p v-if="errors.fieldOfStudy" class="mt-1 text-xs text-red-400">{{ errors.fieldOfStudy }}</p>
-              </div>
             </div>
 
             <!-- Erreur globale -->

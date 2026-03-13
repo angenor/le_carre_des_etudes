@@ -21,15 +21,13 @@ export default defineEventHandler(async (event) => {
     'Content-Disposition': `attachment; filename="telechargements-${today}.csv"`,
   })
 
-  const header = '"Nom complet","Contact","Âge","Niveau d\'étude","Filière","Magazine","Date"'
+  const header = '"Nom complet","Contact","Niveau d\'étude","Magazine","Date"'
   const rows = downloads.map((dl) => {
     const date = dl.createdAt.toISOString().slice(0, 10)
     return [
       escapeCsv(dl.fullName),
       escapeCsv(dl.contact),
-      String(dl.age),
       escapeCsv(dl.studyLevel),
-      escapeCsv(dl.fieldOfStudy),
       escapeCsv(dl.magazine.name),
       escapeCsv(date),
     ].join(',')

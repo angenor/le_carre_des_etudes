@@ -34,8 +34,8 @@ model Download {
   fullName     String
   contact      String
   studyLevel   String
-  age          Int
-  fieldOfStudy String
+  age          Int?
+  fieldOfStudy String?
   magazineId   Int
   magazine     Magazine @relation(fields: [magazineId], references: [id])
   createdAt    DateTime @default(now())
