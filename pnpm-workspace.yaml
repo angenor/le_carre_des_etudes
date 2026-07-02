@@ -1,1 +1,7 @@
-onlyBuiltDependencies: prisma
+onlyBuiltDependencies:
+  - prisma
+  - '@prisma/engines'
+  - esbuild
+  - '@parcel/watcher'
+  - better-sqlite3
+  - sharp

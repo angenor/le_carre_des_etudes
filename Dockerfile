@@ -1,7 +1,7 @@
 # ---- Base ----
 FROM node:22-slim AS base
 RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
 WORKDIR /app
 
 # ---- Dependencies ----

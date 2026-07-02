@@ -5,6 +5,7 @@ const navLinks = [
   { label: 'Accueil', to: '/' },
   { label: 'Magazine', to: '/magazine' },
   { label: 'Rubriques', to: '/rubriques' },
+  { label: 'Résultats', to: '/resultats' },
   { label: 'Partenaires', to: '/partenaires' },
 ]
 
