@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // -------------------------------------------------------------------------
 // Fenêtre flottante « À la une » — renvoie vers la page des résultats.
-// Composant éphémère (SCHOLARSHIP EXAM 2025).
+// Composant éphémère (ADMISSION TEST 2026).
 // -------------------------------------------------------------------------
-const STORAGE_KEY = 'alaune-scholarship-2025-ferme'
+const STORAGE_KEY = 'alaune-admission-test-2026-ferme'
 
 const visible = ref(false)
 
@@ -60,7 +60,7 @@ function fermer() {
 
           <!-- Contenu -->
           <p class="mt-3 text-base font-bold leading-snug text-white">
-            Résultats SCHOLARSHIP EXAM 2025
+            Résultats ADMISSION TEST 2026
           </p>
           <span class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-400">
             Voir les résultats

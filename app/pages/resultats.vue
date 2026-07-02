@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // -------------------------------------------------------------------------
-// Résultats SCHOLARSHIP EXAM 2025 — page éphémère, données en dur (urgence).
+// Résultats ADMISSION TEST 2026 — page éphémère, données en dur (urgence).
 // -------------------------------------------------------------------------
 useHead({
-  title: 'Résultats SCHOLARSHIP EXAM 2025 — Le Carré des Études',
+  title: 'Résultats ADMISSION TEST 2026 — Le Carré des Études',
   meta: [
-    { name: 'description', content: 'Liste officielle des admis au SCHOLARSHIP EXAM 2025.' },
+    { name: 'description', content: 'Liste officielle des admis à l\'ADMISSION TEST 2026.' },
   ],
 })
 
@@ -266,9 +266,9 @@ const medailles = ['🥇', '🥈', '🥉']
           Résultats officiels
         </span>
         <h1 class="mt-6 text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-          SCHOLARSHIP
-          <span class="bg-linear-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent">EXAM</span>
-          2025
+          ADMISSION
+          <span class="bg-linear-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent">TEST</span>
+          2026
         </h1>
         <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-gray-400 sm:text-lg">
           Liste officielle des admis. Félicitations à toutes et à tous&nbsp;!
@@ -366,7 +366,7 @@ const medailles = ['🥇', '🥈', '🥉']
         </div>
 
         <p class="mt-6 text-center text-xs text-gray-600">
-          Le Carré des Études — SCHOLARSHIP EXAM 2025.
+          Le Carré des Études — ADMISSION TEST 2026.
         </p>
       </div>
     </section>
