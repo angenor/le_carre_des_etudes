@@ -107,15 +107,19 @@ ENDSSH
 # Deploiement complet
 deploy() {
     echo -e "${GREEN}[1/3] Mise a jour du code depuis GitHub...${NC}"
-    ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
+    ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH || { echo -e "${RED}Echec de la mise a jour du code.${NC}"; exit 1; }
+        set -e
         cd ${REMOTE_DIR}
         git fetch origin
         git checkout ${DEPLOY_BRANCH} 2>/dev/null || git checkout -b ${DEPLOY_BRANCH} origin/${DEPLOY_BRANCH}
         git reset --hard origin/${DEPLOY_BRANCH}
+        git clean -fd app/ server/ prisma/
+        echo "Commit deploye : \$(git log -1 --oneline)"
 ENDSSH
 
     echo -e "${GREEN}[2/3] Build et demarrage des conteneurs...${NC}"
-    ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
+    ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH || { echo -e "${RED}Echec du build.${NC}"; exit 1; }
+        set -e
         cd ${REMOTE_DIR}
 
         if [ ! -f ".env" ]; then
@@ -152,9 +156,19 @@ ENDSSH
 # Mise a jour rapide
 update() {
     echo -e "${GREEN}Mise a jour du code et redemarrage...${NC}"
-    ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
+    ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH || { echo -e "${RED}Echec de la mise a jour.${NC}"; exit 1; }
+        set -e
         cd ${REMOTE_DIR}
-        git pull origin ${DEPLOY_BRANCH}
+
+        # Le serveur est une copie jetable : on force l'alignement sur origin.
+        # (un simple 'git pull' echoue en silence si des fichiers ont ete
+        #  modifies directement en production)
+        git fetch origin
+        git reset --hard origin/${DEPLOY_BRANCH}
+        git clean -fd app/ server/ prisma/
+
+        echo "Commit deploye : \$(git log -1 --oneline)"
+
         docker compose build
         docker compose up -d
 ENDSSH
