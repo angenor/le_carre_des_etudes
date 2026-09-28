@@ -37,6 +37,28 @@ setup_ssh() {
     echo -e "${GREEN}Acces SSH sans mot de passe configure.${NC}"
 }
 
+# Garantit un NUXT_SESSION_SECRET (32 caracteres min.) dans le .env du serveur.
+# Sans lui, l'app refuse de demarrer (server/utils/session.ts). Idempotent :
+# un secret valide n'est jamais modifie (sinon tous les admins seraient deconnectes).
+ensure_session_secret() {
+    ssh ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH' || { echo -e "${RED}Echec de la verification de NUXT_SESSION_SECRET.${NC}"; exit 1; }
+        set -e
+        cd /opt/le_carre_des_etudes
+        [ -f .env ] || exit 0
+
+        if grep -Eq '^NUXT_SESSION_SECRET="?[^"]{32,}' .env; then
+            echo "NUXT_SESSION_SECRET present."
+        else
+            cp -p .env ".env.bak-$(date +%Y%m%d-%H%M%S)"
+            sed -i '/^NUXT_SESSION_SECRET=/d' .env
+            [ -n "$(tail -c1 .env)" ] && echo >> .env
+            echo "NUXT_SESSION_SECRET=\"$(openssl rand -hex 32)\"" >> .env
+            chmod 600 .env
+            echo "NUXT_SESSION_SECRET absent ou trop court : secret genere et ajoute au .env."
+        fi
+ENDSSH
+}
+
 # Premier setup du serveur
 setup() {
     setup_ssh
@@ -83,13 +105,12 @@ ENDSSH
 
         if [ ! -f ".env" ]; then
             ADMIN_PWD=$(openssl rand -hex 16)
-            SESSION_SECRET=$(openssl rand -hex 24)
             cat > .env << EOF
 PORT=3000
 DATABASE_URL="file:/app/data/production.db"
 ADMIN_PASSWORD="${ADMIN_PWD}"
-NUXT_SESSION_SECRET="${SESSION_SECRET}"
 EOF
+            chmod 600 .env
             echo ""
             echo "Fichier .env cree."
             echo "  ADMIN_PASSWORD: ${ADMIN_PWD}"
@@ -99,6 +120,7 @@ EOF
             echo ".env existe deja, pas de modification."
         fi
 ENDSSH
+    ensure_session_secret
 
     echo -e "${GREEN}=== Setup termine ===${NC}"
     echo ""
@@ -118,6 +140,7 @@ deploy() {
         git clean -fd app/ server/ prisma/
         echo "Commit deploye : \$(git log -1 --oneline)"
 ENDSSH
+    ensure_session_secret
 
     echo -e "${GREEN}[2/3] Build et demarrage des conteneurs...${NC}"
     ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH || { echo -e "${RED}Echec du build.${NC}"; exit 1; }
@@ -158,6 +181,7 @@ ENDSSH
 # Mise a jour rapide
 update() {
     echo -e "${GREEN}Mise a jour du code et redemarrage...${NC}"
+    ensure_session_secret
     ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH || { echo -e "${RED}Echec de la mise a jour.${NC}"; exit 1; }
         set -e
         cd ${REMOTE_DIR}
@@ -197,7 +221,8 @@ logs() {
 
 # Redemarrer
 restart() {
-    ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DIR} && docker compose restart"
+    # up --force-recreate et non 'restart' : 'restart' ne relit pas le .env
+    ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DIR} && docker compose up -d --force-recreate"
 }
 
 # Arreter
