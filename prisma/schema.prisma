@@ -252,3 +252,10 @@ model SalmSchoolRegistration {
   @@index([editionId, status])
   @@index([editionId, createdAt])
 }
+
+// Réglages globaux du site (une seule ligne, id = 1)
+model SiteSettings {
+  id              Int      @id @default(1)
+  maintenanceMode Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+}

@@ -12,6 +12,29 @@ watchEffect(() => {
 
 const sidebarOpen = ref(false)
 
+// Mode maintenance du site entier
+const { status: siteStatus, refresh: refreshSiteStatus } = useSiteStatus()
+await refreshSiteStatus()
+const maintenance = computed(() => !!siteStatus.value?.maintenance)
+const maintenanceSaving = ref(false)
+
+async function toggleMaintenance() {
+  const enable = !maintenance.value
+  if (enable && !confirm('Activer le mode maintenance ? Les visiteurs ne verront plus que la page de maintenance ; vous gardez l\'accès au site en étant connecté.')) return
+  maintenanceSaving.value = true
+  try {
+    const { maintenance: value } = await $fetch<{ maintenance: boolean }>('/api/admin/site/maintenance', {
+      method: 'PATCH',
+      body: { enabled: enable },
+    })
+    siteStatus.value = { maintenance: value, admin: true }
+  } catch {
+    alert('Erreur lors du changement du mode maintenance')
+  } finally {
+    maintenanceSaving.value = false
+  }
+}
+
 const navItems = [
   { label: 'Tableau de bord', to: '/admin', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
   { label: 'Magazines', to: '/admin/magazines', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
@@ -79,6 +102,35 @@ function isActive(to: string) {
           {{ item.label }}
         </NuxtLink>
       </nav>
+
+      <!-- Mode maintenance -->
+      <div class="border-t border-gray-800 px-3 py-4">
+        <div class="flex items-center justify-between gap-3 rounded-lg px-3 py-2" :class="maintenance ? 'bg-amber-500/10' : ''">
+          <div>
+            <p id="maintenance-label" class="text-sm font-medium" :class="maintenance ? 'text-amber-400' : 'text-gray-300'">Mode maintenance</p>
+            <p class="text-xs text-gray-500">{{ maintenance ? 'Site fermé au public' : 'Site en ligne' }}</p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            :aria-checked="maintenance ? 'true' : 'false'"
+            aria-labelledby="maintenance-label"
+            :disabled="maintenanceSaving"
+            class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 focus-visible:outline-none disabled:opacity-50"
+            :class="maintenance ? 'bg-amber-500' : 'bg-gray-700'"
+            @click="toggleMaintenance"
+          >
+            <span class="inline-block size-5 rounded-full bg-white shadow transition-transform" :class="maintenance ? 'translate-x-5' : 'translate-x-0.5'" />
+          </button>
+        </div>
+        <NuxtLink
+          v-if="maintenance"
+          to="/"
+          class="mt-2 block px-3 text-xs text-gray-400 underline underline-offset-2 hover:text-white"
+        >
+          Voir le site (aperçu administrateur)
+        </NuxtLink>
+      </div>
 
       <!-- Déconnexion -->
       <div class="border-t border-gray-800 px-3 py-4">

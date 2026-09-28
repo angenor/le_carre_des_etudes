@@ -56,6 +56,7 @@ Standard Nuxt 4 layout with the `app/` directory convention:
 - `app/assets/css/` — stylesheets
 - `server/` — server routes and utilities (Nitro)
 - `shared/` — code commun app + serveur (dossier Nuxt 4, auto-importé côté app, `#shared/...` côté serveur) : constantes et normalisations (`STUDY_LEVELS`, téléphone ivoirien, validateurs SALM), types
+- Mode maintenance du site entier : interrupteur dans la barre latérale admin (`SiteSettings.maintenanceMode`). `server/middleware/maintenance.ts` renvoie les visiteurs vers `/maintenance` (503) et les API publiques en 503 ; `app/middleware/maintenance.global.ts` couvre la navigation côté client. Les admins connectés voient le site avec un bandeau d'aperçu.
 - Module SALM : `app/components/salm/` (kebab-case → `<Salm…>`), `app/pages/salm/`, `server/api/salm/` (public), `server/api/admin/salm/` (protégé toutes méthodes par `server/middleware/admin.ts`). Polices Montserrat/DM Sans/Yellowtail auto-hébergées, déclarées dans `app/assets/css/salm.css` et importées **uniquement** par les composants SALM (ne pas l'ajouter à `css` de `nuxt.config.ts`). Polices du badge PDF dans `server/assets/fonts/salm/`
 
 ## Conventions

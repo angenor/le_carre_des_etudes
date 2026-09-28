@@ -25,10 +25,18 @@ export function useAdmin() {
     checked.value = true
   }
 
-  function logout(): void {
+  async function logout(): Promise<void> {
+    try {
+      await $fetch('/api/auth/logout', { method: 'POST' })
+    }
+    catch {
+      // la redirection vers la connexion a lieu quoi qu'il arrive
+    }
     isLoggedIn.value = false
     checked.value = false
-    navigateTo('/admin/login')
+    // L'aperçu du site en maintenance n'est plus autorisé
+    useState('site-status').value = null
+    await navigateTo('/admin/login')
   }
 
   return { isLoggedIn, checked, login, logout, checkSession }
