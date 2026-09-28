@@ -21,7 +21,7 @@ pnpm postinstall  # Run nuxt prepare (auto-runs after pnpm install)
 pnpm prisma migrate dev     # Apply migrations in development
 pnpm prisma migrate deploy  # Apply migrations in production
 pnpm prisma generate        # Regenerate Prisma client
-pnpm prisma db seed         # Contenus idempotents (éditions SALM 2026/2027) — prisma/seed/salm-data.ts
+pnpm prisma db seed         # Crée les éditions SALM absentes (2026/2027) ; n'écrase jamais une édition existante — prisma/seed/salm-data.ts
 ```
 
 No test runner is configured yet.
@@ -58,6 +58,7 @@ Standard Nuxt 4 layout with the `app/` directory convention:
 - `shared/` — code commun app + serveur (dossier Nuxt 4, auto-importé côté app, `#shared/...` côté serveur) : constantes et normalisations (`STUDY_LEVELS`, téléphone ivoirien, validateurs SALM), types
 - Mode maintenance du site entier : interrupteur dans la barre latérale admin (`SiteSettings.maintenanceMode`). `server/middleware/maintenance.ts` renvoie les visiteurs vers `/maintenance` (503) et les API publiques en 503 ; `app/middleware/maintenance.global.ts` couvre la navigation côté client. Les admins connectés voient le site avec un bandeau d'aperçu.
 - Module SALM : `app/components/salm/` (kebab-case → `<Salm…>`), `app/pages/salm/`, `server/api/salm/` (public), `server/api/admin/salm/` (protégé toutes méthodes par `server/middleware/admin.ts`). Polices Montserrat/DM Sans/Yellowtail auto-hébergées, déclarées dans `app/assets/css/salm.css` et importées **uniquement** par les composants SALM (ne pas l'ajouter à `css` de `nuxt.config.ts`). Polices du badge PDF dans `server/assets/fonts/salm/`
+- Back-office SALM des contenus (007) : menu « SALM » › Inscriptions, Éditions (`/admin/salm/editions`, fiche en sections `?section=`), Statistiques (`/admin/salm/statistiques`) ; aperçu d'une édition non publiée sur `/admin/salm/editions/:id/apercu` (même composant `SalmEditionView` que `/salm`). Logique serveur dans `server/utils/salm-content.ts` (validateurs, ordre, fiche), `salm-lifecycle.ts` (publier, archiver, supprimer, dupliquer), `salm-files.ts`, `salm-stats.ts`. Catégorie d'upload `salm` de `POST /api/upload` : JPEG, PNG, WebP de 5 Mo au plus, PDF de 10 Mo au plus, contenu réel contrôlé ; fichiers dans `public/uploads/salm/`, supprimés quand plus aucune ligne SALM ne les référence (jamais les images du seed `public/images/salm/`)
 
 ## Conventions
 
@@ -108,7 +109,7 @@ Deploy script: `deploy.sh` (Docker-based, branch `main`)
 ./deploy.sh status         # État du serveur
 ./deploy.sh ssl <domaine>  # Configurer SSL avec Let's Encrypt
 ./deploy.sh backup         # Sauvegarder la base SQLite en local (dans backups/)
-./deploy.sh seed           # Charger/mettre à jour les contenus SALM (npx prisma db seed dans le conteneur)
+./deploy.sh seed           # Crée les éditions SALM absentes ; n'écrase jamais une édition existante (npx prisma db seed dans le conteneur)
 ./deploy.sh connect        # Se connecter en SSH au serveur
 ```
 
@@ -117,5 +118,6 @@ Deploy script: `deploy.sh` (Docker-based, branch `main`)
 - Site accessible sur `http://<IP>:3000` (ou HTTPS après `ssl`)
 
 ## Recent Changes
+- 007-salm-admin-contenus: Back-office SALM des éditions et des contenus (publication unique, aperçu, duplication), statistiques et encart du tableau de bord ; seed en création seule ; aucune dépendance ni migration
 - 006-salm-inscriptions: Module SALM (page /salm, inscriptions, badge PDF, back-office) ; ajout de pdf-lib, @pdf-lib/fontkit, qrcode, tsx
 - 001-magazine-landing-site: Added TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7

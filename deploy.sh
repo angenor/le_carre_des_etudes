@@ -307,7 +307,7 @@ case "$1" in
         echo "  setup          - Premier setup du serveur (Docker, clone, .env)"
         echo "  deploy         - Deploiement complet (pull, build, restart)"
         echo "  update         - Mise a jour rapide (pull, rebuild)"
-        echo "  seed           - Charger/mettre a jour les contenus (editions SALM)"
+        echo "  seed           - Initialiser les éditions SALM absentes (n'écrase jamais le contenu géré dans le back-office)"
         echo "  logs [service] - Voir les logs"
         echo "  restart        - Redemarrer les conteneurs"
         echo "  stop           - Arreter les conteneurs"
@@ -319,7 +319,7 @@ case "$1" in
         echo "Exemples :"
         echo "  $0 setup                # Premier setup"
         echo "  $0 deploy               # Deployer l'application"
-        echo "  $0 seed                 # Apres deploy : contenus SALM"
+        echo "  $0 seed                 # Base neuve : éditions SALM initiales"
         echo "  $0 logs app             # Voir les logs de l'app"
         echo "  $0 ssl mondomaine.com   # Configurer HTTPS"
         exit 1

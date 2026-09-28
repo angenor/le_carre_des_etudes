@@ -173,8 +173,19 @@ export interface SalmAdminEdition {
   purgedStats: SalmPurgedStats | null
 }
 
+export interface SalmAdminEditionListItem extends SalmAdminEdition {
+  venue: string | null
+  city: string
+  firstDay: string | null
+  lastDay: string | null
+  dayCount: number
+  yearLocked: boolean
+  canDelete: boolean
+  canPublish: boolean
+}
+
 export interface SalmAdminEditionsResponse {
-  data: SalmAdminEdition[]
+  data: SalmAdminEditionListItem[]
   defaultEditionId: number | null
 }
 
@@ -213,3 +224,108 @@ export interface SalmAdminSchoolDetail {
   createdAt: string
   updatedAt: string
 }
+
+// ---- Back-office des éditions et des contenus (specs/007-salm-admin-contenus/contracts/admin-api.md) ----
+
+export type SalmAdminWarning = 'DUPLICATE_VIDEO'
+
+export interface SalmAdminSlot {
+  id: number
+  startTime: string
+  endTime: string
+  title: string
+  kind: string
+  description: string | null
+  isHighlighted: boolean
+}
+
+export interface SalmAdminDay {
+  id: number
+  date: string
+  label: string
+  opensAt: string
+  closesAt: string
+  slots: SalmAdminSlot[]
+}
+
+export interface SalmAdminHighlight {
+  id: number
+  title: string
+  imagePath: string
+  imageAlt: string
+}
+
+export interface SalmAdminVideo {
+  id: number
+  youtubeUrl: string
+  youtubeId: string | null
+  title: string | null
+  guest: string | null
+  institution: string | null
+}
+
+export interface SalmAdminPhoto {
+  id: number
+  imagePath: string
+  alt: string
+  caption: string | null
+}
+
+export interface SalmAdminStandType {
+  id: number
+  name: string
+  description: string | null
+  priceLabel: string | null
+  isVisible: boolean
+  schoolCount: number
+}
+
+export interface SalmAdminEditionDetail {
+  id: number
+  year: number
+  status: 'draft' | 'published' | 'archived' | string
+  salonName: string
+  organizerName: string
+  city: string
+  venue: string | null
+  tagline: string | null
+  whyTitle: string | null
+  whyText: string | null
+  audiences: SalmAudience[]
+  contacts: SalmContact[]
+  poster: { path: string; alt: string | null } | null
+  programPdfPath: string | null
+  recap: { youtubeUrl: string | null; youtubeId: string | null; posterPath: string | null }
+  days: SalmAdminDay[]
+  highlights: SalmAdminHighlight[]
+  videos: SalmAdminVideo[]
+  photos: SalmAdminPhoto[]
+  standTypes: SalmAdminStandType[]
+  counts: { students: number; schools: number }
+  yearLocked: boolean
+  canDelete: boolean
+  canPublish: boolean
+  ended: boolean
+  registrationOpen: { students: boolean; schools: boolean }
+  previousEdition: { id: number; year: number } | null
+  nextEditionYear: number
+}
+
+export interface SalmAdminStatsBlock {
+  source: 'live' | 'purged'
+  purgedAt: string | null
+  stats: SalmPurgedStats
+}
+
+export interface SalmAdminStats extends SalmAdminStatsBlock {
+  edition: { id: number; year: number; opensAtIso: string | null }
+  standTypes: { name: string; isVisible: boolean }[]
+  comparison: (SalmAdminStatsBlock & { year: number; opensAtIso: string | null }) | null
+}
+
+export type SalmAdminSummary = {
+  year: number
+  students: number
+  schools: number
+  comparison: { year: number; students: number; schools: number } | null
+} | null

@@ -36,4 +36,5 @@ Thumbs.db
 /public/uploads/magazines/*
 /public/uploads/rubriques/*
 /public/uploads/partenaires/*
+/public/uploads/salm/*
 !.gitkeep

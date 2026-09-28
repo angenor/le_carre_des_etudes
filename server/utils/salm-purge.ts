@@ -2,6 +2,7 @@ import { createError } from 'h3'
 import { prisma } from './prisma'
 import { getEditionTimeline } from './salm-edition'
 import type { SalmPurgedStats } from '#shared/types/salm'
+import type { Prisma } from '../../app/generated/prisma/client'
 
 // Suppression des données personnelles d'une édition archivée (FR-065b, research R16).
 
@@ -11,14 +12,17 @@ function conflict(code: string) {
   return createError({ statusCode: 409, message: code, data: { code } })
 }
 
-/** Compteurs agrégés anonymes, calculés juste avant la suppression. */
-export async function computePurgedStats(tx: Tx, editionId: number): Promise<SalmPurgedStats> {
+/**
+ * Compteurs agrégés anonymes : calculés juste avant la suppression, et pour les statistiques en direct
+ * (specs/007, research R11). Les exposants ne comptent que les inscriptions non annulées (FR-192).
+ */
+export async function computePurgedStats(tx: Tx | typeof prisma, editionId: number): Promise<SalmPurgedStats> {
   const [byLevel, students, byStatus, byStand, schools] = await Promise.all([
     tx.salmStudentRegistration.groupBy({ by: ['studyLevel'], where: { editionId }, _count: { _all: true } }),
     tx.salmStudentRegistration.findMany({ where: { editionId }, select: { createdAt: true } }),
     tx.salmSchoolRegistration.groupBy({ by: ['status'], where: { editionId }, _count: { _all: true } }),
     tx.salmSchoolRegistration.groupBy({ by: ['standTypeId'], where: { editionId }, _count: { _all: true } }),
-    tx.salmSchoolRegistration.findMany({ where: { editionId }, select: { exhibitors: true } }),
+    tx.salmSchoolRegistration.findMany({ where: { editionId }, select: { exhibitors: true, status: true } }),
   ])
   const standNames = await tx.salmStandType.findMany({
     where: { id: { in: byStand.map((s) => s.standTypeId) } },
@@ -46,7 +50,9 @@ export async function computePurgedStats(tx: Tx, editionId: number): Promise<Sal
         byStand.map((s) => [standNames.find((n) => n.id === s.standTypeId)?.name ?? String(s.standTypeId), s._count._all]),
       ),
       byStatus: statusCounts,
-      exhibitors: schools.reduce((n, s) => n + (Array.isArray(s.exhibitors) ? s.exhibitors.length : 0), 0),
+      exhibitors: schools
+        .filter((s) => s.status !== 'annulee')
+        .reduce((n, s) => n + (Array.isArray(s.exhibitors) ? s.exhibitors.length : 0), 0),
     },
   }
 }
@@ -78,7 +84,7 @@ export function purgeEditionPersonalData(editionId: number) {
     const purgedAt = new Date()
     await tx.salmEdition.update({
       where: { id: editionId },
-      data: { personalDataPurgedAt: purgedAt, purgedStats },
+      data: { personalDataPurgedAt: purgedAt, purgedStats: purgedStats as unknown as Prisma.InputJsonValue },
     })
     return { purgedAt: purgedAt.toISOString(), deleted: { students: students.count, schools: schools.count }, purgedStats }
   })

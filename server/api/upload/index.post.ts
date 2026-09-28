@@ -1,17 +1,26 @@
 import { defineEventHandler, createError, setResponseStatus, getRequestHeaders, type H3Event } from 'h3'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, open, rename, stat, unlink } from 'node:fs/promises'
 import { createWriteStream } from 'node:fs'
 import { join, extname } from 'node:path'
-import { Readable } from 'node:stream'
+import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import Busboy from 'busboy'
 import sharp from 'sharp'
 
-const ALLOWED_CATEGORIES = ['magazines', 'rubriques', 'partenaires', 'homepage'] as const
+const ALLOWED_CATEGORIES = ['magazines', 'rubriques', 'partenaires', 'homepage', 'salm'] as const
 type Category = typeof ALLOWED_CATEGORIES[number]
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.tiff']
 const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50 Mo
+
+// Catégorie `salm` (specs/007-salm-admin-contenus, research R2) : contenu réel contrôlé, pas d'image OG.
+const SALM_MAX_UPLOAD = 10 * 1024 * 1024 // 10 Mo
+const SALM_MAX_IMAGE = 5 * 1024 * 1024 // 5 Mo
+const SALM_IMAGE_FORMATS: Record<string, string> = { jpeg: '.jpg', png: '.png', webp: '.webp' }
+
+function salmError(statusCode: number, code: string) {
+  return createError({ statusCode, message: code, data: { code } })
+}
 
 /**
  * Nettoie un nom de fichier : supprime les caractères spéciaux,
@@ -48,6 +57,7 @@ interface ParsedUpload {
   filename: string
   filePath: string
   category: string
+  kind: string
   bytesWritten: number
 }
 
@@ -64,17 +74,22 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
     })
 
     let category = ''
+    let kind = ''
     let filename = ''
     let filePath = ''
     let uploadDir = ''
     let bytesWritten = 0
     let fileProcessed = false
     let fileLimitExceeded = false
+    let salmLimitExceeded = false
     let pipelinePromise: Promise<void> | null = null
 
     busboy.on('field', (name, value) => {
       if (name === 'category') {
         category = value.trim()
+      }
+      if (name === 'kind') {
+        kind = value.trim()
       }
     })
 
@@ -112,7 +127,19 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
         writeStream.destroy()
       })
 
-      pipelinePromise = pipeline(stream, writeStream)
+      // Limite de 10 Mo pour `salm` (catégorie envoyée avant le fichier) : l'excédent est écarté
+      // sans interrompre la lecture de la requête.
+      const cap = category === 'salm' ? SALM_MAX_UPLOAD : Infinity
+      let capped = 0
+      const limiter = new Transform({
+        transform(chunk: Buffer, _encoding, callback) {
+          capped += chunk.length
+          if (capped > cap) salmLimitExceeded = true
+          callback(null, salmLimitExceeded ? undefined : chunk)
+        },
+      })
+
+      pipelinePromise = pipeline(stream, limiter, writeStream)
         .then(() => { fileProcessed = true })
         .catch((err) => {
           if (!fileLimitExceeded) reject(err)
@@ -126,9 +153,13 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
         await pipelinePromise
       }
 
+      if (salmLimitExceeded || (fileLimitExceeded && category === 'salm')) {
+        try { await unlink(filePath) } catch { /* ignore */ }
+        return reject(salmError(413, 'FILE_TOO_LARGE'))
+      }
+
       if (fileLimitExceeded) {
         // Nettoyer le fichier partiel
-        const { unlink } = await import('node:fs/promises')
         try { await unlink(filePath) } catch { /* ignore */ }
         return reject(createError({
           statusCode: 413,
@@ -151,7 +182,6 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
       }
 
       if (!ALLOWED_CATEGORIES.includes(category as Category)) {
-        const { unlink } = await import('node:fs/promises')
         try { await unlink(filePath) } catch { /* ignore */ }
         return reject(createError({
           statusCode: 400,
@@ -163,10 +193,9 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
       uploadDir = join(process.cwd(), 'public', 'uploads', category)
       await mkdir(uploadDir, { recursive: true })
       const finalPath = join(uploadDir, filename)
-      const { rename } = await import('node:fs/promises')
       await rename(filePath, finalPath)
 
-      resolve({ filename, filePath: finalPath, category, bytesWritten })
+      resolve({ filename, filePath: finalPath, category, kind, bytesWritten })
     })
 
     busboy.on('error', reject)
@@ -186,8 +215,61 @@ export default defineEventHandler(async (event) => {
   return await handleUpload(event)
 })
 
+/**
+ * Contrôles de la catégorie `salm` : format réel et poids. Renvoie le nom définitif du fichier
+ * (extension déduite du contenu, sans `_`, pour respecter les chemins acceptés par les contenus SALM).
+ * Un fichier refusé est supprimé.
+ */
+async function checkSalmUpload(parsed: ParsedUpload): Promise<string> {
+  const reject = async (statusCode: number, code: string) => {
+    try { await unlink(parsed.filePath) } catch { /* ignore */ }
+    return salmError(statusCode, code)
+  }
+  const { size } = await stat(parsed.filePath)
+  const ext = extname(parsed.filename)
+  const base = parsed.filename.slice(0, parsed.filename.length - ext.length).replace(/_/g, '-')
+  let finalExt: string
+
+  if (parsed.kind === 'pdf') {
+    if (size > SALM_MAX_UPLOAD) throw await reject(413, 'FILE_TOO_LARGE')
+    const handle = await open(parsed.filePath, 'r')
+    const head = Buffer.alloc(5)
+    try { await handle.read(head, 0, 5, 0) } finally { await handle.close() }
+    if (head.toString('latin1') !== '%PDF-') throw await reject(415, 'UNSUPPORTED_FORMAT')
+    finalExt = '.pdf'
+  }
+  else if (!parsed.kind || parsed.kind === 'image') {
+    if (size > SALM_MAX_IMAGE) throw await reject(413, 'FILE_TOO_LARGE')
+    let format: string | undefined
+    try {
+      format = (await sharp(parsed.filePath).metadata()).format
+    }
+    catch {
+      throw await reject(422, 'CORRUPTED_FILE')
+    }
+    const imageExt = format ? SALM_IMAGE_FORMATS[format] : undefined
+    if (!imageExt) throw await reject(415, 'UNSUPPORTED_FORMAT')
+    finalExt = imageExt
+  }
+  else {
+    throw await reject(400, 'INVALID_KIND')
+  }
+
+  const filename = `${base}${finalExt}`
+  if (filename !== parsed.filename) {
+    await rename(parsed.filePath, join(process.cwd(), 'public', 'uploads', 'salm', filename))
+  }
+  return filename
+}
+
 async function handleUpload(event: H3Event) {
   const parsed = await parseMultipart(event)
+
+  if (parsed.category === 'salm') {
+    const filename = await checkSalmUpload(parsed)
+    setResponseStatus(event, 201)
+    return { path: `/uploads/salm/${filename}`, ogPath: null }
+  }
 
   const publicPath = `/uploads/${parsed.category}/${parsed.filename}`
 

@@ -1,6 +1,8 @@
-// Contenus des éditions SALM, repris de documentations/brouillons/ et de la maquette
-// (documentations/SALM/maquette/page-desktop.dc.html). Jusqu'à la feature B (administration
-// des contenus), modifier ce fichier puis relancer `pnpm prisma db seed` (ou `./deploy.sh seed`).
+// Contenus initiaux des éditions SALM, repris de documentations/brouillons/ et de la maquette
+// (documentations/SALM/maquette/page-desktop.dc.html). Ce fichier initialise une base neuve :
+// `pnpm prisma db seed` (ou `./deploy.sh seed`) ne crée que les éditions absentes. Une fois une
+// édition créée, son contenu se gère dans le back-office (« SALM › Éditions ») et le seed ne la
+// modifie plus.
 
 export interface SeedSlot {
   startTime: string

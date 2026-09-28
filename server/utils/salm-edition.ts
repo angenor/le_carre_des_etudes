@@ -1,8 +1,10 @@
 import { prisma } from './prisma'
 import { formatHour, parseYoutubeId } from '#shared/utils/salm'
+import type { Prisma } from '../../app/generated/prisma/client'
 import type {
   SalmAudience,
   SalmContact,
+  SalmEditionResponse,
   SalmPreviousEdition,
   SalmPublicEdition,
   SalmTimeline,
@@ -125,12 +127,17 @@ export function asAudiences(value: unknown): SalmAudience[] {
 }
 
 /** Contenu complet de l'édition publiée pour `GET /api/salm/edition`. */
-export async function getPublicEditionPayload(): Promise<{
-  edition: SalmPublicEdition | null
-  previous: SalmPreviousEdition | null
-}> {
+export function getPublicEditionPayload(): Promise<SalmEditionResponse> {
+  return loadEditionPayload({ status: 'published' })
+}
+
+/**
+ * Contenu public d'une édition : l'édition publiée (`GET /api/salm/edition`) ou n'importe quelle
+ * édition pour l'aperçu du back-office (`GET /api/admin/salm/editions/:id/preview`, research R6).
+ */
+export async function loadEditionPayload(where: Prisma.SalmEditionWhereInput): Promise<SalmEditionResponse> {
   const edition = await prisma.salmEdition.findFirst({
-    where: { status: 'published' },
+    where,
     orderBy: { year: 'desc' },
     select: {
       year: true,

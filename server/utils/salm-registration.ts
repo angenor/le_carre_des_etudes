@@ -10,6 +10,7 @@ import { isStudyLevel } from '#shared/utils/study-levels'
 import {
   collapseSpaces,
   formatBadgeNumber,
+  isValidEmail,
   nameMatchKey,
   nameSearchKey,
   SCHOOL_MAX_EXHIBITORS,
@@ -327,8 +328,6 @@ export interface SchoolData {
   question: string | null
 }
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 function text(value: unknown): string {
   return typeof value === 'string' ? collapseSpaces(value) : ''
 }
@@ -349,7 +348,7 @@ export function validateSchool(fields: SchoolFields, visibleStandIds: number[]):
   const email = text(fields.email).toLowerCase()
   if (!email) errors.email = 'REQUIRED'
   else if (email.length > 254) errors.email = 'TOO_LONG'
-  else if (!EMAIL_REGEX.test(email)) errors.email = 'INVALID_FORMAT'
+  else if (!isValidEmail(email)) errors.email = 'INVALID_FORMAT'
 
   const programmes = Array.isArray(fields.programmes) ? fields.programmes : []
   if (!programmes.length) errors.programmes = 'REQUIRED'

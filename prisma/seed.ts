@@ -4,8 +4,13 @@ import { seedSalm } from './seed/salm'
 
 async function main() {
   const salm = await seedSalm()
-  console.log('Seed SALM terminé :')
-  console.table(salm)
+  if (salm.length) {
+    console.log('Seed SALM terminé, éditions créées :')
+    console.table(salm)
+  }
+  else {
+    console.log('Seed SALM terminé : aucune édition à créer.')
+  }
 }
 
 main()

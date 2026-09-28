@@ -35,14 +35,37 @@ async function toggleMaintenance() {
   }
 }
 
-const navItems = [
+interface NavChild {
+  label: string
+  to: string
+  /** Sous-entrée active pour le chemin donné */
+  match: (path: string) => boolean
+}
+
+interface NavItem {
+  label: string
+  to: string
+  icon: string
+  children?: NavChild[]
+}
+
+const navItems: NavItem[] = [
   { label: 'Tableau de bord', to: '/admin', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
   { label: 'Magazines', to: '/admin/magazines', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
   { label: 'Rubriques', to: '/admin/rubriques', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
   { label: 'Partenaires', to: '/admin/partenaires', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
   { label: 'Téléchargements', to: '/admin/telechargements', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' },
   { label: 'Newsletter', to: '/admin/newsletter', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
-  { label: 'SALM', to: '/admin/salm', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm4-6h2v2H9v-2z' },
+  {
+    label: 'SALM',
+    to: '/admin/salm',
+    icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm4-6h2v2H9v-2z',
+    children: [
+      { label: 'Inscriptions', to: '/admin/salm', match: (p) => p === '/admin/salm' || p.startsWith('/admin/salm/etablissements') },
+      { label: 'Éditions', to: '/admin/salm/editions', match: (p) => p.startsWith('/admin/salm/editions') },
+      { label: 'Statistiques', to: '/admin/salm/statistiques', match: (p) => p === '/admin/salm/statistiques' },
+    ],
+  },
   { label: 'Images accueil', to: '/admin/images-accueil', icon: 'M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z' },
 ]
 
@@ -79,28 +102,44 @@ function isActive(to: string) {
 
       <!-- Navigation -->
       <nav class="flex-1 space-y-1 px-3 py-4">
-        <NuxtLink
-          v-for="item in navItems"
-          :key="item.to"
-          :to="item.to"
-          class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
-          :class="isActive(item.to)
-            ? 'bg-gray-800 text-amber-400'
-            : 'text-gray-400 hover:bg-gray-800 hover:text-white'"
-          @click="sidebarOpen = false"
-        >
-          <svg
-            class="h-5 w-5 shrink-0"
-            :class="isActive(item.to) ? 'text-amber-400' : 'text-gray-500'"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="1.5"
+        <template v-for="item in navItems" :key="item.to">
+          <NuxtLink
+            :to="item.to"
+            v-bind="item.children ? { 'aria-current': undefined } : {}"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
+            :class="isActive(item.to)
+              ? 'bg-gray-800 text-amber-400'
+              : 'text-gray-400 hover:bg-gray-800 hover:text-white'"
+            @click="sidebarOpen = false"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
-          </svg>
-          {{ item.label }}
-        </NuxtLink>
+            <svg
+              class="h-5 w-5 shrink-0"
+              :class="isActive(item.to) ? 'text-amber-400' : 'text-gray-500'"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
+            </svg>
+            {{ item.label }}
+          </NuxtLink>
+          <ul v-if="item.children" class="space-y-0.5 pb-1 pl-11" :aria-label="`Rubriques ${item.label}`">
+            <li v-for="child in item.children" :key="child.to">
+              <NuxtLink
+                :to="child.to"
+                :aria-current="child.match(route.path) ? 'page' : undefined"
+                class="block rounded-lg px-3 py-1.5 text-sm transition-colors"
+                :class="child.match(route.path)
+                  ? 'font-medium text-amber-400'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'"
+                @click="sidebarOpen = false"
+              >
+                {{ child.label }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </template>
       </nav>
 
       <!-- Mode maintenance -->

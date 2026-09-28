@@ -94,15 +94,76 @@ export function nameSearchKey(name: string): string {
   return normalizeName(name).join(' ')
 }
 
-// ---- YouTube ----
+// ---- YouTube (research R7) ----
 
-/** Identifiant YouTube à partir des formats youtu.be/ID, watch?v=ID, embed/ID et shorts/ID. */
+const YOUTUBE_HOSTS = ['youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'youtu.be']
+const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/
+
+/**
+ * Identifiant YouTube d'une URL `youtu.be/ID`, `/watch?v=ID`, `/embed/ID`, `/shorts/ID` ou `/live/ID`,
+ * sur un hôte YouTube uniquement ; `null` pour toute autre adresse.
+ */
 export function parseYoutubeId(url: string | null | undefined): string | null {
-  if (!url) return null
-  const match = url.match(
-    /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/,
-  )
-  return match?.[1] ?? null
+  const raw = url?.trim()
+  if (!raw) return null
+  let u: URL
+  try {
+    u = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`)
+  }
+  catch {
+    return null
+  }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null
+  const host = u.hostname.toLowerCase().replace(/^(www|m)\./, '')
+  if (!YOUTUBE_HOSTS.includes(host)) return null
+  const segments = u.pathname.split('/').filter(Boolean)
+  let id: string | null | undefined
+  if (host === 'youtu.be') id = segments[0]
+  else if (segments[0] === 'watch' && segments.length === 1) id = u.searchParams.get('v')
+  else if (['embed', 'shorts', 'live'].includes(segments[0] ?? '')) id = segments[1]
+  return id && YOUTUBE_ID.test(id) ? id : null
+}
+
+/** `dQw4w9WgXcQ` → `https://www.youtube.com/watch?v=dQw4w9WgXcQ` (forme stockée). */
+export function canonicalYoutubeUrl(id: string): string {
+  return `https://www.youtube.com/watch?v=${id}`
+}
+
+// ---- E-mail ----
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+export function isValidEmail(value: string): boolean {
+  return value.length <= 254 && EMAIL_REGEX.test(value)
+}
+
+// ---- Chronogramme ----
+
+export const SLOT_KIND_LABELS: Record<SlotKind, string> = {
+  ceremonie: 'Cérémonie',
+  panel: 'Panel',
+  presentation: 'Présentation',
+  stands: 'Stands',
+  pause: 'Pause',
+  exposition: 'Exposition',
+}
+
+/**
+ * Chevauchements stricts entre créneaux d'un même jour (FR-153) : `a` et `b` se chevauchent si
+ * `a.startTime < b.endTime && b.startTime < a.endTime`. Des créneaux qui se touchent ne se chevauchent pas.
+ * Renvoie, pour chaque créneau concerné, les identifiants des créneaux qu'il chevauche.
+ */
+export function findSlotOverlaps<Id>(slots: { id: Id; startTime: string; endTime: string }[]): Map<Id, Id[]> {
+  const overlaps = new Map<Id, Id[]>()
+  for (const [i, a] of slots.entries()) {
+    for (const b of slots.slice(i + 1)) {
+      if (a.startTime < b.endTime && b.startTime < a.endTime) {
+        overlaps.set(a.id, [...(overlaps.get(a.id) ?? []), b.id])
+        overlaps.set(b.id, [...(overlaps.get(b.id) ?? []), a.id])
+      }
+    }
+  }
+  return overlaps
 }
 
 // ---- Dates et heures (Abidjan = UTC+0) ----

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Line, Bar, Doughnut } from 'vue-chartjs'
+import type { SalmAdminSummary } from '#shared/types/salm'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -40,6 +41,16 @@ const downloadsPeriod = ref('30d')
 const visitsPeriod = ref('30d')
 
 const { data: summary } = await useFetch('/api/stats/summary')
+
+// Encart SALM : édition publiée comparée à la précédente (specs/007, FR-197a)
+const { data: salmSummary } = await useFetch<SalmAdminSummary>('/api/admin/salm/summary')
+
+function salmDelta(value: number, reference: number) {
+  const diff = value - reference
+  const sign = diff > 0 ? '+' : diff < 0 ? '−' : ''
+  const percent = reference === 0 ? '' : ` (${sign}${Math.round(Math.abs(diff) / reference * 100)} %)`
+  return `${sign}${Math.abs(diff).toLocaleString('fr-FR')}${percent}`
+}
 
 const { data: downloadsStats } = await useFetch('/api/stats/downloads', {
   query: { period: downloadsPeriod },
@@ -192,6 +203,25 @@ const barOptions = {
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Encart SALM (FR-197a) -->
+    <div v-if="salmSummary" class="mb-8 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-base font-semibold text-gray-800">SALM {{ salmSummary.year }}</h2>
+        <NuxtLink to="/admin/salm/statistiques" class="text-sm font-medium text-emerald-700 hover:text-emerald-800">
+          Voir les statistiques SALM →
+        </NuxtLink>
+      </div>
+      <dl class="mt-3 grid gap-4 sm:grid-cols-2">
+        <div v-for="item in [{ label: 'Étudiant·e·s inscrit·e·s', key: 'students' as const }, { label: 'Établissements', key: 'schools' as const }]" :key="item.key">
+          <dt class="text-xs text-gray-500">{{ item.label }}</dt>
+          <dd class="text-2xl font-bold text-gray-900">{{ salmSummary[item.key].toLocaleString('fr-FR') }}</dd>
+          <dd v-if="salmSummary.comparison" class="text-xs text-gray-500">
+            {{ salmDelta(salmSummary[item.key], salmSummary.comparison[item.key]) }} par rapport à {{ salmSummary.comparison.year }}
+          </dd>
+        </div>
+      </dl>
     </div>
 
     <!-- Courbe téléchargements -->
