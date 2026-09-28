@@ -117,7 +117,7 @@ Deploy script: `deploy.sh` (Docker-based, branch `main`)
 ```
 
 - Production DB: `/app/data/production.db` (dans le conteneur)
-- `.env` production généré au setup avec `ADMIN_PASSWORD` aléatoire
+- `.env` production : `ADMIN_PASSWORD` (12 caractères min.) et `NUXT_SESSION_SECRET` (32 min.) générés par `setup` / `deploy` / `update` s'ils manquent (`ensure_secrets`), jamais remplacés s'ils sont valides. Aucune valeur par défaut : sans secret de session l'app refuse de démarrer, sans mot de passe admin valide la connexion admin est refusée
 - Site accessible sur `http://<IP>:3000` (ou HTTPS après `ssl`)
 
 ## Recent Changes

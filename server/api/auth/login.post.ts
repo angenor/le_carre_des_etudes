@@ -13,7 +13,12 @@ export default defineEventHandler(async (event) => {
 
   const adminPassword = process.env.ADMIN_PASSWORD
 
-  if (!adminPassword) {
+  // En production, un mot de passe court ou resté à une valeur d'exemple publique vaut une absence
+  const weakInProduction = process.env.NODE_ENV === 'production' && !!adminPassword
+    && (adminPassword.length < 12 || ['admin-secret', 'changez-moi-en-production'].includes(adminPassword))
+
+  if (!adminPassword || weakInProduction) {
+    console.error('[auth] ADMIN_PASSWORD absent, trop court (12 caractères minimum) ou valeur d\'exemple : connexion admin refusée. Lancez ./deploy.sh update pour en générer un.')
     throw createError({
       statusCode: 500,
       message: 'Configuration serveur manquante',

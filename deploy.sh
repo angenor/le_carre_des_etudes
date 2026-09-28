@@ -37,24 +37,47 @@ setup_ssh() {
     echo -e "${GREEN}Acces SSH sans mot de passe configure.${NC}"
 }
 
-# Garantit un NUXT_SESSION_SECRET (32 caracteres min.) dans le .env du serveur.
-# Sans lui, l'app refuse de demarrer (server/utils/session.ts). Idempotent :
-# un secret valide n'est jamais modifie (sinon tous les admins seraient deconnectes).
-ensure_session_secret() {
-    ssh ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH' || { echo -e "${RED}Echec de la verification de NUXT_SESSION_SECRET.${NC}"; exit 1; }
+# Garantit dans le .env du serveur les secrets obligatoires en production :
+# - NUXT_SESSION_SECRET (32 caracteres min.) : sans lui, l'app refuse de demarrer (server/utils/session.ts) ;
+# - ADMIN_PASSWORD (12 caracteres min., pas une valeur d'exemple) : sans lui, la connexion admin est refusee.
+# Idempotent : une valeur valide n'est jamais modifiee (sinon admins deconnectes ou mot de passe change).
+ensure_secrets() {
+    ssh ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH' || { echo -e "${RED}Echec de la verification des secrets du .env.${NC}"; exit 1; }
         set -e
         cd /opt/le_carre_des_etudes
         [ -f .env ] || exit 0
+        BACKUP_DONE=""
+
+        # Remplace (ou ajoute) la cle $1 par la valeur $2, apres une sauvegarde unique du .env
+        replace_key() {
+            if [ -z "$BACKUP_DONE" ]; then
+                cp -p .env ".env.bak-$(date +%Y%m%d-%H%M%S)"
+                BACKUP_DONE=1
+            fi
+            sed -i "/^$1=/d" .env
+            if [ -n "$(tail -c1 .env)" ]; then echo >> .env; fi
+            echo "$1=\"$2\"" >> .env
+            chmod 600 .env
+        }
 
         if grep -Eq '^NUXT_SESSION_SECRET="?[^"]{32,}' .env; then
             echo "NUXT_SESSION_SECRET present."
         else
-            cp -p .env ".env.bak-$(date +%Y%m%d-%H%M%S)"
-            sed -i '/^NUXT_SESSION_SECRET=/d' .env
-            [ -n "$(tail -c1 .env)" ] && echo >> .env
-            echo "NUXT_SESSION_SECRET=\"$(openssl rand -hex 32)\"" >> .env
-            chmod 600 .env
+            replace_key NUXT_SESSION_SECRET "$(openssl rand -hex 32)"
             echo "NUXT_SESSION_SECRET absent ou trop court : secret genere et ajoute au .env."
+        fi
+
+        if grep -Eq '^ADMIN_PASSWORD="?[^"]{12,}' .env \
+            && ! grep -Eq '^ADMIN_PASSWORD="?(admin-secret|changez-moi-en-production)"?$' .env; then
+            echo "ADMIN_PASSWORD present."
+        else
+            ADMIN_PWD=$(openssl rand -hex 16)
+            replace_key ADMIN_PASSWORD "$ADMIN_PWD"
+            echo ""
+            echo "ADMIN_PASSWORD absent, trop court ou valeur d'exemple : nouveau mot de passe genere."
+            echo "  ADMIN_PASSWORD: ${ADMIN_PWD}"
+            echo "Conservez ce mot de passe en lieu sur !"
+            echo ""
         fi
 ENDSSH
 }
@@ -117,10 +140,10 @@ EOF
             echo ""
             echo "Conservez ce mot de passe en lieu sur !"
         else
-            echo ".env existe deja, pas de modification."
+            echo ".env existe deja."
         fi
 ENDSSH
-    ensure_session_secret
+    ensure_secrets
 
     echo -e "${GREEN}=== Setup termine ===${NC}"
     echo ""
@@ -140,7 +163,7 @@ deploy() {
         git clean -fd app/ server/ prisma/
         echo "Commit deploye : \$(git log -1 --oneline)"
 ENDSSH
-    ensure_session_secret
+    ensure_secrets
 
     echo -e "${GREEN}[2/3] Build et demarrage des conteneurs...${NC}"
     ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH || { echo -e "${RED}Echec du build.${NC}"; exit 1; }
@@ -181,7 +204,7 @@ ENDSSH
 # Mise a jour rapide
 update() {
     echo -e "${GREEN}Mise a jour du code et redemarrage...${NC}"
-    ensure_session_secret
+    ensure_secrets
     ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH || { echo -e "${RED}Echec de la mise a jour.${NC}"; exit 1; }
         set -e
         cd ${REMOTE_DIR}

@@ -19,7 +19,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/data/production.db
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin-secret}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - NUXT_SESSION_SECRET=${NUXT_SESSION_SECRET}
       - NUXT_SESSION_SECURE=${NUXT_SESSION_SECURE:-true}
     volumes:
