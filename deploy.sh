@@ -227,26 +227,35 @@ ENDSSH
 }
 
 # SSL avec Let's Encrypt
+# Les certificats vivent dans le volume Docker lu par nginx (le_carre_des_etudes_letsencrypt), jamais dans
+# le /etc/letsencrypt de l'hôte. Certbot tourne en conteneur :
+# - émission : mode standalone, nginx arrêté le temps de libérer le port 80 (il ne démarre pas sans certificat) ;
+# - renouvellement (cron quotidien) : mode webroot via /.well-known/acme-challenge/ de nginx, sans coupure.
+# La caméra du contrôle d'entrée SALM exige un certificat valide le jour du salon (specs/008, R2).
 ssl() {
     DOMAIN=${2:?Usage: ./deploy.sh ssl mon-domaine.com}
     echo -e "${GREEN}Configuration SSL pour ${DOMAIN}...${NC}"
     ssh ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
-        apt-get update
-        apt-get install -y certbot
+        cd ${REMOTE_DIR} || exit 1
+        docker volume create le_carre_des_etudes_letsencrypt >/dev/null
 
-        # Arret temporaire du conteneur pour liberer le port 80
-        docker compose -f ${REMOTE_DIR}/docker-compose.yml stop app || true
+        # Emission ou remplacement du certificat : nginx libere le port 80, puis redemarre quoi qu'il arrive
+        docker compose stop nginx || true
+        docker run --rm -p 80:80 \\
+            -v le_carre_des_etudes_letsencrypt:/etc/letsencrypt \\
+            certbot/certbot certonly --standalone --cert-name ${DOMAIN} -d ${DOMAIN} \\
+            --non-interactive --agree-tos --email admin@${DOMAIN} --keep-until-expiring \\
+            || echo "ECHEC de certbot : certificat inchange"
+        docker compose up -d nginx
 
-        certbot certonly --standalone -d ${DOMAIN} --non-interactive --agree-tos --email admin@${DOMAIN}
-
-        # Redemarrage
-        docker compose -f ${REMOTE_DIR}/docker-compose.yml start app
-
-        # Renouvellement automatique
-        (crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet --pre-hook 'cd ${REMOTE_DIR} && docker compose stop app' --post-hook 'cd ${REMOTE_DIR} && docker compose start app'") | crontab -
+        # Renouvellement automatique (remplace les anciennes lignes certbot de la crontab)
+        WEBROOT_VOLUME=\$(docker volume ls -q | grep 'certbot-webroot\$' | head -1)
+        (crontab -l 2>/dev/null | grep -v certbot; echo "0 3 * * * cd ${REMOTE_DIR} && docker run --rm -v le_carre_des_etudes_letsencrypt:/etc/letsencrypt -v \$WEBROOT_VOLUME:/var/www/certbot certbot/certbot renew --quiet --webroot -w /var/www/certbot && docker compose exec -T nginx nginx -s reload") | crontab -
 
         echo ""
-        echo "Certificat SSL installe pour ${DOMAIN} !"
+        echo "Certificat SSL installe pour ${DOMAIN} ; renouvellement :"
+        crontab -l | grep certbot
+        docker run --rm -v le_carre_des_etudes_letsencrypt:/etc/letsencrypt certbot/certbot certificates
 ENDSSH
 }
 

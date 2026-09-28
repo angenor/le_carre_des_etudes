@@ -13,6 +13,10 @@ export default defineNuxtConfig({
   nitro: {
     routeRules: {
       '/api/upload': { maxBodySize: 50 * 1024 * 1024 },
+      // Adresse courte du contrôle d'entrée SALM, favori des téléphones de l'équipe (FR-201)
+      '/controle': { redirect: { to: '/admin/salm/controle', statusCode: 302 } },
+      // Adresse courte du formulaire étudiant, encodée dans le QR code de l'affiche d'inscription (FR-240)
+      '/inscription': { redirect: { to: '/salm/inscription-etudiant', statusCode: 302 } },
     },
   },
   modules: ['@hypernym/nuxt-gsap'],

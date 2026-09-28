@@ -1,6 +1,7 @@
 import { prisma } from './prisma'
 import { adminError } from './salm-admin'
-import { editionFlags, isUniqueViolation, yearTaken } from './salm-content'
+import { editionFlags, yearTaken } from './salm-content'
+import { isUniqueViolation } from './salm-registration'
 import { isEditionEnded } from './salm-edition'
 import { releaseSalmFiles } from './salm-files'
 import type { Prisma } from '../../app/generated/prisma/client'

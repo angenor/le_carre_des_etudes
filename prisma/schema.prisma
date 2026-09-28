@@ -142,6 +142,7 @@ model SalmDay {
   closesAt  String
   sortOrder Int         @default(0)
   slots     SalmSlot[]
+  entries   SalmEntry[]
 
   @@unique([editionId, date])
 }
@@ -224,11 +225,29 @@ model SalmStudentRegistration {
   verifyToken   String      @unique
   downloadToken String      @unique
   nameSearch    String
+  origin        String      @default("online") // online · onsite
   createdAt     DateTime    @default(now())
+  entries       SalmEntry[]
 
   @@unique([editionId, phone])
   @@unique([editionId, badgeSeq])
   @@index([editionId, createdAt])
+}
+
+// Entrée validée d'un badge un jour de salon : au plus une par inscription et par jour (008, R3)
+model SalmEntry {
+  id             Int                     @id @default(autoincrement())
+  registrationId Int
+  registration   SalmStudentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  dayId          Int
+  day            SalmDay                 @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  enteredAt      DateTime
+  mode           String // scan · manual
+  offline        Boolean                 @default(false)
+  createdAt      DateTime                @default(now())
+
+  @@unique([registrationId, dayId])
+  @@index([dayId, enteredAt])
 }
 
 model SalmSchoolRegistration {

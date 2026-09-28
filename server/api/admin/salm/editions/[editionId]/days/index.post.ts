@@ -5,11 +5,11 @@ import {
   asBody,
   assertValid,
   contentValidationError,
-  isUniqueViolation,
   requireEdition,
   resortDays,
   validateDay,
 } from '../../../../../../utils/salm-content'
+import { isUniqueViolation } from '../../../../../../utils/salm-registration'
 
 // Ajout d'un jour ; libellé « Jour N » par défaut, N étant la position par date (FR-150).
 export default defineEventHandler(async (event) => {

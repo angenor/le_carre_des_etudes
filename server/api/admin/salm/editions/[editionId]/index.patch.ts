@@ -5,10 +5,10 @@ import {
   assertValid,
   editionFlags,
   getEditionDetail,
-  isUniqueViolation,
   validateEditionPatch,
   yearTaken,
 } from '../../../../../utils/salm-content'
+import { isUniqueViolation } from '../../../../../utils/salm-registration'
 import { releaseSalmFiles } from '../../../../../utils/salm-files'
 import type { Prisma } from '../../../../../../app/generated/prisma/client'
 

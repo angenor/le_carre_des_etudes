@@ -1,7 +1,8 @@
 import { defineEventHandler, readBody } from 'h3'
 import { prisma } from '../../../../utils/prisma'
 import { parseIdParam } from '../../../../utils/salm-admin'
-import { asBody, assertValid, contentValidationError, found, isUniqueViolation, validateStandType } from '../../../../utils/salm-content'
+import { asBody, assertValid, contentValidationError, found, validateStandType } from '../../../../utils/salm-content'
+import { isUniqueViolation } from '../../../../utils/salm-registration'
 
 // Modification d'un type de stand ; masquer ou réafficher = { isVisible } (FR-170, FR-171).
 export default defineEventHandler(async (event) => {

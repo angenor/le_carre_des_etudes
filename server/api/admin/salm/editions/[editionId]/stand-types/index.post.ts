@@ -5,11 +5,11 @@ import {
   asBody,
   assertValid,
   contentValidationError,
-  isUniqueViolation,
   nextSortOrder,
   requireEdition,
   validateStandType,
 } from '../../../../../../utils/salm-content'
+import { isUniqueViolation } from '../../../../../../utils/salm-registration'
 
 // Ajout d'un type de stand, en fin de liste (FR-170).
 export default defineEventHandler(async (event) => {

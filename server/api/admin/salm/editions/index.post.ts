@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody, setResponseStatus } from 'h3'
 import { prisma } from '../../../../utils/prisma'
-import { assertValid, getEditionDetail, isUniqueViolation, yearTaken, type ContentErrors } from '../../../../utils/salm-content'
+import { assertValid, getEditionDetail, yearTaken, type ContentErrors } from '../../../../utils/salm-content'
+import { isUniqueViolation } from '../../../../utils/salm-registration'
 import { collapseSpaces } from '#shared/utils/salm'
 
 // Création d'une édition en brouillon (contrat § 2, FR-111).

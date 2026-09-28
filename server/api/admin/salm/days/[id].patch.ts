@@ -1,7 +1,8 @@
 import { defineEventHandler, readBody } from 'h3'
 import { prisma } from '../../../../utils/prisma'
 import { parseIdParam } from '../../../../utils/salm-admin'
-import { asBody, assertValid, contentValidationError, found, isUniqueViolation, resortDays, validateDay } from '../../../../utils/salm-content'
+import { asBody, assertValid, contentValidationError, found, resortDays, validateDay } from '../../../../utils/salm-content'
+import { isUniqueViolation } from '../../../../utils/salm-registration'
 
 // Modification d'un jour ; fermeture postérieure à l'ouverture sur les valeurs fusionnées (FR-150, FR-155).
 export default defineEventHandler(async (event) => {

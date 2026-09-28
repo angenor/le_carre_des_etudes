@@ -26,6 +26,10 @@ export function useAdmin() {
   }
 
   async function logout(): Promise<void> {
+    // Poste de contrôle SALM : entrées hors ligne pas encore envoyées (FR-238), puis effacement (FR-239)
+    const pending = readQueue().length
+    if (pending && !confirm(`${pending} entrée(s) ne sont pas encore envoyées. Si vous vous déconnectez maintenant, elles seront perdues.`)) return
+    await clearControlData()
     try {
       await $fetch('/api/auth/logout', { method: 'POST' })
     }

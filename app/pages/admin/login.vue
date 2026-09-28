@@ -4,9 +4,17 @@ definePageMeta({
 })
 
 const { login } = useAdmin()
+const route = useRoute()
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+
+// Retour vers la page demandée (ex. contrôle d'entrée), limité au back-office : pas de redirection ouverte
+function redirectTarget(): string {
+  const raw = route.query.redirect
+  if (typeof raw === 'string' && raw.startsWith('/admin/') && !raw.includes('//') && !raw.includes('\\')) return raw
+  return '/admin'
+}
 
 async function handleLogin() {
   error.value = ''
@@ -14,7 +22,7 @@ async function handleLogin() {
 
   try {
     await login(password.value)
-    await navigateTo('/admin')
+    await navigateTo(redirectTarget())
   }
   catch {
     error.value = 'Mot de passe incorrect'

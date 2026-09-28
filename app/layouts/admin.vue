@@ -6,11 +6,16 @@ await checkSession()
 
 watchEffect(() => {
   if (checked.value && !isLoggedIn.value) {
-    navigateTo('/admin/login')
+    navigateTo({ path: '/admin/login', query: route.path === '/admin' ? {} : { redirect: route.fullPath } })
   }
 })
 
 const sidebarOpen = ref(false)
+
+// Téléphone de contrôle SALM rouvert seulement sur le back-office après le salon : effacement (FR-239)
+onMounted(() => {
+  if (isControlDataExpired()) clearControlData()
+})
 
 // Mode maintenance du site entier
 const { status: siteStatus, refresh: refreshSiteStatus } = useSiteStatus()
@@ -62,6 +67,7 @@ const navItems: NavItem[] = [
     icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm4-6h2v2H9v-2z',
     children: [
       { label: 'Inscriptions', to: '/admin/salm', match: (p) => p === '/admin/salm' || p.startsWith('/admin/salm/etablissements') },
+      { label: 'Contrôle d\'entrée', to: '/admin/salm/controle', match: (p) => p.startsWith('/admin/salm/controle') },
       { label: 'Éditions', to: '/admin/salm/editions', match: (p) => p.startsWith('/admin/salm/editions') },
       { label: 'Statistiques', to: '/admin/salm/statistiques', match: (p) => p === '/admin/salm/statistiques' },
     ],

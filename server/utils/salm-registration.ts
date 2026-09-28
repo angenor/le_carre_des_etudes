@@ -157,11 +157,23 @@ function newToken(): string {
   return randomBytes(16).toString('base64url')
 }
 
-/** Champ en cause d'une erreur Prisma P2002, quelle que soit la forme de `meta` (adaptateur ou non). */
-function uniqueViolationField(error: unknown): string | null {
+/** Texte de diagnostic d'une erreur Prisma P2002 (forme de `meta` variable selon l'adaptateur), sinon `null`. */
+function uniqueViolationInfo(error: unknown): string | null {
   const e = error as { code?: string; meta?: unknown; message?: string }
   if (e?.code !== 'P2002') return null
-  const info = `${JSON.stringify(e.meta ?? {})} ${e.message ?? ''}`
+  return `${JSON.stringify(e.meta ?? {})} ${e.message ?? ''}`
+}
+
+/** Erreur Prisma de contrainte d'unicité (`P2002`), portant sur tous les champs donnés s'il y en a. */
+export function isUniqueViolation(error: unknown, fields: string[] = []): boolean {
+  const info = uniqueViolationInfo(error)
+  return info !== null && fields.every((field) => info.includes(field))
+}
+
+/** Champ en cause d'une erreur Prisma P2002, quelle que soit la forme de `meta` (adaptateur ou non). */
+function uniqueViolationField(error: unknown): string | null {
+  const info = uniqueViolationInfo(error)
+  if (info === null) return null
   for (const field of ['verifyToken', 'downloadToken', 'badgeSeq', 'phone']) {
     if (info.includes(field)) return field
   }
@@ -170,7 +182,12 @@ function uniqueViolationField(error: unknown): string | null {
 
 export type CreateStudentResult = { kind: 'created'; registration: StudentBadgeRow } | { kind: 'existing' }
 
-export function createStudentRegistration(editionId: number, data: StudentData): Promise<CreateStudentResult> {
+/** Création d'une inscription ; `origin: 'onsite'` pour l'inscription par l'équipe au salon (008, FR-247). */
+export function createStudentRegistration(
+  editionId: number,
+  data: StudentData,
+  options: { origin?: 'online' | 'onsite' } = {},
+): Promise<CreateStudentResult> {
   return withStudentCreationLock(async () => {
     // Doublon arrivé pendant l'attente dans la file : repasser par la vérification du nom
     if (await findStudentByPhone(editionId, data.phone)) return { kind: 'existing' as const }
@@ -193,6 +210,7 @@ export function createStudentRegistration(editionId: number, data: StudentData):
               verifyToken: newToken(),
               downloadToken: newToken(),
               nameSearch: nameSearchKey(data.fullName),
+              origin: options.origin ?? 'online',
             },
             select: badgeRegistrationSelect,
           })

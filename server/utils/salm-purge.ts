@@ -17,13 +17,21 @@ function conflict(code: string) {
  * (specs/007, research R11). Les exposants ne comptent que les inscriptions non annulées (FR-192).
  */
 export async function computePurgedStats(tx: Tx | typeof prisma, editionId: number): Promise<SalmPurgedStats> {
-  const [byLevel, students, byStatus, byStand, schools] = await Promise.all([
+  const [byLevel, students, byStatus, byStand, schools, days] = await Promise.all([
     tx.salmStudentRegistration.groupBy({ by: ['studyLevel'], where: { editionId }, _count: { _all: true } }),
     tx.salmStudentRegistration.findMany({ where: { editionId }, select: { createdAt: true } }),
     tx.salmSchoolRegistration.groupBy({ by: ['status'], where: { editionId }, _count: { _all: true } }),
     tx.salmSchoolRegistration.groupBy({ by: ['standTypeId'], where: { editionId }, _count: { _all: true } }),
     tx.salmSchoolRegistration.findMany({ where: { editionId }, select: { exhibitors: true, status: true } }),
+    tx.salmDay.findMany({ where: { editionId }, select: { id: true, date: true } }),
   ])
+  // Entrées par date de jour de salon (008, FR-228)
+  const byDay = days.length
+    ? await tx.salmEntry.groupBy({ by: ['dayId'], where: { dayId: { in: days.map((d) => d.id) } }, _count: { _all: true } })
+    : []
+  const entriesByDay = Object.fromEntries(
+    days.map((d) => [d.date, byDay.find((g) => g.dayId === d.id)?._count._all ?? 0]),
+  )
   const standNames = await tx.salmStandType.findMany({
     where: { id: { in: byStand.map((s) => s.standTypeId) } },
     select: { id: true, name: true },
@@ -43,6 +51,7 @@ export async function computePurgedStats(tx: Tx | typeof prisma, editionId: numb
       total: students.length,
       byStudyLevel: Object.fromEntries(byLevel.map((l) => [l.studyLevel, l._count._all])),
       byRegistrationDay,
+      entriesByDay,
     },
     schools: {
       total: schools.length,

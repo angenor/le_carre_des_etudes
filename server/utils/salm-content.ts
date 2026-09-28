@@ -31,11 +31,6 @@ export function yearTaken(year: number) {
   return createError({ statusCode: 409, message: 'YEAR_TAKEN', data: { code: 'YEAR_TAKEN', year } })
 }
 
-/** Erreur Prisma de contrainte d'unicité (`P2002`). */
-export function isUniqueViolation(err: unknown): boolean {
-  return (err as { code?: string })?.code === 'P2002'
-}
-
 /** Lève `400 VALIDATION` s'il y a des erreurs. */
 export function assertValid(errors: ContentErrors) {
   if (Object.keys(errors).length) throw contentValidationError(errors)

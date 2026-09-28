@@ -31,8 +31,18 @@ function searchParam(event: H3Event): string {
   return typeof raw === 'string' ? raw.trim().slice(0, 100) : ''
 }
 
-/** Filtres de la liste étudiante : recherche (téléphone ou nom sans accents) et niveau (FR-062). */
-export function studentWhere(event: H3Event, editionId: number): Prisma.SalmStudentRegistrationWhereInput {
+/** Filtre de présence `present:<dayId>` ou `absent:<dayId>` (008, FR-226), sinon `null`. */
+export function presenceParam(event: H3Event): { present: boolean; dayId: number } | null {
+  const raw = getQuery(event).presence
+  const match = typeof raw === 'string' ? /^(present|absent):(\d{1,9})$/.exec(raw) : null
+  return match ? { present: match[1] === 'present', dayId: Number(match[2]) } : null
+}
+
+/**
+ * Filtres de la liste étudiante : recherche (téléphone ou nom sans accents), niveau (FR-062)
+ * et présence un jour donné (008, FR-226), ignorée si le jour n'est pas dans `dayIds` (jours de l'édition).
+ */
+export function studentWhere(event: H3Event, editionId: number, dayIds: number[] = []): Prisma.SalmStudentRegistrationWhereInput {
   const where: Prisma.SalmStudentRegistrationWhereInput = { editionId }
   const search = searchParam(event)
   if (search) {
@@ -47,6 +57,10 @@ export function studentWhere(event: H3Event, editionId: number): Prisma.SalmStud
   }
   const level = getQuery(event).studyLevel
   if (isStudyLevel(level)) where.studyLevel = level
+  const presence = presenceParam(event)
+  if (presence && dayIds.includes(presence.dayId)) {
+    where.entries = presence.present ? { some: { dayId: presence.dayId } } : { none: { dayId: presence.dayId } }
+  }
   return where
 }
 

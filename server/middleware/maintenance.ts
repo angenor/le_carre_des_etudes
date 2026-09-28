@@ -18,6 +18,8 @@ const ALWAYS_ALLOWED = [
   '/uploads/',
   '/favicon',
   '/robots.txt',
+  // Service worker du contrôle d'entrée SALM (portée /admin/salm/controle)
+  '/salm-controle-sw.js',
 ]
 
 export default defineEventHandler(async (event) => {

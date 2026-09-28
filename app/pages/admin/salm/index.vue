@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import type { SalmAdminStudentRow } from '#shared/types/salm'
+import { formatDayTab } from '#shared/utils/salm'
+import { formatEntryTime } from '#shared/utils/salm-control'
+import type { SalmAdminStudentsResponse } from '#shared/types/salm'
 
 definePageMeta({
   layout: 'admin',
@@ -13,6 +15,7 @@ const limit = ref(20)
 const search = ref('')
 const searchInput = ref('')
 const studyLevel = ref('')
+const presence = ref('')
 const sortBy = ref('createdAt')
 const sortOrder = ref<'asc' | 'desc'>('desc')
 
@@ -26,8 +29,11 @@ function onSearchInput(value: string) {
   }, 400)
 }
 
-watch(studyLevel, () => { page.value = 1 })
-watch(() => current.value?.id, () => { page.value = 1 })
+watch([studyLevel, presence], () => { page.value = 1 })
+watch(() => current.value?.id, () => {
+  page.value = 1
+  presence.value = ''
+})
 
 function toggleSort(field: string) {
   if (sortBy.value === field) {
@@ -45,19 +51,16 @@ function sortIcon(field: string) {
 }
 
 const editionId = computed(() => current.value?.id ?? 0)
-const { data: result, refresh } = await useFetch<{
-  data: SalmAdminStudentRow[]
-  total: number
-  page: number
-  limit: number
-  grandTotal: number
-}>(() => `/api/admin/salm/editions/${editionId.value}/students`, {
-  query: { page, limit, search, studyLevel, sortBy, sortOrder },
-  watch: [page, limit, search, studyLevel, sortBy, sortOrder],
+const { data: result, refresh } = await useFetch<SalmAdminStudentsResponse>(() => `/api/admin/salm/editions/${editionId.value}/students`, {
+  query: { page, limit, search, studyLevel, presence, sortBy, sortOrder },
+  watch: [page, limit, search, studyLevel, presence, sortBy, sortOrder],
   immediate: !!editionId.value,
 })
 
 const totalPages = computed(() => Math.ceil((result.value?.total ?? 0) / limit.value))
+// Jours de salon de l'édition : compteurs d'entrées, filtre et colonnes de présence (008, FR-225, FR-226)
+const days = computed(() => result.value?.days ?? [])
+const numberFormat = new Intl.NumberFormat('fr-FR')
 
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('fr-FR', {
@@ -71,6 +74,7 @@ function exportCsv() {
   const params = new URLSearchParams({ sortBy: sortBy.value, sortOrder: sortOrder.value })
   if (search.value) params.set('search', search.value)
   if (studyLevel.value) params.set('studyLevel', studyLevel.value)
+  if (presence.value) params.set('presence', presence.value)
   window.open(`/api/admin/salm/editions/${editionId.value}/students/export?${params}`, '_blank')
 }
 
@@ -113,10 +117,17 @@ const columns = [
 
     <template v-if="current && !current.retention.purgedAt">
       <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
-        <p class="text-sm text-gray-600">
-          <strong class="text-lg font-semibold text-gray-900">{{ result?.grandTotal ?? 0 }}</strong>
-          inscrit·e{{ (result?.grandTotal ?? 0) > 1 ? '·s' : '' }}
-        </p>
+        <div class="flex flex-wrap items-baseline gap-x-5 gap-y-1 text-sm text-gray-600">
+          <p>
+            <strong class="text-lg font-semibold text-gray-900">{{ result?.grandTotal ?? 0 }}</strong>
+            inscrit·e{{ (result?.grandTotal ?? 0) > 1 ? '·s' : '' }}
+          </p>
+          <p v-for="day in days" :key="day.id">
+            {{ day.label }} · {{ formatDayTab(day.date) }} :
+            <strong class="font-semibold text-gray-900">{{ numberFormat.format(day.entries) }}</strong>
+            entrée{{ day.entries > 1 ? 's' : '' }}
+          </p>
+        </div>
         <button
           @click="exportCsv"
           class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
@@ -146,6 +157,18 @@ const columns = [
           <option value="">Tous les niveaux</option>
           <option v-for="level in STUDY_LEVELS" :key="level" :value="level">{{ level }}</option>
         </select>
+        <select
+          v-if="days.length"
+          v-model="presence"
+          aria-label="Filtrer par présence"
+          class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        >
+          <option value="">Présence : tous</option>
+          <template v-for="day in days" :key="day.id">
+            <option :value="`present:${day.id}`">Présent·e le {{ day.label }}</option>
+            <option :value="`absent:${day.id}`">Absent·e le {{ day.label }}</option>
+          </template>
+        </select>
       </div>
 
       <!-- Tableau -->
@@ -163,21 +186,40 @@ const columns = [
               >
                 {{ col.label }}{{ col.key ? sortIcon(col.key) : '' }}
               </th>
+              <th
+                v-for="day in days"
+                :key="`day-${day.id}`"
+                class="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                :title="`Heure d'entrée · ${formatDayTab(day.date)}`"
+              >
+                {{ day.label }}
+              </th>
               <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr v-if="!result?.data?.length">
-              <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-400">
+              <td :colspan="6 + days.length" class="px-4 py-8 text-center text-sm text-gray-400">
                 Aucune inscription trouvée
               </td>
             </tr>
             <tr v-for="row in result?.data" :key="row.id" class="hover:bg-gray-50">
               <td class="whitespace-nowrap px-4 py-3 font-mono text-sm text-gray-900">{{ row.badgeNumber }}</td>
-              <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">{{ row.fullName }}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                {{ row.fullName }}
+                <span
+                  v-if="row.origin === 'onsite'"
+                  class="ml-2 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"
+                  title="Inscrit·e par l'équipe au salon"
+                >Sur place</span>
+              </td>
               <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ row.phone }}</td>
               <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ row.studyLevel }}</td>
               <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ formatDate(row.createdAt) }}</td>
+              <td v-for="day in days" :key="`day-${day.id}`" class="whitespace-nowrap px-4 py-3 text-sm tabular-nums">
+                <span v-if="row.entries[day.id]" class="font-medium text-emerald-700">{{ formatEntryTime(row.entries[day.id]!) }}</span>
+                <span v-else class="text-gray-300" aria-label="Absent·e">—</span>
+              </td>
               <td class="whitespace-nowrap px-4 py-3 text-right">
                 <a
                   :href="`/api/admin/salm/students/${row.id}/badge`"
