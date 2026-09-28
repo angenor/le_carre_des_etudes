@@ -1,0 +1,60 @@
+/*
+ * Polices du module SALM, auto-hébergées (research R3).
+ * Importé uniquement par les composants et pages SALM : ne pas ajouter à `css` dans nuxt.config.ts.
+ * Sous-ensemble Latin + Latin étendu. Licences : public/fonts/salm/OFL.txt et LICENSE-yellowtail.txt.
+ */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('/fonts/salm/montserrat-latin-wght.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/salm/dm-sans-latin-wght.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Yellowtail';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/salm/yellowtail-latin-400.woff2') format('woff2');
+}
+
+/* Défilement bloqué pendant qu'une fenêtre SALM est ouverte (research R9) */
+body:has(dialog.salm-dialog[open]) {
+  overflow: hidden;
+}
+
+/*
+ * Focus visible commun aux éléments interactifs SALM (FR-082, T095).
+ * Orange sur fond sombre, blanc sur fond orange (.salm-on-accent), brun foncé sur fond clair (.salm-on-light).
+ */
+.salm-scope :where(a, button, summary, [tabindex]:not([tabindex="-1"])):focus-visible,
+.salm-dialog :where(a, button):focus-visible {
+  outline: 2px solid #F4792B;
+  outline-offset: 2px;
+}
+
+.salm-scope .salm-on-accent :where(a, button):focus-visible {
+  outline-color: #FFFFFF;
+}
+
+.salm-scope .salm-on-light :where(a, button, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline-color: #9A3A06;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .salm-scope *,
+  .salm-dialog * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

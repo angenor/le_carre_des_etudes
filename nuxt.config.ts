@@ -4,6 +4,12 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  runtimeConfig: {
+    public: {
+      // URL absolue du site (QR code des badges SALM). Surchargeable par NUXT_PUBLIC_SITE_URL.
+      siteUrl: 'https://lecarredesetudes.com',
+    },
+  },
   nitro: {
     routeRules: {
       '/api/upload': { maxBodySize: 50 * 1024 * 1024 },

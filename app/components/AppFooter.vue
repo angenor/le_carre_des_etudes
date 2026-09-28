@@ -3,6 +3,8 @@ const currentYear = new Date().getFullYear()
 
 const facebookUrl = 'https://www.facebook.com/profile.php?id=61588510360890'
 
+const { data: salmStatus } = await useSalmStatus()
+
 const newsletterEmail = ref('')
 const newsletterStatus = ref<'idle' | 'loading' | 'success' | 'error' | 'duplicate'>('idle')
 const newsletterMessage = ref('')
@@ -215,6 +217,12 @@ async function subscribeNewsletter() {
               <NuxtLink to="/rubriques" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
                 <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
                 Rubriques
+              </NuxtLink>
+            </li>
+            <li v-if="salmStatus?.published">
+              <NuxtLink to="/salm" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
+                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
+                SALM {{ salmStatus.year }}
               </NuxtLink>
             </li>
             <li>

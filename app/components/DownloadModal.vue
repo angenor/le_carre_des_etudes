@@ -8,16 +8,7 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const STUDY_LEVELS = [
-  'Terminale / Futur bachelier',
-  'BTS / DUT (Bac+2)',
-  'Licence (Bac+3)',
-  'Master (Bac+5)',
-  'Doctorat',
-  'Autre',
-]
-
-const IVORIAN_PHONE_REGEX = /^(01|05|07|27)\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}$/
+// STUDY_LEVELS et IVORIAN_PHONE_REGEX : auto-importés depuis shared/utils/
 
 const form = reactive({
   fullName: '',

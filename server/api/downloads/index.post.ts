@@ -1,16 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { prisma } from '../../utils/prisma'
-
-const IVORIAN_PHONE_REGEX = /^(01|05|07|27)\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}$/
-
-const STUDY_LEVELS = [
-  'Terminale / Futur bachelier',
-  'BTS / DUT (Bac+2)',
-  'Licence (Bac+3)',
-  'Master (Bac+5)',
-  'Doctorat',
-  'Autre',
-]
+import { STUDY_LEVELS } from '#shared/utils/study-levels'
+import { IVORIAN_PHONE_REGEX } from '#shared/utils/phone'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)

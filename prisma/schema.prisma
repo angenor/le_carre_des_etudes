@@ -90,3 +90,165 @@ model HomepageImage {
   imagePath String
   updatedAt DateTime @updatedAt
 }
+
+// ============================================================
+// Module SALM (specs/006-salm-inscriptions/data-model.md)
+// Statuts et types : chaînes contrôlées par shared/utils/salm.ts
+// Dates `YYYY-MM-DD` et heures `HH:MM`, heure d'Abidjan (UTC+0)
+// ============================================================
+
+model SalmEdition {
+  id                      Int       @id @default(autoincrement())
+  year                    Int       @unique
+  status                  String    @default("draft") // draft · published · archived
+  salonName               String    @default("Salon International des Licences et Masters de Côte d'Ivoire")
+  tagline                 String?
+  city                    String    @default("Abidjan")
+  venue                   String?
+  organizerName           String
+  whyTitle                String?
+  whyText                 String?
+  audiences               Json      @default("[]")
+  contacts                Json      @default("[]")
+  posterPath              String?
+  posterAlt               String?
+  recapVideoUrl           String?
+  recapPosterPath         String?
+  programPdfPath          String?
+  studentRegistrationOpen Boolean   @default(false)
+  schoolRegistrationOpen  Boolean   @default(false)
+  lastBadgeSeq            Int       @default(0)
+  personalDataPurgedAt    DateTime?
+  purgedStats             Json?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  days                 SalmDay[]
+  highlights           SalmHighlight[]
+  videos               SalmVideo[]
+  photos               SalmPhoto[]
+  standTypes           SalmStandType[]
+  studentRegistrations SalmStudentRegistration[]
+  schoolRegistrations  SalmSchoolRegistration[]
+}
+
+model SalmDay {
+  id        Int         @id @default(autoincrement())
+  editionId Int
+  edition   SalmEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  date      String
+  label     String
+  opensAt   String
+  closesAt  String
+  sortOrder Int         @default(0)
+  slots     SalmSlot[]
+
+  @@unique([editionId, date])
+}
+
+model SalmSlot {
+  id            Int     @id @default(autoincrement())
+  dayId         Int
+  day           SalmDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  startTime     String
+  endTime       String
+  title         String
+  description   String?
+  kind          String // ceremonie · panel · presentation · stands · pause · exposition
+  isHighlighted Boolean @default(false)
+  sortOrder     Int     @default(0)
+
+  @@index([dayId, sortOrder])
+}
+
+model SalmHighlight {
+  id        Int         @id @default(autoincrement())
+  editionId Int
+  edition   SalmEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  title     String
+  imagePath String
+  imageAlt  String
+  sortOrder Int         @default(0)
+
+  @@index([editionId, sortOrder])
+}
+
+model SalmVideo {
+  id            Int         @id @default(autoincrement())
+  editionId     Int
+  edition       SalmEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  youtubeUrl    String
+  title         String?
+  guest         String?
+  institution   String?
+  thumbnailPath String?
+  sortOrder     Int         @default(0)
+
+  @@index([editionId, sortOrder])
+}
+
+model SalmPhoto {
+  id        Int         @id @default(autoincrement())
+  editionId Int
+  edition   SalmEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  imagePath String
+  alt       String
+  caption   String?
+  sortOrder Int         @default(0)
+
+  @@index([editionId, sortOrder])
+}
+
+model SalmStandType {
+  id                  Int                      @id @default(autoincrement())
+  editionId           Int
+  edition             SalmEdition              @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  name                String
+  description         String?
+  priceLabel          String?
+  isVisible           Boolean                  @default(true)
+  sortOrder           Int                      @default(0)
+  schoolRegistrations SalmSchoolRegistration[]
+
+  @@unique([editionId, name])
+}
+
+model SalmStudentRegistration {
+  id            Int         @id @default(autoincrement())
+  editionId     Int
+  edition       SalmEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  fullName      String
+  phone         String
+  studyLevel    String
+  badgeSeq      Int
+  verifyToken   String      @unique
+  downloadToken String      @unique
+  nameSearch    String
+  createdAt     DateTime    @default(now())
+
+  @@unique([editionId, phone])
+  @@unique([editionId, badgeSeq])
+  @@index([editionId, createdAt])
+}
+
+model SalmSchoolRegistration {
+  id             Int           @id @default(autoincrement())
+  editionId      Int
+  edition        SalmEdition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  name           String
+  phone          String
+  email          String
+  programmes     Json
+  otherProgramme String?
+  exhibitors     Json
+  standTypeId    Int
+  standType      SalmStandType @relation(fields: [standTypeId], references: [id], onDelete: Restrict)
+  question       String?
+  status         String        @default("nouvelle") // nouvelle · contactee · confirmee · annulee
+  internalNote   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([editionId, status])
+  @@index([editionId, createdAt])
+}

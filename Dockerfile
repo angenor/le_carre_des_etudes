@@ -33,6 +33,10 @@ COPY --from=build /app/package.json ./
 # Prisma runtime : le CLI et les adapters necessaires
 COPY --from=deps /app/node_modules ./node_modules
 
+# Seed (npx prisma db seed) : client Prisma genere et singleton importe par prisma/seed/
+COPY --from=build /app/app/generated ./app/generated
+COPY --from=build /app/server/utils/prisma.ts ./server/utils/prisma.ts
+
 # Dossier pour la base de donnees SQLite et les uploads
 RUN mkdir -p /app/data
 

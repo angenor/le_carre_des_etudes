@@ -1,13 +1,17 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const navLinks = [
+const { data: salmStatus } = await useSalmStatus()
+
+const navLinks = computed(() => [
   { label: 'Accueil', to: '/' },
   { label: 'Magazine', to: '/magazine' },
   { label: 'Rubriques', to: '/rubriques' },
   { label: 'Résultats', to: '/resultats' },
+  // Lien SALM seulement si une édition est publiée (FR-018)
+  ...(salmStatus.value?.published ? [{ label: `SALM ${salmStatus.value.year}`, to: '/salm' }] : []),
   { label: 'Partenaires', to: '/partenaires' },
-]
+])
 
 function isActive(to: string): boolean {
   if (to === '/') {
@@ -65,6 +69,27 @@ function isActive(to: string): boolean {
   color: rgb(255 255 255 / 0.8);
   text-decoration: none;
   transition: color 150ms ease-in-out;
+}
+
+/* Sous 640 px : avec le lien SALM (6 liens), la pilule passe sur deux lignes plutôt que de déborder
+   (FR-018 : tous les liens visibles, texte ≥ 12 px, cible ≥ 24 px, pas de défilement horizontal) */
+@media (max-width: 639px) {
+  .nav-wrapper {
+    --nav-padding: 0.25rem;
+    max-width: 100%;
+    border-radius: 1.25rem;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.125rem 0;
+  }
+
+  .nav-link {
+    padding: 0.375rem 0.625rem;
+    white-space: nowrap;
+  }
 }
 
 @media (min-width: 640px) {

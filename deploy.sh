@@ -83,10 +83,12 @@ ENDSSH
 
         if [ ! -f ".env" ]; then
             ADMIN_PWD=$(openssl rand -hex 16)
+            SESSION_SECRET=$(openssl rand -hex 24)
             cat > .env << EOF
 PORT=3000
 DATABASE_URL="file:/app/data/production.db"
 ADMIN_PASSWORD="${ADMIN_PWD}"
+NUXT_SESSION_SECRET="${SESSION_SECRET}"
 EOF
             echo ""
             echo "Fichier .env cree."
@@ -173,6 +175,14 @@ update() {
         docker compose up -d
 ENDSSH
     echo -e "${GREEN}Mise a jour terminee !${NC}"
+}
+
+# Seed des contenus (editions SALM) dans le conteneur : idempotent, ne touche jamais aux inscriptions
+seed() {
+    echo -e "${GREEN}Seed des contenus (npx prisma db seed)...${NC}"
+    ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DIR} && docker compose exec -T app npx prisma db seed" \
+        || { echo -e "${RED}Echec du seed.${NC}"; exit 1; }
+    echo -e "${GREEN}Seed termine.${NC}"
 }
 
 # Logs
@@ -266,6 +276,9 @@ case "$1" in
     update)
         update
         ;;
+    seed)
+        seed
+        ;;
     logs)
         logs "$@"
         ;;
@@ -294,6 +307,7 @@ case "$1" in
         echo "  setup          - Premier setup du serveur (Docker, clone, .env)"
         echo "  deploy         - Deploiement complet (pull, build, restart)"
         echo "  update         - Mise a jour rapide (pull, rebuild)"
+        echo "  seed           - Charger/mettre a jour les contenus (editions SALM)"
         echo "  logs [service] - Voir les logs"
         echo "  restart        - Redemarrer les conteneurs"
         echo "  stop           - Arreter les conteneurs"
@@ -305,6 +319,7 @@ case "$1" in
         echo "Exemples :"
         echo "  $0 setup                # Premier setup"
         echo "  $0 deploy               # Deployer l'application"
+        echo "  $0 seed                 # Apres deploy : contenus SALM"
         echo "  $0 logs app             # Voir les logs de l'app"
         echo "  $0 ssl mondomaine.com   # Configurer HTTPS"
         exit 1

@@ -21,6 +21,7 @@ pnpm postinstall  # Run nuxt prepare (auto-runs after pnpm install)
 pnpm prisma migrate dev     # Apply migrations in development
 pnpm prisma migrate deploy  # Apply migrations in production
 pnpm prisma generate        # Regenerate Prisma client
+pnpm prisma db seed         # Contenus idempotents (éditions SALM 2026/2027) — prisma/seed/salm-data.ts
 ```
 
 No test runner is configured yet.
@@ -54,6 +55,8 @@ Standard Nuxt 4 layout with the `app/` directory convention:
 - `app/pages/` — file-based routing
 - `app/assets/css/` — stylesheets
 - `server/` — server routes and utilities (Nitro)
+- `shared/` — code commun app + serveur (dossier Nuxt 4, auto-importé côté app, `#shared/...` côté serveur) : constantes et normalisations (`STUDY_LEVELS`, téléphone ivoirien, validateurs SALM), types
+- Module SALM : `app/components/salm/` (kebab-case → `<Salm…>`), `app/pages/salm/`, `server/api/salm/` (public), `server/api/admin/salm/` (protégé toutes méthodes par `server/middleware/admin.ts`). Polices Montserrat/DM Sans/Yellowtail auto-hébergées, déclarées dans `app/assets/css/salm.css` et importées **uniquement** par les composants SALM (ne pas l'ajouter à `css` de `nuxt.config.ts`). Polices du badge PDF dans `server/assets/fonts/salm/`
 
 ## Conventions
 
@@ -86,6 +89,8 @@ Use multiple sub-agents in parallel for efficiency:
 - Prisma 7 avec SQLite (`dev.db` à la racine) ; client généré dans `app/generated/prisma/` (004-rubriques-simplify)
 - TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3.5.28 + Nuxt 4, Vue 3, Tailwind CSS v4.2.1 (`@tailwindcss/vite`), Chart.js 4.5.1, vue-chartjs 5.3.3, Prisma 7.4.2 (005-admin-dashboard-newsletter)
 - SQLite via Prisma 7 (`dev.db` à la racine) ; client généré dans `app/generated/prisma/` (005-admin-dashboard-newsletter)
+- TypeScript (ESM), Node 22 / Nuxt 4, Vue 3, Tailwind CSS v4.2.1, Prisma 7.4.2, pdf-lib + @pdf-lib/fontkit + qrcode (badge PDF), tsx (seed) ; dossier `shared/` Nuxt 4 (006-salm-inscriptions)
+- SQLite via Prisma 7 (`dev.db`, `/app/data/production.db` en production). Images du seed statiques dans `public/images/salm/` (pas `public/salm/`, qui masquerait la route `/salm`). Polices du PDF dans `server/assets/fonts/salm/`. Aucun fichier d'upload dans cette feature. (006-salm-inscriptions)
 
 ## Deployment
 
@@ -102,6 +107,7 @@ Deploy script: `deploy.sh` (Docker-based, branch `main`)
 ./deploy.sh status         # État du serveur
 ./deploy.sh ssl <domaine>  # Configurer SSL avec Let's Encrypt
 ./deploy.sh backup         # Sauvegarder la base SQLite en local (dans backups/)
+./deploy.sh seed           # Charger/mettre à jour les contenus SALM (npx prisma db seed dans le conteneur)
 ./deploy.sh connect        # Se connecter en SSH au serveur
 ```
 
@@ -110,4 +116,5 @@ Deploy script: `deploy.sh` (Docker-based, branch `main`)
 - Site accessible sur `http://<IP>:3000` (ou HTTPS après `ssl`)
 
 ## Recent Changes
+- 006-salm-inscriptions: Module SALM (page /salm, inscriptions, badge PDF, back-office) ; ajout de pdf-lib, @pdf-lib/fontkit, qrcode, tsx
 - 001-magazine-landing-site: Added TypeScript (ESM) via Nuxt 4 (v4.3.1) / Vue 3 + Nuxt 4, Vue 3, Tailwind CSS v4 (`@tailwindcss/vite`), Prisma 7

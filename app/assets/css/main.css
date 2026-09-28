@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/* Jetons du module SALM (research R3). Les polices elles-mêmes sont déclarées dans salm.css. */
+@theme {
+  /* Accent des surfaces web portant du texte blanc : #C2410C (5,18:1, option d'accent de la maquette).
+     #D5570B (4,04:1) n'atteint pas le 4,5:1 exigé par FR-082 ; il reste la couleur du badge PDF imprimé. */
+  --color-salm-accent: #C2410C;
+  --color-salm-accent-text: #F4792B;
+  --color-salm-bg: #0B0B0D;
+  --color-salm-surface: #141417;
+  --color-salm-surface-2: #16161A;
+  --color-salm-surface-3: #1C1C21;
+  --color-salm-border: #2A2A31;
+  --color-salm-input-border: #8A847F;
+
+  --font-salm-title: Montserrat, sans-serif;
+  --font-salm-body: 'DM Sans', system-ui, sans-serif;
+  --font-salm-script: Yellowtail, cursive;
+}
