@@ -10,14 +10,18 @@ const remaining = computed(() => Math.max(0, props.photos.length - preview.value
 
 const galleryOpen = ref(false)
 const index = ref(0)
+// Photo suivante / précédente : elle glisse depuis le côté correspondant (aucun effet à l'ouverture)
+const photoSlide = ref<'' | 'salm-slide-next' | 'salm-slide-prev'>('')
 const photo = computed(() => props.photos[index.value])
 
 function open(at = 0) {
+  photoSlide.value = ''
   index.value = at
   galleryOpen.value = true
 }
 
 function go(delta: number) {
+  photoSlide.value = delta > 0 ? 'salm-slide-next' : 'salm-slide-prev'
   const n = props.photos.length
   index.value = (index.value + delta + n) % n
 }
@@ -76,7 +80,7 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
         </button>
       </div>
 
-      <ul class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4 lg:grid-rows-[230px_230px]">
+      <ul class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4 lg:grid-rows-[230px_230px]" data-motion="toss">
         <li v-for="(p, i) in preview" :key="p.imagePath" :class="cellClass[i]">
           <button
             type="button"
@@ -120,9 +124,11 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
       >
         <figure class="m-0 flex flex-col gap-2">
           <img
+            :key="photo.imagePath"
             :src="photo.imagePath"
             :alt="photo.alt"
             class="max-h-[70dvh] w-full rounded-2xl bg-black object-contain"
+            :class="photoSlide"
           >
           <figcaption class="text-sm text-stone-300">{{ photo.caption ?? photo.alt }}</figcaption>
         </figure>

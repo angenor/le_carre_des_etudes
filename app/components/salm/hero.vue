@@ -79,7 +79,7 @@ function toggleVideo() {
       width="1440"
       height="860"
       fetchpriority="high"
-      class="absolute -inset-5 -z-20 h-[calc(100%+40px)] w-[calc(100%+40px)] max-w-none object-cover object-[center_30%] blur-[3px] brightness-[0.34] saturate-[0.9]"
+      class="salm-kenburns absolute -inset-5 -z-20 h-[calc(100%+40px)] w-[calc(100%+40px)] max-w-none object-cover object-[center_30%] blur-[3px] brightness-[0.34] saturate-[0.9]"
     >
     <div
       v-if="videoEligible && !videoPaused && backgroundSrc"
@@ -100,24 +100,24 @@ function toggleVideo() {
       <!-- Colonne principale -->
       <div class="flex max-w-[820px] min-w-0 flex-col gap-5 md:gap-7">
         <div class="flex items-center gap-3.5">
-          <span class="hidden h-[3px] w-10 shrink-0 bg-salm-accent md:block" aria-hidden="true" />
-          <span class="font-salm-title text-[11px] leading-[1.6] font-bold tracking-[0.14em] text-salm-accent-text md:text-[13px] md:tracking-[0.16em]">
+          <span class="salm-intro-line hidden h-[3px] w-10 shrink-0 bg-salm-accent md:block" aria-hidden="true" />
+          <span class="salm-intro font-salm-title text-[11px] leading-[1.6] font-bold tracking-[0.14em] text-salm-accent-text md:text-[13px] md:tracking-[0.16em]" style="--salm-delay: 0.1s">
             {{ edition.salonName.toLocaleUpperCase('fr-FR') }}
           </span>
         </div>
 
         <h1 class="flex items-end gap-0.5 leading-[0.8] md:gap-1">
           <span class="sr-only">SALM {{ edition.year }}</span>
-          <span aria-hidden="true" class="font-salm-script text-[min(118px,30vw)] font-normal tracking-[-0.01em] text-[#F5F3EF] md:text-[190px]">Salm</span>
-          <span aria-hidden="true" class="pb-1 font-salm-title text-[min(52px,13vw)] font-extrabold tracking-[-0.03em] text-salm-accent-text md:pb-1.5 md:text-[84px]">{{ edition.year }}</span>
+          <span aria-hidden="true" class="salm-intro-write font-salm-script text-[min(118px,30vw)] font-normal tracking-[-0.01em] text-[#F5F3EF] md:text-[190px]" style="--salm-delay: 0.25s">Salm</span>
+          <span aria-hidden="true" class="salm-intro-stamp pb-1 font-salm-title text-[min(52px,13vw)] font-extrabold tracking-[-0.03em] text-salm-accent-text md:pb-1.5 md:text-[84px]" style="--salm-delay: 1.15s">{{ edition.year }}</span>
         </h1>
 
-        <p v-if="edition.tagline" class="font-salm-title text-2xl leading-[1.25] font-semibold tracking-[-0.01em] text-[#F5F3EF] md:text-[34px]">
+        <p v-if="edition.tagline" class="salm-intro font-salm-title text-2xl leading-[1.25] font-semibold tracking-[-0.01em] text-[#F5F3EF] md:text-[34px]" style="--salm-delay: 1.3s">
           {{ edition.tagline }}
         </p>
 
         <!-- Informations pratiques -->
-        <ul class="flex flex-col gap-2.5 font-salm-body text-[15px] text-stone-300 md:flex-row md:flex-wrap md:gap-7 md:text-[17px]">
+        <ul class="salm-intro flex flex-col gap-2.5 font-salm-body text-[15px] text-stone-300 md:flex-row md:flex-wrap md:gap-7 md:text-[17px]" style="--salm-delay: 1.4s">
           <li class="flex items-center gap-2.5">
             <svg class="size-[18px] shrink-0 md:size-5" viewBox="0 0 24 24" fill="none" stroke="#F4792B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
             <span class="md:hidden">{{ datesShort }}<template v-if="edition.timeline.hoursLabel"> · {{ edition.timeline.hoursLabel }}</template></span>
@@ -139,15 +139,16 @@ function toggleVideo() {
           :opens-at-iso="edition.timeline.opensAtIso"
           :ends-at-iso="edition.timeline.endsAtIso"
           :year="edition.year"
-          class="md:hidden"
+          class="salm-intro md:hidden"
+          style="--salm-delay: 1.5s"
         />
 
         <!-- Appels à l'action (FR-051) -->
-        <div class="mt-2 flex flex-col gap-3 md:mt-3 md:flex-row md:flex-wrap md:gap-4">
+        <div class="salm-intro mt-2 flex flex-col gap-3 md:mt-3 md:flex-row md:flex-wrap md:gap-4" style="--salm-delay: 1.55s">
           <NuxtLink
             v-if="studentsOpen"
             to="/salm/inscription-etudiant"
-            class="flex min-h-14 items-center justify-center gap-3 rounded-[14px] bg-salm-accent px-7 py-2 text-center font-salm-title text-base font-bold text-white transition-colors hover:bg-[#9A3412] md:h-[60px] md:justify-start"
+            class="salm-shine flex min-h-14 items-center justify-center gap-3 rounded-[14px] bg-salm-accent px-7 py-2 text-center font-salm-title text-base font-bold text-white transition-colors hover:bg-[#9A3412] md:h-[60px] md:justify-start"
           >
             <svg class="hidden size-5 md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M9 6h6" /><circle cx="12" cy="13" r="3" /></svg>
             Étudiant·e : obtenir mon badge
@@ -174,7 +175,8 @@ function toggleVideo() {
         <button
           v-if="recap"
           type="button"
-          class="flex items-center gap-3 self-start text-[15px] font-semibold text-[#F5F3EF] md:hidden"
+          class="salm-intro flex items-center gap-3 self-start text-[15px] font-semibold text-[#F5F3EF] md:hidden"
+          style="--salm-delay: 1.7s"
           @click="recapOpen = true"
         >
           <span class="flex size-11 items-center justify-center rounded-full bg-[#F5F3EF] text-[#0B0B0D]">
@@ -185,7 +187,7 @@ function toggleVideo() {
       </div>
 
       <!-- Colonne de droite (desktop) : compte à rebours et vidéo -->
-      <div class="hidden w-full max-w-85 shrink-0 flex-col gap-4 md:flex lg:mt-[74px]">
+      <div class="salm-intro-swing hidden w-full max-w-85 shrink-0 flex-col gap-4 md:flex lg:mt-[74px]" style="--salm-delay: 1.35s">
         <SalmCountdown
           v-if="edition.timeline.opensAtIso && edition.timeline.endsAtIso"
           :opens-at-iso="edition.timeline.opensAtIso"
@@ -220,7 +222,7 @@ function toggleVideo() {
     </div>
 
     <!-- Barre d'ancres et organisateur -->
-    <div class="flex flex-col gap-3 border-t border-white/10 bg-[#0B0B0D]/80 px-5 py-4 md:h-[68px] md:flex-row md:items-center md:justify-between md:px-12 md:py-0 xl:px-24">
+    <div class="salm-intro flex flex-col gap-3 border-t border-white/10 bg-[#0B0B0D]/80 px-5 py-4 md:h-[68px] md:flex-row md:items-center md:justify-between md:px-12 md:py-0 xl:px-24" style="--salm-delay: 1.7s">
       <nav aria-label="Sections de la page SALM" class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium md:gap-x-9 md:text-[15px]">
         <a v-for="anchor in anchors" :key="anchor.href" :href="anchor.href" class="text-stone-300 transition-colors hover:text-salm-accent-text">{{ anchor.label }}</a>
       </nav>

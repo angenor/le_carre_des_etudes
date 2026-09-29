@@ -7,10 +7,14 @@ defineProps<{
   edition: SalmPublicEdition | null
   previous: SalmPreviousEdition | null
 }>()
+
+// Apparitions au défilement, déclarées par data-motion dans les sections
+const root = ref<HTMLElement | null>(null)
+useSalmMotion(root)
 </script>
 
 <template>
-  <div class="salm-scope overflow-x-clip bg-salm-bg font-salm-body text-[#F5F3EF]">
+  <div ref="root" class="salm-scope overflow-x-clip bg-salm-bg font-salm-body text-[#F5F3EF]">
     <template v-if="edition">
       <SalmHero :edition="edition" :previous="previous" />
       <SalmParticipate :edition="edition" />

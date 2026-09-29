@@ -51,7 +51,7 @@ function onKeydown(event: KeyboardEvent) {
         class="-mx-5 snap-x snap-mandatory scroll-px-5 overflow-x-auto px-5 pb-2 motion-safe:scroll-smooth md:mx-0 md:overflow-visible md:px-0 md:pb-0"
         @keydown="onKeydown"
       >
-      <ul class="flex gap-4 md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-5">
+      <ul class="flex gap-4 md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-5" data-motion="deal">
         <li v-for="item in highlights" :key="item.title" class="w-[78%] shrink-0 snap-start md:w-auto">
           <figure class="m-0 flex h-[360px] flex-col overflow-hidden rounded-[18px] bg-salm-surface-2 md:h-[392px]">
             <figcaption class="flex h-[72px] shrink-0 items-center justify-center bg-salm-accent px-4 text-center font-salm-title text-[15px] font-extrabold tracking-[0.04em] text-white">

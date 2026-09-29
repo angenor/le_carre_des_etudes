@@ -1,5 +1,9 @@
 <script setup lang="ts">
 const { status } = useSiteStatus()
+
+// Pages SALM : fond sombre derrière la page, pour qu'aucun blanc n'apparaisse pendant les transitions
+const route = useRoute()
+const salmPage = computed(() => route.path === '/salm' || route.path.startsWith('/salm/'))
 </script>
 
 <template>
@@ -14,7 +18,7 @@ const { status } = useSiteStatus()
       <NuxtLink to="/admin" class="font-semibold underline underline-offset-2">Administration</NuxtLink>
     </div>
     <AppNavbar />
-    <main class="flex-1">
+    <main class="flex-1" :class="{ 'bg-salm-bg': salmPage }">
       <slot />
     </main>
     <AppFooter />

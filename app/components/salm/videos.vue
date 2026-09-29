@@ -36,7 +36,7 @@ const intro = computed(() => {
         <p class="max-w-[420px] text-[15px] leading-[1.55] text-stone-400 md:text-base">{{ intro }}</p>
       </div>
 
-      <ul class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+      <ul class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-3" data-motion="pop">
         <li v-for="(v, i) in videos" :key="v.youtubeId + i">
           <button
             type="button"

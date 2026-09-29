@@ -13,6 +13,11 @@ const props = defineProps<{
 
 const uid = useId()
 const selected = ref(0)
+// Onglets (mobile) : le jour choisi glisse depuis le côté de son onglet
+const tabSlide = ref<'' | 'salm-slide-next' | 'salm-slide-prev'>('')
+watch(selected, (to, from) => {
+  tabSlide.value = to > from ? 'salm-slide-next' : 'salm-slide-prev'
+})
 const isMobile = ref(false)
 const tabRefs = ref<HTMLButtonElement[]>([])
 let media: MediaQueryList | undefined
@@ -94,7 +99,7 @@ function capitalize(text: string) {
         </button>
       </div>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2" data-motion="hours">
         <div
           v-for="(day, dayIndex) in days"
           :id="`${uid}-panel-${dayIndex}`"
@@ -103,7 +108,7 @@ function capitalize(text: string) {
           :aria-labelledby="isMobile && days.length > 1 ? `${uid}-tab-${dayIndex}` : undefined"
           :tabindex="isMobile && days.length > 1 ? 0 : undefined"
           class="self-start rounded-3xl border border-salm-border bg-salm-bg px-5 pt-2 pb-5 md:px-8"
-          :class="{ 'hidden md:block': days.length > 1 && dayIndex !== selected }"
+          :class="[{ 'hidden md:block': days.length > 1 && dayIndex !== selected }, dayIndex === selected ? tabSlide : '']"
         >
           <h3 class="flex flex-wrap items-baseline gap-x-3.5 gap-y-1 pt-6 pb-5">
             <span class="font-salm-title text-2xl font-extrabold text-salm-accent-text">{{ day.label }}</span>
@@ -113,6 +118,7 @@ function capitalize(text: string) {
             <li
               v-for="(slot, i) in day.slots"
               :key="i"
+              :data-glow="slot.isHighlighted || undefined"
               class="grid grid-cols-1 gap-1 py-4 sm:grid-cols-[136px_1fr] sm:gap-4"
               :class="slot.isHighlighted
                 ? '-mx-3 rounded-xl bg-amber-400/9 px-3'

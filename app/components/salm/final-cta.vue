@@ -22,7 +22,7 @@ function tel(value: string) {
   <section class="salm-on-accent bg-salm-accent px-5 py-14 text-white md:px-12 md:py-20 xl:px-24">
     <div class="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
       <div class="flex max-w-[640px] flex-col gap-[18px] md:gap-5">
-        <h2 class="font-salm-title text-[32px] leading-[1.1] font-extrabold tracking-[-0.03em] md:text-[50px] md:leading-[1.06]">
+        <h2 class="font-salm-title text-[32px] leading-[1.1] font-extrabold tracking-[-0.03em] md:text-[50px] md:leading-[1.06]" data-motion="rise">
           <template v-if="firstDay">Le {{ formatDate(firstDay) }}, ton avenir a rendez-vous.</template>
           <template v-else>Ton avenir a rendez-vous.</template>
         </h2>
@@ -31,11 +31,13 @@ function tel(value: string) {
           <NuxtLink
             v-if="studentsOpen"
             to="/salm/inscription-etudiant"
+            data-motion="wiggle"
             class="flex h-[54px] items-center justify-center rounded-[14px] bg-white px-[26px] font-salm-title text-base font-bold text-[#9A3A06] transition-colors hover:bg-orange-50 md:h-14"
           >Obtenir mon badge</NuxtLink>
           <NuxtLink
             v-else
             to="/salm/inscription-etudiant"
+            data-motion="wiggle"
             class="flex h-[54px] items-center justify-center rounded-[14px] bg-white px-[26px] font-salm-title text-base font-bold text-[#9A3A06] transition-colors hover:bg-orange-50 md:h-14"
           >Récupérer mon badge</NuxtLink>
           <NuxtLink

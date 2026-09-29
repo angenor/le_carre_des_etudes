@@ -2,6 +2,9 @@
 import '~/assets/css/salm.css'
 import type { SalmEditionResponse } from '#shared/types/salm'
 
+// Transition entre les écrans SALM (salm.css)
+definePageMeta({ pageTransition: { name: 'salm-page', mode: 'out-in', duration: { enter: 500, leave: 200 } } })
+
 // Inscription étudiante (US1). Contenu et état d'ouverture : édition publiée.
 const { data } = await useFetch<SalmEditionResponse>('/api/salm/edition', { key: 'salm-edition' })
 const edition = computed(() => data.value?.edition ?? null)

@@ -136,6 +136,8 @@ async function submit() {
     mode.value = 'done'
     await nextTick()
     doneTitle.value?.focus()
+    // Nouvelle inscription : on fête le badge (pas pour un badge simplement récupéré)
+    if (response.status === 'created') launchSalmConfetti(doneTitle.value)
   }
   catch (error) {
     const data = (error as { data?: { data?: { code?: string; errors?: Record<string, SalmFieldError> } } }).data?.data
@@ -300,7 +302,7 @@ const inputClass = 'box-border h-[52px] w-full rounded-xl border-[1.5px] bg-whit
 
       <!-- Félicitations / déjà inscrit·e -->
       <div v-else-if="result" class="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-12">
-        <figure class="m-0">
+        <figure class="salm-badge-drop m-0">
           <SalmBadgeCard
             size="md"
             :year="edition.year"
@@ -313,10 +315,10 @@ const inputClass = 'box-border h-[52px] w-full rounded-xl border-[1.5px] bg-whit
           <figcaption class="sr-only">Ton badge n° {{ result.badge.number }}, au nom de {{ result.badge.fullName }}</figcaption>
         </figure>
         <div class="flex w-full min-w-0 grow flex-col gap-[18px] md:pt-2">
-          <span class="flex size-14 items-center justify-center rounded-full bg-green-100 text-green-700" aria-hidden="true">
+          <span class="salm-intro-stamp flex size-14 items-center justify-center rounded-full bg-green-100 text-green-700" style="--salm-delay: 0.45s" aria-hidden="true">
             <svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
           </span>
-          <h2 ref="doneTitle" tabindex="-1" class="font-salm-title text-2xl font-extrabold tracking-[-0.02em] text-stone-900 focus:outline-none md:text-[30px]">
+          <h2 ref="doneTitle" tabindex="-1" style="--salm-delay: 0.55s" class="salm-intro font-salm-title text-2xl font-extrabold tracking-[-0.02em] text-stone-900 focus:outline-none md:text-[30px]">
             {{ result.status === 'created' ? 'Félicitations, ton badge est prêt !' : 'Tu es déjà inscrit·e' }}
           </h2>
           <p class="text-base leading-relaxed text-stone-600">

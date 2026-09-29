@@ -65,6 +65,8 @@ function textKey(field: string): string {
 // ---- État ----
 const STEPS = ['Établissement', 'Exposants & stand', 'Confirmation']
 const step = ref<1 | 2 | 3>(1)
+// Sens du dernier changement d'étape : l'étape affichée glisse depuis la droite (suivante) ou la gauche (précédente)
+const stepSlide = ref<'' | 'salm-slide-next' | 'salm-slide-prev'>('')
 const form = reactive({
   name: '',
   phone: '',
@@ -174,6 +176,7 @@ async function focusFirstError() {
 }
 
 async function goTo(target: 1 | 2 | 3) {
+  if (target !== step.value) stepSlide.value = target > step.value ? 'salm-slide-next' : 'salm-slide-prev'
   step.value = target
   await nextTick()
   stepTitle.value?.focus()
@@ -299,7 +302,7 @@ const border = (field: string) => (errors[field] ? 'border-red-600' : 'border-sa
       </ol>
 
       <!-- Étape 1 : établissement et programmes -->
-      <form v-if="step === 1" class="relative flex flex-col gap-5" novalidate @submit.prevent="next">
+      <form v-if="step === 1" class="relative flex flex-col gap-5" :class="stepSlide" novalidate @submit.prevent="next">
         <h2 ref="stepTitle" tabindex="-1" class="sr-only">Étape 1 sur 3 : établissement</h2>
         <div class="flex flex-col gap-2">
           <label :for="id('name')" class="text-[13px] font-semibold text-stone-700">Nom de l'établissement *</label>
@@ -382,7 +385,7 @@ const border = (field: string) => (errors[field] ? 'border-red-600' : 'border-sa
       </form>
 
       <!-- Étape 2 : exposants et stand -->
-      <form v-else-if="step === 2" class="flex flex-col gap-[22px]" novalidate @submit.prevent="submit">
+      <form v-else-if="step === 2" class="flex flex-col gap-[22px]" :class="stepSlide" novalidate @submit.prevent="submit">
         <h2 ref="stepTitle" tabindex="-1" class="sr-only">Étape 2 sur 3 : exposants et stand</h2>
 
         <fieldset class="m-0 flex flex-col gap-2.5 border-0 p-0">
@@ -504,8 +507,8 @@ const border = (field: string) => (errors[field] ? 'border-red-600' : 'border-sa
       </form>
 
       <!-- Étape 3 : présence confirmée -->
-      <div v-else-if="summary" class="flex flex-col gap-5 pt-1.5">
-        <span class="flex size-16 items-center justify-center rounded-full bg-green-100 text-green-700" aria-hidden="true">
+      <div v-else-if="summary" class="flex flex-col gap-5 pt-1.5" :class="stepSlide">
+        <span class="salm-intro-stamp flex size-16 items-center justify-center rounded-full bg-green-100 text-green-700" style="--salm-delay: 0.25s" aria-hidden="true">
           <svg class="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
         </span>
         <h2 ref="stepTitle" tabindex="-1" class="font-salm-title text-[28px] font-extrabold tracking-[-0.02em] text-stone-900 focus:outline-none md:text-[32px]">Présence confirmée</h2>

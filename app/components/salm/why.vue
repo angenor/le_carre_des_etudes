@@ -9,7 +9,7 @@ defineProps<{ edition: SalmPublicEdition }>()
 <template>
   <section id="pourquoi" class="scroll-mt-24 bg-salm-surface px-5 py-16 md:px-12 md:py-[100px] xl:px-24">
     <div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-24">
-      <figure v-if="edition.poster" class="m-0 w-full shrink-0 lg:w-[400px] xl:w-[480px]">
+      <figure v-if="edition.poster" class="m-0 w-full shrink-0 lg:w-[400px] xl:w-[480px]" data-motion="pin">
         <img
           :src="edition.poster.path"
           :alt="edition.poster.alt ?? `Affiche du SALM ${edition.year}`"
