@@ -3,11 +3,7 @@ import '~/assets/css/salm.css'
 import type { SalmPublicEdition } from '#shared/types/salm'
 
 // « Pourquoi le SALM ? » : affiche officielle, texte, publics et organisateur.
-const props = defineProps<{ edition: SalmPublicEdition }>()
-
-const initials = computed(() =>
-  props.edition.organizerName.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toLocaleUpperCase('fr-FR'),
-)
+defineProps<{ edition: SalmPublicEdition }>()
 </script>
 
 <template>
@@ -37,7 +33,8 @@ const initials = computed(() =>
           </li>
         </ul>
         <div class="flex items-center gap-[18px] border-t border-salm-border pt-6">
-          <span class="flex size-[52px] shrink-0 items-center justify-center rounded-full bg-[#F5F3EF] font-salm-title text-lg font-black text-[#9A3A06]" aria-hidden="true">{{ initials }}</span>
+          <!-- Emblème de Sucrey Corporates (fixe : l'organisateur ne change pas d'une édition à l'autre), extrait de public/images/logos/LOGO-BLANC-.png -->
+          <img src="/images/logos/sucrey-embleme-blanc.png" alt="" width="52" height="52" loading="lazy" class="size-13 shrink-0">
           <div class="flex flex-col gap-0.5">
             <span class="text-[13px] text-stone-400">Organisé par</span>
             <span class="font-salm-title text-[17px] font-bold text-[#F5F3EF]">{{ edition.organizerName.toLocaleUpperCase('fr-FR') }}</span>

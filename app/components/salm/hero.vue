@@ -131,11 +131,16 @@ function toggleVideo() {
             <svg class="size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#F4792B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
             {{ edition.timeline.hoursLabel }}
           </li>
-          <li v-if="edition.timeline.opensAtIso && edition.timeline.endsAtIso" class="flex items-center gap-2.5 md:hidden">
-            <svg class="size-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="#F4792B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
-            <SalmCountdown :opens-at-iso="edition.timeline.opensAtIso" :ends-at-iso="edition.timeline.endsAtIso" :year="edition.year" inline />
-          </li>
         </ul>
+
+        <!-- Compte à rebours (mobile ; sur desktop, dans la colonne de droite) -->
+        <SalmCountdown
+          v-if="edition.timeline.opensAtIso && edition.timeline.endsAtIso"
+          :opens-at-iso="edition.timeline.opensAtIso"
+          :ends-at-iso="edition.timeline.endsAtIso"
+          :year="edition.year"
+          class="md:hidden"
+        />
 
         <!-- Appels à l'action (FR-051) -->
         <div class="mt-2 flex flex-col gap-3 md:mt-3 md:flex-row md:flex-wrap md:gap-4">
@@ -180,7 +185,7 @@ function toggleVideo() {
       </div>
 
       <!-- Colonne de droite (desktop) : compte à rebours et vidéo -->
-      <div class="hidden w-full max-w-[300px] shrink-0 flex-col gap-4 md:flex lg:mt-[74px]">
+      <div class="hidden w-full max-w-85 shrink-0 flex-col gap-4 md:flex lg:mt-[74px]">
         <SalmCountdown
           v-if="edition.timeline.opensAtIso && edition.timeline.endsAtIso"
           :opens-at-iso="edition.timeline.opensAtIso"

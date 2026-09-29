@@ -50,6 +50,22 @@ body:has(dialog.salm-dialog[open]) {
   outline-color: #9A3A06;
 }
 
+/* Chiffre du compte à rebours qui change (hero) : il glisse depuis le haut de sa case */
+@keyframes salm-tick {
+  from {
+    opacity: 0;
+    transform: translateY(-45%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.salm-tick {
+  animation: salm-tick 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .salm-scope *,
   .salm-dialog * {
