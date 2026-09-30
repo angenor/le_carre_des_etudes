@@ -105,28 +105,28 @@ function formatDate(dateStr: string): string {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-950">
+  <div class="min-h-screen bg-page">
     <!-- Chargement -->
     <div v-if="status === 'pending'" class="flex min-h-screen items-center justify-center">
       <div class="text-center">
-        <div class="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-amber-500/20 border-t-amber-500" />
-        <p class="mt-4 text-sm text-gray-500">Chargement...</p>
+        <div class="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-gold/20 border-t-gold" />
+        <p class="mt-4 text-sm text-ink-subtle">Chargement...</p>
       </div>
     </div>
 
     <!-- Erreur / non trouvé -->
     <div v-else-if="!magazine" class="flex min-h-screen items-center justify-center px-6">
       <div class="text-center">
-        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-gray-800 bg-gray-900">
-          <svg class="h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-line bg-surface">
+          <svg class="h-8 w-8 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
           </svg>
         </div>
-        <h1 class="mt-5 text-xl font-semibold text-white">Magazine introuvable</h1>
-        <p class="mt-2 text-sm text-gray-500">Ce magazine n'existe pas ou a été retiré.</p>
+        <h1 class="mt-5 text-xl font-semibold text-ink">Magazine introuvable</h1>
+        <p class="mt-2 text-sm text-ink-subtle">Ce magazine n'existe pas ou a été retiré.</p>
         <NuxtLink
           to="/magazine"
-          class="mt-6 inline-flex items-center gap-2 rounded-full border border-gray-700 px-6 py-2.5 text-sm font-medium text-gray-400 transition-colors hover:border-gray-600 hover:text-white"
+          class="mt-6 inline-flex items-center gap-2 rounded-full border border-line-strong px-6 py-2.5 text-sm font-medium text-ink-muted transition-colors hover:border-ink-faint hover:text-ink"
         >
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -139,7 +139,7 @@ function formatDate(dateStr: string): string {
     <!-- Contenu magazine -->
     <template v-else>
       <!-- Hero -->
-      <section class="relative overflow-hidden bg-gray-950 pb-20 pt-32 sm:pt-36">
+      <section class="relative overflow-hidden bg-page pb-20 pt-32 sm:pt-36">
         <!-- Motifs -->
         <svg class="absolute inset-0 h-full w-full" aria-hidden="true">
           <defs>
@@ -147,7 +147,7 @@ function formatDate(dateStr: string): string {
               <circle cx="1" cy="1" r="1" fill="rgba(251,191,36,0.08)" />
             </pattern>
             <radialGradient id="detail-fade" cx="30%" cy="40%" r="50%">
-              <stop offset="0%" stop-color="rgba(221,132,72,0.12)" />
+              <stop offset="0%" style="stop-color: color-mix(in srgb, var(--site-copper) 12%, transparent)" />
               <stop offset="100%" stop-color="transparent" />
             </radialGradient>
           </defs>
@@ -156,14 +156,14 @@ function formatDate(dateStr: string): string {
         </svg>
 
         <!-- Halos -->
-        <div class="absolute -left-20 top-0 h-80 w-80 rounded-full bg-amber-500/5 blur-3xl" />
+        <div class="absolute -left-20 top-0 h-80 w-80 rounded-full bg-gold/5 blur-3xl" />
 
         <div class="relative mx-auto max-w-6xl px-6">
           <!-- Breadcrumb -->
           <nav class="mb-10">
             <NuxtLink
               to="/magazine"
-              class="inline-flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-amber-400"
+              class="inline-flex items-center gap-2 text-sm text-ink-subtle transition-colors hover:text-accent"
             >
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -225,11 +225,11 @@ function formatDate(dateStr: string): string {
                     />
                     <div
                       v-else
-                      class="flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-gray-800 to-gray-900"
+                      class="flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-surface-2 to-surface"
                     >
                       <div class="text-center">
-                        <div class="text-5xl font-bold text-amber-400">{{ magazine.version }}</div>
-                        <div class="mt-3 text-base text-gray-500">{{ magazine.name }}</div>
+                        <div class="text-5xl font-bold text-accent">{{ magazine.version }}</div>
+                        <div class="mt-3 text-base text-ink-subtle">{{ magazine.name }}</div>
                       </div>
                     </div>
                   </div>
@@ -237,7 +237,7 @@ function formatDate(dateStr: string): string {
               </template>
 
               <!-- Couverture normale (pas à la une) -->
-              <div v-else class="w-full overflow-hidden rounded-2xl border border-gray-800 shadow-2xl shadow-black/50">
+              <div v-else class="w-full overflow-hidden rounded-2xl border border-line shadow-2xl shadow-black/50">
                 <img
                   v-if="magazine.coverImage"
                   :src="magazine.coverImage"
@@ -246,11 +246,11 @@ function formatDate(dateStr: string): string {
                 />
                 <div
                   v-else
-                  class="flex aspect-3/4 w-full items-center justify-center bg-linear-to-br from-gray-800 to-gray-900"
+                  class="flex aspect-3/4 w-full items-center justify-center bg-linear-to-br from-surface-2 to-surface"
                 >
                   <div class="text-center">
-                    <div class="text-5xl font-bold text-amber-400">{{ magazine.version }}</div>
-                    <div class="mt-3 text-base text-gray-500">{{ magazine.name }}</div>
+                    <div class="text-5xl font-bold text-accent">{{ magazine.version }}</div>
+                    <div class="mt-3 text-base text-ink-subtle">{{ magazine.name }}</div>
                   </div>
                 </div>
               </div>
@@ -259,32 +259,32 @@ function formatDate(dateStr: string): string {
             <!-- Détails -->
             <div class="flex-1">
               <!-- Badge version -->
-              <span class="inline-block rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-bold tracking-wider text-amber-400">
+              <span class="inline-block rounded-full border border-gold/20 bg-gold/10 px-3 py-1 text-xs font-bold tracking-wider text-accent">
                 {{ magazine.version }}
               </span>
 
-              <h1 class="mt-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+              <h1 class="mt-4 text-3xl font-bold text-ink sm:text-4xl lg:text-5xl">
                 {{ magazine.name }}
               </h1>
 
-              <p v-if="magazine.subtitle" class="mt-2 text-lg font-medium text-amber-400/80">
+              <p v-if="magazine.subtitle" class="mt-2 text-lg font-medium text-accent/80">
                 {{ magazine.subtitle }}
               </p>
 
-              <p class="mt-2 text-sm text-gray-500">
+              <p class="mt-2 text-sm text-ink-subtle">
                 Publié le {{ formatDate(magazine.publishedAt) }}
               </p>
 
               <!-- Séparateur -->
-              <div class="my-6 h-px bg-linear-to-r from-amber-500/20 via-gray-800 to-transparent" />
+              <div class="my-6 h-px bg-linear-to-r from-gold/20 via-line to-transparent" />
 
-              <p class="max-w-xl text-base leading-relaxed text-gray-400">
+              <p class="max-w-xl text-base leading-relaxed text-ink-muted">
                 {{ magazine.description }}
               </p>
 
               <!-- Compte à rebours -->
               <div v-if="countdown" class="mt-8 w-full max-w-md">
-                <p class="mb-4 text-sm font-medium tracking-wide text-gray-500 uppercase">
+                <p class="mb-4 text-sm font-medium tracking-wide text-ink-subtle uppercase">
                   Disponible le {{ dateDisponibiliteFormatee }}
                 </p>
                 <div class="grid grid-cols-4 gap-3">
@@ -296,12 +296,12 @@ function formatDate(dateStr: string): string {
                       { valeur: countdown.secondes, label: 'Sec' },
                     ]"
                     :key="bloc.label"
-                    class="flex flex-col items-center gap-1.5 rounded-2xl border border-amber-500/15 bg-white/4 px-2 py-3"
+                    class="flex flex-col items-center gap-1.5 rounded-2xl border border-gold/15 bg-ink/4 px-2 py-3"
                   >
-                    <span class="bg-linear-to-b from-amber-400 to-amber-600 bg-clip-text text-[28px] font-bold leading-none tracking-tight text-transparent">
+                    <span class="bg-linear-to-b from-title-from to-title-deep bg-clip-text text-[28px] font-bold leading-none tracking-tight text-transparent">
                       {{ String(bloc.valeur).padStart(2, '0') }}
                     </span>
-                    <span class="text-[11px] font-medium uppercase tracking-wider text-white/40">{{ bloc.label }}</span>
+                    <span class="text-[11px] font-medium uppercase tracking-wider text-ink/40">{{ bloc.label }}</span>
                   </div>
                 </div>
               </div>
@@ -312,7 +312,7 @@ function formatDate(dateStr: string): string {
                 <button
                   v-if="estDisponible && magazine.pdfPath"
                   type="button"
-                  class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-amber-400/30"
+                  class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-gold/20 transition-all hover:bg-amber-400 hover:shadow-glow/30"
                   @click="showDownloadModal = true"
                 >
                   <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -323,7 +323,7 @@ function formatDate(dateStr: string): string {
 
                 <span
                   v-else
-                  class="inline-flex items-center justify-center gap-2 rounded-full bg-white/5 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-500 uppercase"
+                  class="inline-flex items-center justify-center gap-2 rounded-full bg-ink/5 px-8 py-3.5 text-sm font-bold tracking-wide text-ink-subtle uppercase"
                 >
                   <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -334,7 +334,7 @@ function formatDate(dateStr: string): string {
                 <!-- Retour -->
                 <NuxtLink
                   to="/magazine"
-                  class="inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3.5 text-sm font-medium text-gray-400 transition-colors hover:text-white"
+                  class="inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
                 >
                   Voir tous les numéros
                   <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -366,11 +366,11 @@ function formatDate(dateStr: string): string {
   position: relative;
   background: linear-gradient(
       -30deg,
-      oklch(from #dd8448 0.3 calc(c / 2) h / 0.4),
+      oklch(from var(--site-copper) 0.3 calc(c / 2) h / 0.4),
       transparent,
-      oklch(from #dd8448 0.3 calc(c / 2) h / 0.4)
+      oklch(from var(--site-copper) 0.3 calc(c / 2) h / 0.4)
     ),
-    linear-gradient(to bottom, oklch(0.185 0 0), oklch(0.185 0 0));
+    linear-gradient(to bottom, var(--site-frame), var(--site-frame));
 }
 
 .electric-inner {
@@ -378,7 +378,7 @@ function formatDate(dateStr: string): string {
 }
 
 .electric-border-outer {
-  border: 2px solid rgba(221, 132, 72, 0.5);
+  border: 2px solid color-mix(in srgb, var(--site-copper) 50%, transparent);
   border-radius: 24px;
   padding-right: 4px;
   padding-bottom: 4px;
@@ -388,7 +388,7 @@ function formatDate(dateStr: string): string {
   width: 280px;
   aspect-ratio: 583 / 828;
   border-radius: 24px;
-  border: 2px solid #dd8448;
+  border: 2px solid var(--site-copper);
   margin-top: -4px;
   margin-left: -4px;
   filter: url(#detail-turbulent-displace);
@@ -403,7 +403,7 @@ function formatDate(dateStr: string): string {
 }
 
 .electric-glow-1 {
-  border: 2px solid rgba(221, 132, 72, 0.6);
+  border: 2px solid color-mix(in srgb, var(--site-copper) 60%, transparent);
   border-radius: 24px;
   width: 100%;
   height: 100%;
@@ -416,7 +416,7 @@ function formatDate(dateStr: string): string {
 }
 
 .electric-glow-2 {
-  border: 2px solid #dd8448;
+  border: 2px solid var(--site-copper);
   border-radius: 24px;
   width: 100%;
   height: 100%;
@@ -472,7 +472,7 @@ function formatDate(dateStr: string): string {
   transform: scale(1.1);
   opacity: 0.3;
   z-index: -1;
-  background: linear-gradient(-30deg, #dd8448, transparent, #dd8448);
+  background: linear-gradient(-30deg, var(--site-copper), transparent, var(--site-copper));
 }
 
 .electric-content {

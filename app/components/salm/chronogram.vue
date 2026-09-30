@@ -59,13 +59,13 @@ function capitalize(text: string) {
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="flex flex-col gap-2.5 md:gap-3.5">
           <span class="font-salm-title text-xs font-bold tracking-[0.16em] text-salm-accent-text md:text-[13px]">HEURE PAR HEURE</span>
-          <h2 class="font-salm-title text-[32px] font-extrabold tracking-[-0.03em] text-[#F5F3EF] md:text-5xl">Chronogramme SALM {{ year }}</h2>
+          <h2 class="font-salm-title text-[32px] font-extrabold tracking-[-0.03em] text-salm-ink md:text-5xl">Chronogramme SALM {{ year }}</h2>
         </div>
         <a
           v-if="programPdfPath"
           :href="programPdfPath"
           download
-          class="flex h-12 items-center gap-2.5 self-start rounded-xl border border-[#3A3A42] px-5 text-[15px] font-semibold text-stone-200 transition-colors hover:border-stone-400"
+          class="flex h-12 items-center gap-2.5 self-start rounded-xl border border-salm-line-strong px-5 text-[15px] font-semibold text-salm-ink-strong transition-colors hover:border-salm-ink-muted"
         >
           <svg class="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
           Télécharger le programme (PDF)
@@ -91,7 +91,7 @@ function capitalize(text: string) {
           :aria-controls="`${uid}-panel-${i}`"
           :tabindex="selected === i ? 0 : -1"
           class="h-11 rounded-[10px] text-sm transition-colors"
-          :class="selected === i ? 'bg-salm-accent font-bold text-white' : 'font-semibold text-stone-400 hover:text-stone-200'"
+          :class="selected === i ? 'bg-salm-accent font-bold text-white' : 'font-semibold text-salm-ink-muted hover:text-salm-ink-strong'"
           @click="selected = i"
           @keydown="onTabKeydown"
         >
@@ -112,7 +112,7 @@ function capitalize(text: string) {
         >
           <h3 class="flex flex-wrap items-baseline gap-x-3.5 gap-y-1 pt-6 pb-5">
             <span class="font-salm-title text-2xl font-extrabold text-salm-accent-text">{{ day.label }}</span>
-            <span class="text-base font-normal text-stone-400">{{ capitalize(formatDayLong(day.date)) }}</span>
+            <span class="text-base font-normal text-salm-ink-muted">{{ capitalize(formatDayLong(day.date)) }}</span>
           </h3>
           <ol>
             <li
@@ -121,24 +121,24 @@ function capitalize(text: string) {
               :data-glow="slot.isHighlighted || undefined"
               class="grid grid-cols-1 gap-1 py-4 sm:grid-cols-[136px_1fr] sm:gap-4"
               :class="slot.isHighlighted
-                ? '-mx-3 rounded-xl bg-amber-400/9 px-3'
-                : 'border-t border-[#24242B]'"
+                ? '-mx-3 rounded-xl bg-glow/9 px-3'
+                : 'border-t border-salm-surface-4'"
             >
               <span
                 class="text-[13px] font-bold tabular-nums sm:text-[15px] sm:font-semibold"
-                :class="slot.isHighlighted ? 'text-amber-400' : slot.kind === 'pause' ? 'text-salm-input-border' : 'text-salm-accent-text sm:text-stone-300'"
+                :class="slot.isHighlighted ? 'text-accent' : slot.kind === 'pause' ? 'text-salm-ink-dim' : 'text-salm-accent-text sm:text-salm-ink-soft'"
               >{{ formatHour(slot.startTime) }} – {{ formatHour(slot.endTime) }}</span>
               <div class="flex flex-col gap-1.5">
                 <template v-if="slot.kind === 'panel'">
-                  <span class="self-start rounded-md bg-[#2A1A10] px-[9px] py-[3px] text-xs font-bold tracking-[0.06em] text-salm-accent-text">{{ slot.title }}</span>
-                  <span v-if="slot.description" class="text-base leading-[1.4] font-bold text-[#F5F3EF]">{{ slot.description }}</span>
+                  <span class="self-start rounded-md bg-salm-accent-tint px-[9px] py-[3px] text-xs font-bold tracking-[0.06em] text-salm-accent-text">{{ slot.title }}</span>
+                  <span v-if="slot.description" class="text-base leading-[1.4] font-bold text-salm-ink">{{ slot.description }}</span>
                 </template>
                 <template v-else>
                   <span
                     class="text-base leading-[1.4]"
-                    :class="slot.isHighlighted ? 'font-bold text-amber-200' : slot.kind === 'pause' ? 'text-salm-input-border' : 'font-bold text-[#F5F3EF]'"
+                    :class="slot.isHighlighted ? 'font-bold text-salm-highlight' : slot.kind === 'pause' ? 'text-salm-ink-dim' : 'font-bold text-salm-ink'"
                   >{{ slot.title }}</span>
-                  <span v-if="slot.description" class="text-sm leading-normal text-stone-400">{{ slot.description }}</span>
+                  <span v-if="slot.description" class="text-sm leading-normal text-salm-ink-muted">{{ slot.description }}</span>
                 </template>
               </div>
             </li>
@@ -147,8 +147,8 @@ function capitalize(text: string) {
             v-if="dayIndex === days.length - 1 && days.length > 1"
             class="mt-3 flex items-center justify-between gap-4 rounded-[14px] bg-salm-surface-2 p-5"
           >
-            <span class="text-[15px] leading-[1.45] text-stone-300">Ton badge est valable {{ days.length === 2 ? 'les deux jours' : 'tous les jours du salon' }}.</span>
-            <NuxtLink v-if="studentsOpen" to="/salm/inscription-etudiant" class="shrink-0 text-[15px] font-bold text-salm-accent-text hover:text-orange-300">M'inscrire →</NuxtLink>
+            <span class="text-[15px] leading-[1.45] text-salm-ink-soft">Ton badge est valable {{ days.length === 2 ? 'les deux jours' : 'tous les jours du salon' }}.</span>
+            <NuxtLink v-if="studentsOpen" to="/salm/inscription-etudiant" class="shrink-0 text-[15px] font-bold text-salm-accent-text hover:text-salm-accent-soft">M'inscrire →</NuxtLink>
           </div>
         </div>
       </div>

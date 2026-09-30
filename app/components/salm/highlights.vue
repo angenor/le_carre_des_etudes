@@ -38,9 +38,9 @@ function onKeydown(event: KeyboardEvent) {
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="flex flex-col gap-2.5 md:gap-3.5">
           <span class="font-salm-title text-xs font-bold tracking-[0.16em] text-salm-accent-text md:text-[13px]">{{ eyebrow }}</span>
-          <h2 class="font-salm-title text-[32px] font-extrabold tracking-[-0.03em] text-[#F5F3EF] md:text-5xl">Programme d'activité</h2>
+          <h2 class="font-salm-title text-[32px] font-extrabold tracking-[-0.03em] text-salm-ink md:text-5xl">Programme d'activité</h2>
         </div>
-        <a href="#chronogramme" class="text-[15px] font-semibold text-salm-accent-text hover:text-orange-300 md:text-base">Voir le chronogramme détaillé →</a>
+        <a href="#chronogramme" class="text-[15px] font-semibold text-salm-accent-text hover:text-salm-accent-soft md:text-base">Voir le chronogramme détaillé →</a>
       </div>
 
       <div

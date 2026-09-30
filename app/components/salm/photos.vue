@@ -70,11 +70,11 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="flex flex-col gap-2.5 md:gap-3.5">
           <span class="font-salm-title text-xs font-bold tracking-[0.16em] text-salm-accent-text md:text-[13px]">CATALOGUE PHOTOS · ÉDITION {{ year }}</span>
-          <h2 class="font-salm-title text-[32px] font-extrabold tracking-[-0.03em] text-[#F5F3EF] md:text-5xl">Les moments forts du salon</h2>
+          <h2 class="font-salm-title text-[32px] font-extrabold tracking-[-0.03em] text-salm-ink md:text-5xl">Les moments forts du salon</h2>
         </div>
         <button
           type="button"
-          class="flex h-12 items-center gap-2.5 self-start rounded-xl border border-[#3A3A42] px-5 text-[15px] font-semibold text-stone-200 transition-colors hover:border-stone-400"
+          class="flex h-12 items-center gap-2.5 self-start rounded-xl border border-salm-line-strong px-5 text-[15px] font-semibold text-salm-ink-strong transition-colors hover:border-salm-ink-muted"
           @click="open(0)"
         >
           Voir tout le catalogue →
@@ -101,10 +101,10 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
         <li v-if="remaining > 0">
           <button
             type="button"
-            class="flex size-full min-h-[120px] flex-col items-center justify-center gap-2 rounded-[18px] border-[1.5px] border-dashed border-[#3A3A42] text-salm-input-border transition-colors hover:border-stone-400"
+            class="flex size-full min-h-[120px] flex-col items-center justify-center gap-2 rounded-[18px] border-[1.5px] border-dashed border-salm-line-strong text-salm-ink-dim transition-colors hover:border-salm-ink-muted"
             @click="open(preview.length)"
           >
-            <span class="font-salm-title text-[32px] font-extrabold text-stone-200">+ {{ remaining }}</span>
+            <span class="font-salm-title text-[32px] font-extrabold text-salm-ink-strong">+ {{ remaining }}</span>
             <span class="text-sm">photo{{ remaining > 1 ? 's' : '' }} dans le catalogue</span>
           </button>
         </li>

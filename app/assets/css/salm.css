@@ -34,11 +34,12 @@ body:has(dialog.salm-dialog[open]) {
 
 /*
  * Focus visible commun aux éléments interactifs SALM (FR-082, T095).
- * Orange sur fond sombre, blanc sur fond orange (.salm-on-accent), brun foncé sur fond clair (.salm-on-light).
+ * Orange du jeton --salm-accent-text sur fond SALM (clair ou sombre), blanc sur fond orange (.salm-on-accent),
+ * brun foncé sur les cartes claires (.salm-on-light). Les fenêtres (.salm-dialog) portent `dark` : orange vif.
  */
 .salm-scope :where(a, button, summary, [tabindex]:not([tabindex="-1"])):focus-visible,
 .salm-dialog :where(a, button):focus-visible {
-  outline: 2px solid #F4792B;
+  outline: 2px solid var(--salm-accent-text);
   outline-offset: 2px;
 }
 

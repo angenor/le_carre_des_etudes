@@ -175,7 +175,7 @@ const inputClass = 'box-border h-[52px] w-full rounded-xl border-[1.5px] bg-whit
 </script>
 
 <template>
-  <div class="flex w-full max-w-[1160px] flex-col overflow-hidden rounded-3xl bg-[#FAF8F5] font-salm-body text-stone-900 md:rounded-[28px] lg:flex-row">
+  <div class="flex w-full max-w-[1160px] flex-col overflow-hidden rounded-3xl bg-[#FAF8F5] shadow-[0_0_0_1px_var(--salm-card-edge),0_24px_48px_-28px_var(--salm-card-shadow)] font-salm-body text-stone-900 md:rounded-[28px] lg:flex-row">
     <!-- Colonne orange -->
     <aside class="salm-on-accent flex shrink-0 flex-col gap-5 bg-salm-accent p-6 text-white md:gap-6 md:p-9 lg:w-[420px]">
       <NuxtLink to="/salm" class="flex items-center gap-2 self-start text-sm font-semibold text-white hover:underline">

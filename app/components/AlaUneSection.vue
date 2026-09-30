@@ -74,6 +74,17 @@ let foudreTimer: ReturnType<typeof setTimeout> | null = null
 
 let gsapCtx: ReturnType<typeof useGsap.context> | null = null
 
+/**
+ * Composantes RVB du jeton `--site-copper` vu depuis `el` (valeur hexadécimale #rrggbb).
+ * GSAP n'interpole pas `color-mix()` dans un text-shadow : on repasse donc par rgba().
+ */
+function couleurCuivre(el: Element): [number, number, number] {
+  const hex = getComputedStyle(el).getPropertyValue('--site-copper').trim()
+  const m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex)
+  if (!m) return [221, 132, 72]
+  return [parseInt(m[1]!, 16), parseInt(m[2]!, 16), parseInt(m[3]!, 16)]
+}
+
 function initAnimations() {
   gsapCtx?.revert()
 
@@ -147,8 +158,10 @@ function initAnimations() {
       // Flash ambre sur l'élément touché par l'éclair
       const cible = trouverCible(bolt)
       if (cible) {
+        // Cuivre relu à chaque éclair : suit le mode clair / sombre sans rechargement.
+        const [r, g, b] = couleurCuivre(cible)
         useGsap.timeline()
-          .to(cible, { textShadow: '0 0 30px rgba(221,132,72,0.7), 0 0 60px rgba(221,132,72,0.3)', duration: 0.1, delay: 0.1 })
+          .to(cible, { textShadow: `0 0 30px rgba(${r},${g},${b},0.7), 0 0 60px rgba(${r},${g},${b},0.3)`, duration: 0.1, delay: 0.1 })
           .to(cible, { textShadow: '0 0 0px transparent', duration: 0.8, ease: 'power2.out' })
       }
 
@@ -183,14 +196,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="magazine" ref="sectionRef" class="relative overflow-hidden bg-gray-950 py-20 sm:py-28">
+  <section v-if="magazine" ref="sectionRef" class="relative overflow-hidden bg-page py-20 sm:py-28">
     <!-- Fond subtil -->
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(221,132,72,0.08),transparent_60%)]" />
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,color-mix(in_srgb,var(--site-copper)_8%,transparent),transparent_60%)]" />
 
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- Titre de section -->
       <div ref="badgeRef" class="mb-14 text-center">
-        <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
+        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           À la une
         </span>
       </div>
@@ -203,9 +216,9 @@ onUnmounted(() => {
           <svg class="absolute h-0 w-0">
             <defs>
               <linearGradient id="foudre-grad" x1="0%" y1="50%" x2="100%" y2="50%">
-                <stop offset="0%" stop-color="#dd8448" />
-                <stop offset="40%" stop-color="#fbbf24" />
-                <stop offset="100%" stop-color="#dd8448" stop-opacity="0.3" />
+                <stop offset="0%" style="stop-color: var(--site-copper)" />
+                <stop offset="40%" style="stop-color: var(--site-spark)" />
+                <stop offset="100%" style="stop-color: var(--site-copper)" stop-opacity="0.3" />
               </linearGradient>
             </defs>
           </svg>
@@ -213,7 +226,7 @@ onUnmounted(() => {
           <!-- Éclair 1 — trajectoire haute -->
           <svg class="foudre foudre-1" viewBox="0 0 300 60" fill="none">
             <path d="M 0,35 L 45,22 L 38,30 L 90,12 L 82,24 L 140,8 L 130,20 L 185,14 L 175,26 L 235,18 L 270,28 L 300,25" stroke="url(#foudre-grad)" stroke-width="2.5" stroke-linecap="round" />
-            <path d="M 0,35 L 45,22 L 38,30 L 90,12 L 82,24 L 140,8 L 130,20 L 185,14 L 175,26 L 235,18 L 270,28 L 300,25" stroke="#fbbf24" stroke-width="1" stroke-linecap="round" />
+            <path d="M 0,35 L 45,22 L 38,30 L 90,12 L 82,24 L 140,8 L 130,20 L 185,14 L 175,26 L 235,18 L 270,28 L 300,25" class="stroke-spark" stroke-width="1" stroke-linecap="round" />
             <!-- Branche secondaire -->
             <path d="M 140,8 L 155,0 L 148,6" stroke="url(#foudre-grad)" stroke-width="1.5" stroke-linecap="round" />
           </svg>
@@ -221,14 +234,14 @@ onUnmounted(() => {
           <!-- Éclair 2 — trajectoire médiane -->
           <svg class="foudre foudre-2" viewBox="0 0 300 60" fill="none">
             <path d="M 0,30 L 55,24 L 48,32 L 110,18 L 102,28 L 165,32 L 158,26 L 220,20 L 255,30 L 300,28" stroke="url(#foudre-grad)" stroke-width="2.5" stroke-linecap="round" />
-            <path d="M 0,30 L 55,24 L 48,32 L 110,18 L 102,28 L 165,32 L 158,26 L 220,20 L 255,30 L 300,28" stroke="#fbbf24" stroke-width="1" stroke-linecap="round" />
+            <path d="M 0,30 L 55,24 L 48,32 L 110,18 L 102,28 L 165,32 L 158,26 L 220,20 L 255,30 L 300,28" class="stroke-spark" stroke-width="1" stroke-linecap="round" />
             <path d="M 110,18 L 120,8 L 114,14" stroke="url(#foudre-grad)" stroke-width="1.5" stroke-linecap="round" />
           </svg>
 
           <!-- Éclair 3 — trajectoire basse -->
           <svg class="foudre foudre-3" viewBox="0 0 300 60" fill="none">
             <path d="M 0,25 L 40,38 L 35,30 L 85,45 L 78,35 L 130,48 L 122,38 L 180,44 L 230,36 L 265,42 L 300,35" stroke="url(#foudre-grad)" stroke-width="2.5" stroke-linecap="round" />
-            <path d="M 0,25 L 40,38 L 35,30 L 85,45 L 78,35 L 130,48 L 122,38 L 180,44 L 230,36 L 265,42 L 300,35" stroke="#fbbf24" stroke-width="1" stroke-linecap="round" />
+            <path d="M 0,25 L 40,38 L 35,30 L 85,45 L 78,35 L 130,48 L 122,38 L 180,44 L 230,36 L 265,42 L 300,35" class="stroke-spark" stroke-width="1" stroke-linecap="round" />
             <path d="M 85,45 L 92,55 L 88,48" stroke="url(#foudre-grad)" stroke-width="1.5" stroke-linecap="round" />
           </svg>
         </div>
@@ -291,11 +304,11 @@ onUnmounted(() => {
               />
               <div
                 v-else
-                class="flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-gray-800 to-gray-900"
+                class="flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-surface-2 to-surface"
               >
                 <div class="text-center">
-                  <div class="text-4xl font-bold text-amber-400">{{ magazine.version }}</div>
-                  <div class="mt-2 text-sm text-gray-500">{{ magazine.name }}</div>
+                  <div class="text-4xl font-bold text-accent">{{ magazine.version }}</div>
+                  <div class="mt-2 text-sm text-ink-subtle">{{ magazine.name }}</div>
                 </div>
               </div>
             </div>
@@ -305,26 +318,26 @@ onUnmounted(() => {
         <!-- Droite : infos édition -->
         <div ref="infosRef" class="flex flex-col items-center text-center lg:items-start lg:text-left">
           <!-- Badge numéro -->
-          <span class="inline-block rounded-full bg-amber-500/15 px-4 py-1 text-sm font-bold tracking-wider text-amber-400">
+          <span class="inline-block rounded-full bg-gold/15 px-4 py-1 text-sm font-bold tracking-wider text-accent">
             {{ magazine.version }}
           </span>
 
           <!-- Titre -->
-          <h2 class="mt-5 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+          <h2 class="mt-5 text-3xl font-bold text-ink sm:text-4xl lg:text-5xl">
             {{ magazine.name }}
           </h2>
-          <p v-if="magazine.subtitle" class="mt-2 text-lg font-medium text-amber-400/80">
+          <p v-if="magazine.subtitle" class="mt-2 text-lg font-medium text-accent/80">
             {{ magazine.subtitle }}
           </p>
 
           <!-- Description -->
-          <p class="mt-6 max-w-lg text-base leading-relaxed text-gray-400">
+          <p class="mt-6 max-w-lg text-base leading-relaxed text-ink-muted">
             {{ magazine.description }}
           </p>
 
           <!-- Compte à rebours -->
           <div v-if="countdown" class="mt-8 w-full max-w-md">
-            <p class="mb-4 text-sm font-medium tracking-wide text-gray-500 uppercase">
+            <p class="mb-4 text-sm font-medium tracking-wide text-ink-subtle uppercase">
               Disponible le {{ dateDisponibiliteFormatee }}
             </p>
             <div class="grid grid-cols-4 gap-3">
@@ -348,7 +361,7 @@ onUnmounted(() => {
             <button
               v-if="estDisponible && magazine.pdfPath"
               type="button"
-              class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-amber-400/30"
+              class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-gold/20 transition-all hover:bg-amber-400 hover:shadow-glow/30"
               @click="showDownloadModal = true"
             >
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -360,7 +373,7 @@ onUnmounted(() => {
             <!-- Bouton désactivé avant la date ou sans PDF -->
             <span
               v-else
-              class="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-full bg-white/5 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-500 uppercase"
+              class="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-full bg-ink/5 px-8 py-3.5 text-sm font-bold tracking-wide text-ink-subtle uppercase"
             >
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -371,7 +384,7 @@ onUnmounted(() => {
             <!-- Bouton secondaire : Voir les détails -->
             <NuxtLink
               :to="`/magazine/${magazine.id}`"
-              class="inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3.5 text-sm font-medium text-gray-400 transition-colors hover:text-white"
+              class="inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
             >
               Voir les détails
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -396,7 +409,7 @@ onUnmounted(() => {
 <style scoped>
 /* Electric border variables */
 :root {
-  --electric-border-color: #dd8448;
+  --electric-border-color: var(--site-copper);
 }
 
 /* Card container */
@@ -406,11 +419,11 @@ onUnmounted(() => {
   position: relative;
   background: linear-gradient(
       -30deg,
-      oklch(from #dd8448 0.3 calc(c / 2) h / 0.4),
+      oklch(from var(--site-copper) 0.3 calc(c / 2) h / 0.4),
       transparent,
-      oklch(from #dd8448 0.3 calc(c / 2) h / 0.4)
+      oklch(from var(--site-copper) 0.3 calc(c / 2) h / 0.4)
     ),
-    linear-gradient(to bottom, oklch(0.185 0 0), oklch(0.185 0 0));
+    linear-gradient(to bottom, var(--site-frame), var(--site-frame));
 }
 
 /* Inner container */
@@ -420,7 +433,7 @@ onUnmounted(() => {
 
 /* Border layers */
 .electric-border-outer {
-  border: 2px solid rgba(221, 132, 72, 0.5);
+  border: 2px solid color-mix(in srgb, var(--site-copper) 50%, transparent);
   border-radius: 24px;
   padding-right: 4px;
   padding-bottom: 4px;
@@ -430,7 +443,7 @@ onUnmounted(() => {
   width: 280px;
   aspect-ratio: 583 / 828;
   border-radius: 24px;
-  border: 2px solid #dd8448;
+  border: 2px solid var(--site-copper);
   margin-top: -4px;
   margin-left: -4px;
   filter: url(#turbulent-displace);
@@ -446,7 +459,7 @@ onUnmounted(() => {
 
 /* Glow effects */
 .electric-glow-1 {
-  border: 2px solid rgba(221, 132, 72, 0.6);
+  border: 2px solid color-mix(in srgb, var(--site-copper) 60%, transparent);
   border-radius: 24px;
   width: 100%;
   height: 100%;
@@ -459,7 +472,7 @@ onUnmounted(() => {
 }
 
 .electric-glow-2 {
-  border: 2px solid #dd8448;
+  border: 2px solid var(--site-copper);
   border-radius: 24px;
   width: 100%;
   height: 100%;
@@ -517,7 +530,7 @@ onUnmounted(() => {
   transform: scale(1.1);
   opacity: 0.3;
   z-index: -1;
-  background: linear-gradient(-30deg, #dd8448, transparent, #dd8448);
+  background: linear-gradient(-30deg, var(--site-copper), transparent, var(--site-copper));
 }
 
 /* Countdown */
@@ -528,8 +541,8 @@ onUnmounted(() => {
   gap: 6px;
   padding: 12px 8px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(221, 132, 72, 0.15);
+  background: color-mix(in srgb, var(--site-ink) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--site-copper) 15%, transparent);
 }
 
 .countdown-valeur {
@@ -537,7 +550,7 @@ onUnmounted(() => {
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
-  background: linear-gradient(180deg, #fbbf24, #dd8448);
+  background: linear-gradient(180deg, var(--site-spark), var(--site-copper));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -548,7 +561,7 @@ onUnmounted(() => {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.4);
+  color: color-mix(in srgb, var(--site-ink) 40%, transparent);
 }
 
 /* Éclairs — positionnement et glow */
@@ -558,7 +571,7 @@ onUnmounted(() => {
   width: 55%;
   height: 40px;
   left: 28%;
-  filter: drop-shadow(0 0 8px rgba(221, 132, 72, 0.8))
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--site-copper) 80%, transparent))
     drop-shadow(0 0 20px rgba(251, 191, 36, 0.4));
 }
 

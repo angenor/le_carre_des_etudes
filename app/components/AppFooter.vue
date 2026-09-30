@@ -41,7 +41,8 @@ async function subscribeNewsletter() {
 </script>
 
 <template>
-  <footer class="relative bg-gray-950">
+  <footer class="dark [color-scheme:dark] relative bg-gray-950">
+    <!-- Toujours sombre, dans les deux modes : `dark` y rend aux jetons leurs valeurs sombres -->
     <!-- Vague SVG en haut -->
     <div class="absolute inset-x-0 -top-px w-full overflow-hidden leading-none">
       <svg

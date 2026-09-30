@@ -70,32 +70,32 @@ const countdown = computed(() => {
         />
         <div
           v-else
-          class="w-full h-80 shadow-lg rounded-sm flex items-center justify-center bg-linear-to-br from-gray-800 to-gray-900"
+          class="w-full h-80 shadow-lg rounded-sm flex items-center justify-center bg-linear-to-br from-surface-2 to-surface"
         >
           <div class="text-center">
-            <div class="text-4xl font-bold text-amber-400">{{ version }}</div>
-            <div class="mt-2 text-sm text-gray-500">{{ name }}</div>
+            <div class="text-4xl font-bold text-accent">{{ version }}</div>
+            <div class="mt-2 text-sm text-ink-subtle">{{ name }}</div>
           </div>
         </div>
       </NuxtLink>
 
       <!-- Panneau d'infos superposé -->
       <div class="animated-border rounded-l-[20px] rounded-t-[20px] absolute bottom-4 -right-6 w-[55%] h-[55%] sm:bottom-6 sm:-right-10 px-5 pt-4 pb-6 shadow-xl flex flex-col">
-        <span class="inline-block text-xs text-gray-500">
+        <span class="inline-block text-xs text-ink-subtle">
           {{ formatDate(publishedAt) }}
         </span>
 
         <NuxtLink :to="`/magazine/${id}`" class="block">
-          <h2 class="text-lg font-bold leading-tight mt-1 mb-1.5 text-white line-clamp-2 hover:text-amber-400 hover:underline transition-colors">
+          <h2 class="text-lg font-bold leading-tight mt-1 mb-1.5 text-ink line-clamp-2 hover:text-accent hover:underline transition-colors">
             {{ name }}
           </h2>
         </NuxtLink>
 
-        <span class="inline-block text-amber-400 text-xs">
+        <span class="inline-block text-accent text-xs">
           {{ version }}
         </span>
 
-        <p class="text-gray-400 mt-4 leading-relaxed text-xs line-clamp-3 flex-1">
+        <p class="text-ink-muted mt-4 leading-relaxed text-xs line-clamp-3 flex-1">
           {{ description }}
         </p>
 
@@ -103,16 +103,16 @@ const countdown = computed(() => {
         <div class="mt-auto">
           <!-- Countdown si pas encore disponible -->
           <div v-if="countdown" class="mt-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wide mb-2">Disponible dans</p>
+            <p class="text-[10px] text-ink-subtle uppercase tracking-wide mb-2">Disponible dans</p>
             <div class="flex gap-1.5">
               <div v-for="bloc in [
                 { val: countdown.jours, label: 'j' },
                 { val: countdown.heures, label: 'h' },
                 { val: countdown.minutes, label: 'm' },
                 { val: countdown.secondes, label: 's' },
-              ]" :key="bloc.label" class="flex flex-col items-center rounded bg-gray-800/80 px-1.5 py-1 min-w-7">
-                <span class="text-sm font-bold text-amber-400 tabular-nums">{{ String(bloc.val).padStart(2, '0') }}</span>
-                <span class="text-[9px] text-gray-500 uppercase">{{ bloc.label }}</span>
+              ]" :key="bloc.label" class="flex flex-col items-center rounded bg-surface-2/80 px-1.5 py-1 min-w-7">
+                <span class="text-sm font-bold text-accent tabular-nums">{{ String(bloc.val).padStart(2, '0') }}</span>
+                <span class="text-[9px] text-ink-subtle uppercase">{{ bloc.label }}</span>
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@ const countdown = computed(() => {
             <!-- Voir détails -->
             <NuxtLink
               :to="`/magazine/${id}`"
-              class="text-gray-500 hover:text-amber-400 transition-colors"
+              class="text-ink-subtle hover:text-accent transition-colors"
               title="Voir les détails"
             >
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 576 512">
@@ -134,13 +134,13 @@ const countdown = computed(() => {
             <button
               v-if="pdfPath"
               type="button"
-              class="flex items-center uppercase text-amber-500 font-semibold text-xs hover:underline cursor-pointer"
+              class="flex items-center uppercase text-gold font-semibold text-xs hover:underline cursor-pointer"
               @click="$emit('download', id)"
             >
-              <span class="mr-3 block w-8 h-0.5 bg-amber-500" />
+              <span class="mr-3 block w-8 h-0.5 bg-gold" />
               télécharger
             </button>
-            <span v-else class="text-xs text-gray-600 italic">Bientôt</span>
+            <span v-else class="text-xs text-ink-faint italic">Bientôt</span>
           </div>
         </div>
       </div>
@@ -157,18 +157,20 @@ const countdown = computed(() => {
 
 .animated-border {
   --border-angle: 0turn;
+  /* Bord du panneau : #111827 en sombre (valeur d'origine, à 1/255 près du jeton surface) */
+  --card-edge: #111827;
   --main-bg: conic-gradient(
     from var(--border-angle),
-    #111827,
-    #030712 5%,
-    #030712 60%,
-    #111827 95%
+    var(--card-edge),
+    var(--site-page) 5%,
+    var(--site-page) 60%,
+    var(--card-edge) 95%
   );
   --gradient-border: conic-gradient(
     from var(--border-angle),
     transparent 25%,
     #f59e0b,
-    #dd8448 99%,
+    var(--site-copper) 99%,
     transparent
   );
 
@@ -179,6 +181,11 @@ const countdown = computed(() => {
     var(--main-bg) border-box;
   background-position: center center;
   animation: bg-spin 3s linear infinite;
+}
+
+/* Mode clair : le bord du panneau suit la surface « papier » */
+.light .animated-border {
+  --card-edge: var(--site-surface);
 }
 
 .animated-border:hover {

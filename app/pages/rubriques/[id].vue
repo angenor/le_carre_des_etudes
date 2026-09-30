@@ -24,23 +24,23 @@ useHead({
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-950">
+  <div class="min-h-screen bg-page">
     <!-- Chargement -->
     <div v-if="status === 'pending'" class="flex items-center justify-center py-40">
       <div class="text-center">
-        <div class="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-amber-500/20 border-t-amber-500" />
-        <p class="mt-4 text-sm text-gray-500">Chargement...</p>
+        <div class="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-gold/20 border-t-gold" />
+        <p class="mt-4 text-sm text-ink-subtle">Chargement...</p>
       </div>
     </div>
 
     <!-- Erreur 404 -->
     <div v-else-if="error" class="flex items-center justify-center py-40">
       <div class="text-center">
-        <h1 class="text-4xl font-bold text-white">404</h1>
-        <p class="mt-2 text-gray-400">Rubrique non trouvée</p>
+        <h1 class="text-4xl font-bold text-ink">404</h1>
+        <p class="mt-2 text-ink-muted">Rubrique non trouvée</p>
         <NuxtLink
           to="/rubriques"
-          class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-amber-400 hover:text-amber-300"
+          class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent-strong"
         >
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -56,7 +56,7 @@ useHead({
       <div class="mx-auto max-w-6xl px-6">
         <NuxtLink
           to="/rubriques"
-          class="mb-8 inline-flex items-center gap-2 text-sm font-medium text-gray-400 transition-colors hover:text-amber-400"
+          class="mb-8 inline-flex items-center gap-2 text-sm font-medium text-ink-muted transition-colors hover:text-accent"
         >
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />

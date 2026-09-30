@@ -7,7 +7,8 @@ const salmPage = computed(() => route.path === '/salm' || route.path.startsWith(
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <!-- Fond et `color-scheme` (champs natifs, barres de défilement) suivent le mode clair / sombre -->
+  <div class="min-h-screen flex flex-col bg-page text-ink [color-scheme:var(--site-scheme)]">
     <!-- Aperçu administrateur pendant la maintenance -->
     <div
       v-if="status?.maintenance && status.admin"
@@ -22,6 +23,6 @@ const salmPage = computed(() => route.path === '/salm' || route.path.startsWith(
       <slot />
     </main>
     <AppFooter />
-    <ResultatsFloatingCard />
+    <!-- Carte flottante « À la une · Résultats » masquée : /resultats reste en ligne, le lien a été partagé -->
   </div>
 </template>

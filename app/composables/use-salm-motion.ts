@@ -118,7 +118,7 @@ export function useSalmMotion(root: Ref<HTMLElement | null>) {
   })
 }
 
-const CONFETTI_COLORS = ['#D5570B', '#F4792B', '#FBBF24', '#F5F3EF', '#9A3A06']
+const CONFETTI_COLORS = ['#D5570B', '#F4792B', '#FBBF24', 'var(--salm-ink)', '#9A3A06'] // var(--salm-ink) : crème en sombre, encre en clair (visible sur les deux fonds)
 
 /**
  * Pluie de confettis aux couleurs du SALM, lancée depuis le centre de `origin` (badge obtenu).

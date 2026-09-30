@@ -22,22 +22,23 @@ defineProps<{ edition: SalmPublicEdition }>()
 
       <div class="flex min-w-0 grow flex-col gap-6 md:gap-7 lg:pt-5">
         <span class="font-salm-title text-xs font-bold tracking-[0.16em] text-salm-accent-text md:text-[13px]">POURQUOI LE SALM ?</span>
-        <h2 v-if="edition.whyTitle" class="font-salm-title text-[28px] leading-[1.1] font-extrabold tracking-[-0.03em] text-[#F5F3EF] md:text-[44px]">
+        <h2 v-if="edition.whyTitle" class="font-salm-title text-[28px] leading-[1.1] font-extrabold tracking-[-0.03em] text-salm-ink md:text-[44px]">
           {{ edition.whyTitle }}
         </h2>
-        <p v-if="edition.whyText" class="text-base leading-[1.65] text-stone-300 md:text-lg">{{ edition.whyText }}</p>
+        <p v-if="edition.whyText" class="text-base leading-[1.65] text-salm-ink-soft md:text-lg">{{ edition.whyText }}</p>
         <ul v-if="edition.audiences.length" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <li v-for="audience in edition.audiences" :key="audience.title" class="flex flex-col gap-2 rounded-2xl bg-salm-surface-3 p-[22px]">
-            <span class="font-salm-title text-[17px] font-extrabold text-[#F5F3EF]">{{ audience.title }}</span>
-            <span class="text-sm leading-normal text-stone-400">{{ audience.text }}</span>
+            <span class="font-salm-title text-[17px] font-extrabold text-salm-ink">{{ audience.title }}</span>
+            <span class="text-sm leading-normal text-salm-ink-muted">{{ audience.text }}</span>
           </li>
         </ul>
         <div class="flex items-center gap-[18px] border-t border-salm-border pt-6">
           <!-- Emblème de Sucrey Corporates (fixe : l'organisateur ne change pas d'une édition à l'autre), extrait de public/images/logos/LOGO-BLANC-.png -->
-          <img src="/images/logos/sucrey-embleme-blanc.png" alt="" width="52" height="52" loading="lazy" class="size-13 shrink-0">
+          <!-- Emblème blanc employé comme masque, rempli de l'encre du mode : blanc en sombre, encre foncée en clair -->
+          <span aria-hidden="true" class="size-13 shrink-0 bg-ink mask-[url(/images/logos/sucrey-embleme-blanc.png)] mask-contain mask-center mask-no-repeat" />
           <div class="flex flex-col gap-0.5">
-            <span class="text-[13px] text-stone-400">Organisé par</span>
-            <span class="font-salm-title text-[17px] font-bold text-[#F5F3EF]">{{ edition.organizerName.toLocaleUpperCase('fr-FR') }}</span>
+            <span class="text-[13px] text-salm-ink-muted">Organisé par</span>
+            <span class="font-salm-title text-[17px] font-bold text-salm-ink">{{ edition.organizerName.toLocaleUpperCase('fr-FR') }}</span>
           </div>
         </div>
       </div>

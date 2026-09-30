@@ -245,11 +245,11 @@ const border = (field: string) => (errors[field] ? 'border-red-600' : 'border-sa
 <template>
   <div
     :data-school-form="uid"
-    class="flex w-full max-w-[1160px] flex-col overflow-hidden rounded-3xl bg-[#FAF8F5] font-salm-body text-stone-900 md:rounded-[28px] lg:flex-row"
+    class="flex w-full max-w-[1160px] flex-col overflow-hidden rounded-3xl bg-[#FAF8F5] shadow-[0_0_0_1px_var(--salm-card-edge),0_24px_48px_-28px_var(--salm-card-shadow)] font-salm-body text-stone-900 md:rounded-[28px] lg:flex-row"
   >
     <!-- Colonne d'information -->
-    <aside class="flex shrink-0 flex-col gap-5 bg-salm-surface-2 p-6 text-[#F5F3EF] md:gap-6 md:p-9 lg:w-[420px]">
-      <NuxtLink to="/salm" class="flex items-center gap-2 self-start text-sm font-semibold text-salm-accent-text hover:text-orange-300">
+    <aside class="flex shrink-0 flex-col gap-5 bg-salm-surface-2 p-6 text-salm-ink md:gap-6 md:p-9 lg:w-[420px]">
+      <NuxtLink to="/salm" class="flex items-center gap-2 self-start text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft">
         <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
         Retour à la page SALM
       </NuxtLink>
@@ -260,13 +260,13 @@ const border = (field: string) => (errors[field] ? 'border-red-600' : 'border-sa
         class="hidden h-[260px] w-full rounded-[20px] object-cover object-[center_40%] lg:block"
       >
       <p class="font-salm-title text-2xl leading-[1.15] font-extrabold tracking-[-0.02em] md:text-[28px]">Universités et écoles : confirmez votre présence</p>
-      <div class="flex items-start gap-3.5 rounded-2xl bg-[#24242B] px-5 py-[18px]">
-        <svg class="mt-0.5 size-[22px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="#F4792B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
-        <span class="text-[15px] leading-[1.55] text-stone-200"><strong class="text-white">Aucun badge pour les établissements.</strong> Ce formulaire confirme simplement votre participation, vos exposants et votre stand.</span>
+      <div class="flex items-start gap-3.5 rounded-2xl bg-salm-surface-4 px-5 py-[18px]">
+        <svg class="mt-0.5 size-[22px] shrink-0 text-salm-accent-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+        <span class="text-[15px] leading-[1.55] text-salm-ink-strong"><strong class="text-ink">Aucun badge pour les établissements.</strong> Ce formulaire confirme simplement votre participation, vos exposants et votre stand.</span>
       </div>
-      <div v-if="helpContacts" class="flex flex-col gap-1.5 text-sm text-stone-400 lg:mt-auto">
+      <div v-if="helpContacts" class="flex flex-col gap-1.5 text-sm text-salm-ink-muted lg:mt-auto">
         <span>Une question ? L'équipe SALM vous répond :</span>
-        <span class="break-words text-stone-200">{{ helpContacts }}</span>
+        <span class="break-words text-salm-ink-strong">{{ helpContacts }}</span>
       </div>
     </aside>
 

@@ -20,13 +20,13 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="salm-scope overflow-x-clip bg-salm-bg px-4 pt-28 pb-16 font-salm-body text-[#F5F3EF] md:px-8 md:pt-[116px] md:pb-16">
+  <div class="salm-scope overflow-x-clip bg-salm-bg px-4 pt-28 pb-16 font-salm-body text-salm-ink md:px-8 md:pt-[116px] md:pb-16">
     <div v-if="edition" class="mx-auto flex max-w-[1160px] justify-center">
       <SalmStudentForm :edition="edition" />
     </div>
     <section v-else class="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
       <h1 class="max-w-2xl font-salm-title text-3xl font-extrabold tracking-[-0.02em] md:text-4xl">La prochaine édition du SALM sera bientôt annoncée.</h1>
-      <NuxtLink to="/" class="text-sm font-semibold text-salm-accent-text hover:text-orange-300">Retour à l'accueil</NuxtLink>
+      <NuxtLink to="/" class="text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft">Retour à l'accueil</NuxtLink>
     </section>
   </div>
 </template>

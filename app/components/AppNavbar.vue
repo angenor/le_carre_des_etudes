@@ -56,15 +56,24 @@ watch(menuOpen, (open) => {
 watch(() => route.path, () => closeMenu())
 onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPointerDown))
 
-// Clair / sombre : pour l'instant, le clic ne fait qu'alterner l'icône (le thème clair viendra plus tard).
-// Mode sombre (le site actuel) : soleil, pour passer en clair ; mode clair : lune, pour revenir au sombre.
-const lightMode = ref(false)
+// Clair / sombre (@nuxtjs/color-mode) : réglage du visiteur au premier affichage, puis son choix, mémorisé.
+// Mode sombre : soleil, pour passer en clair ; mode clair : lune, pour revenir au sombre.
+const colorMode = useColorMode()
+// Le serveur ne connaît pas le thème du visiteur : l'icône suit le thème une fois la page montée,
+// sinon le rendu serveur et le premier rendu du navigateur divergeraient.
+const mounted = ref(false)
+onMounted(() => { mounted.value = true })
+const lightMode = computed(() => mounted.value && colorMode.value === 'light')
 const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : 'Passer en mode clair'))
+
+function toggleTheme() {
+  colorMode.preference = lightMode.value ? 'dark' : 'light'
+}
 </script>
 
 <template>
-  <nav class="fixed inset-x-0 top-4 z-50 flex items-center justify-center gap-1.5 px-4" aria-label="Navigation principale">
-    <div class="nav-wrapper rounded-full border border-amber-400/20 bg-gray-900/60 backdrop-blur-xl">
+  <nav class="site-nav fixed inset-x-0 top-4 z-50 flex items-center justify-center gap-1.5 px-4" aria-label="Navigation principale">
+    <div class="nav-wrapper rounded-full border border-accent/20 bg-surface/60 backdrop-blur-xl">
       <div class="nav-links">
         <NuxtLink to="/" class="nav-link" :class="{ 'is-active': isActive('/') }">
           Accueil
@@ -118,10 +127,10 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
     <!-- Bouton clair / sombre, hors de la pilule : ensemble, ils dessinent un « i » couché -->
     <button
       type="button"
-      class="theme-toggle rounded-full border border-amber-400/20 bg-gray-900/60 backdrop-blur-xl"
+      class="theme-toggle rounded-full border border-accent/20 bg-surface/60 backdrop-blur-xl"
       :aria-label="themeLabel"
       :title="themeLabel"
-      @click="lightMode = !lightMode"
+      @click="toggleTheme"
     >
       <Transition name="theme-icon" mode="out-in">
         <svg v-if="lightMode" key="moon" class="theme-toggle-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -136,9 +145,22 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
 </template>
 
 <style scoped>
+/* Couleurs de la barre : en sombre, les valeurs d'origine exactes ; en clair, les jetons du site */
+.site-nav {
+  --nav-accent: rgb(251 191 36); /* ambre */
+  --nav-surface: rgb(17 24 39); /* gris 900 */
+  --nav-muted: rgb(156 163 175); /* gris 400 */
+}
+
+.light .site-nav {
+  --nav-accent: var(--site-accent);
+  --nav-surface: var(--site-surface);
+  --nav-muted: var(--site-ink-muted);
+}
+
 .nav-wrapper {
-  --nav-indicator-hover: rgb(251 191 36 / 0.15); /* amber-400/15 */
-  --nav-indicator-active: rgb(251 191 36); /* amber-400 */
+  --nav-indicator-hover: color-mix(in srgb, var(--nav-accent) 15%, transparent);
+  --nav-indicator-active: rgb(251 191 36); /* aplat ambre, le même dans les deux modes */
   --nav-padding: 0.375rem;
   --nav-trans-duration: 700ms;
   --nav-trans-easing: linear(0, 1 44.7%, 0.898 51.8%, 0.874 55.1%, 0.866 58.4%, 0.888 64.3%, 1 77.4%, 0.98 84.5%, 1);
@@ -162,7 +184,7 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1rem;
-  color: rgb(255 255 255 / 0.8);
+  color: color-mix(in srgb, var(--site-ink) 80%, transparent);
   text-decoration: none;
   transition: color 150ms ease-in-out;
 }
@@ -205,18 +227,18 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
   justify-content: center;
   width: calc(2.75rem + 2px);
   height: calc(2.75rem + 2px);
-  color: rgb(255 255 255 / 0.8);
+  color: color-mix(in srgb, var(--site-ink) 80%, transparent);
   cursor: pointer;
   transition: color 150ms ease-in-out, background-color 150ms ease-in-out;
 }
 
 .theme-toggle:hover {
-  background-color: rgb(251 191 36 / 0.15);
-  color: rgb(251 191 36);
+  background-color: color-mix(in srgb, var(--nav-accent) 15%, transparent);
+  color: var(--nav-accent);
 }
 
 .theme-toggle:focus-visible {
-  outline: 2px solid rgb(251 191 36);
+  outline: 2px solid var(--nav-accent);
   outline-offset: 2px;
 }
 
@@ -307,10 +329,15 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
   margin: 0;
   padding: 0.375rem;
   list-style: none;
-  border: 1px solid rgb(251 191 36 / 0.2);
+  border: 1px solid color-mix(in srgb, var(--nav-accent) 20%, transparent);
   border-radius: 1rem;
-  background: rgb(17 24 39); /* gray-900 : opaque, le titre de la page ne doit pas transparaître */
+  background: var(--nav-surface); /* opaque : le titre de la page ne doit pas transparaître */
   box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.6);
+}
+
+/* Sur fond clair, une ombre noire marquée ferait tache : ombre chaude et légère */
+.light .nav-dropdown {
+  box-shadow: 0 20px 40px -16px rgb(120 53 15 / 0.25);
 }
 
 .nav-dropdown-link {
@@ -325,27 +352,27 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
 
 .nav-dropdown-link:hover,
 .nav-dropdown-link:focus-visible {
-  background-color: rgb(251 191 36 / 0.1);
+  background-color: color-mix(in srgb, var(--nav-accent) 10%, transparent);
 }
 
 .nav-dropdown-link:focus-visible {
-  outline: 2px solid rgb(251 191 36);
+  outline: 2px solid var(--nav-accent);
   outline-offset: -2px;
 }
 
 .nav-dropdown-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: rgb(255 255 255);
+  color: var(--site-ink);
 }
 
 .nav-dropdown-link.is-current .nav-dropdown-label {
-  color: rgb(251 191 36);
+  color: var(--nav-accent);
 }
 
 .nav-dropdown-description {
   font-size: 0.75rem;
-  color: rgb(156 163 175); /* gray-400 */
+  color: var(--nav-muted);
 }
 
 .nav-dropdown-enter-active,
@@ -370,7 +397,7 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
 /* Repli : navigateurs sans « anchor positioning » (Firefox, anciens Safari) */
 .nav-link:hover {
   background-color: var(--nav-indicator-hover);
-  color: rgb(251 191 36);
+  color: var(--nav-accent);
 }
 
 .nav-link.is-active {
@@ -411,7 +438,7 @@ const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : '
   .nav-link:hover {
     anchor-name: --hovered-option;
     background-color: transparent;
-    color: rgb(255 255 255);
+    color: var(--site-ink);
   }
 
   .nav-link.is-active {

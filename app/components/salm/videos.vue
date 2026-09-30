@@ -30,10 +30,10 @@ const intro = computed(() => {
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="flex flex-col gap-2.5 md:gap-3.5">
           <span class="hidden font-salm-title text-[13px] font-bold tracking-[0.16em] text-salm-accent-text md:block">LES VIDÉOS</span>
-          <h2 class="font-salm-title text-[26px] leading-[1.1] font-extrabold tracking-[-0.02em] text-[#F5F3EF] md:text-5xl md:tracking-[-0.03em]">Le canapé du SALM {{ year }}</h2>
+          <h2 class="font-salm-title text-[26px] leading-[1.1] font-extrabold tracking-[-0.02em] text-salm-ink md:text-5xl md:tracking-[-0.03em]">Le canapé du SALM {{ year }}</h2>
         </div>
-        <a href="#canape" class="text-sm font-semibold text-salm-accent-text hover:text-orange-300 md:hidden">{{ videos.length }} vidéo{{ videos.length > 1 ? 's' : '' }} →</a>
-        <p class="max-w-[420px] text-[15px] leading-[1.55] text-stone-400 md:text-base">{{ intro }}</p>
+        <a href="#canape" class="text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft md:hidden">{{ videos.length }} vidéo{{ videos.length > 1 ? 's' : '' }} →</a>
+        <p class="max-w-[420px] text-[15px] leading-[1.55] text-salm-ink-muted md:text-base">{{ intro }}</p>
       </div>
 
       <ul class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-3" data-motion="pop">
@@ -41,7 +41,7 @@ const intro = computed(() => {
           <button
             type="button"
             :aria-label="`Lire la vidéo ${num(i)} — ${label(v, i)}`"
-            class="group relative block h-[180px] w-full overflow-hidden rounded-2xl border border-salm-border bg-salm-surface-2 text-left text-[#F5F3EF] md:h-[225px]"
+            class="dark group relative block h-[180px] w-full overflow-hidden rounded-2xl border border-salm-border bg-salm-surface-2 text-left text-[#F5F3EF] md:h-[225px]"
             @click="current = i"
           >
             <img :src="v.thumbnailUrl" alt="" loading="lazy" class="absolute inset-0 size-full object-cover opacity-40 transition-opacity group-hover:opacity-55">
@@ -78,7 +78,7 @@ const intro = computed(() => {
           :href="`https://www.youtube.com/watch?v=${video.youtubeId}`"
           target="_blank"
           rel="noopener noreferrer"
-          class="self-start text-sm font-semibold text-salm-accent-text hover:text-orange-300"
+          class="self-start text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft"
         >Ouvrir sur YouTube</a>
       </template>
     </SalmModalDialog>

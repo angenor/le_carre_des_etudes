@@ -80,38 +80,38 @@ const spoken = computed(() => {
 </script>
 
 <template>
-  <div class="rounded-[20px] border border-white/10 bg-salm-bg/72 p-4 min-[380px]:p-5">
+  <div class="rounded-[20px] border border-ink/10 bg-salm-bg/72 p-4 min-[380px]:p-5">
     <template v-if="state.kind === 'running'">
-      <p class="text-[13px] font-semibold tracking-[0.12em] text-stone-400">EN CE MOMENT</p>
-      <p class="mt-1.5 font-salm-title text-3xl font-extrabold tracking-[-0.03em] text-[#F5F3EF]">Le SALM {{ year }} est en cours</p>
+      <p class="text-[13px] font-semibold tracking-[0.12em] text-salm-ink-muted">EN CE MOMENT</p>
+      <p class="mt-1.5 font-salm-title text-3xl font-extrabold tracking-[-0.03em] text-salm-ink">Le SALM {{ year }} est en cours</p>
     </template>
     <template v-else-if="state.kind === 'ended'">
-      <p class="font-salm-title text-3xl font-extrabold tracking-[-0.03em] text-[#F5F3EF]">Merci pour cette édition</p>
+      <p class="font-salm-title text-3xl font-extrabold tracking-[-0.03em] text-salm-ink">Merci pour cette édition</p>
     </template>
     <template v-else>
-      <p class="text-[13px] font-semibold tracking-[0.12em] text-stone-400">OUVERTURE DANS</p>
+      <p class="text-[13px] font-semibold tracking-[0.12em] text-salm-ink-muted">OUVERTURE DANS</p>
       <p class="sr-only">{{ spoken }}</p>
       <ol class="mt-3 grid grid-cols-[1.2fr_1fr_1fr_1fr] gap-1.5 min-[380px]:gap-2" aria-hidden="true">
         <li
           v-for="(c, i) in cells"
           :key="c.short"
-          class="flex min-w-0 flex-col items-center rounded-xl border border-white/10 bg-white/4 px-0.5 pt-2.5 pb-2"
+          class="flex min-w-0 flex-col items-center rounded-xl border border-ink/10 bg-ink/4 px-0.5 pt-2.5 pb-2"
         >
           <!-- Nouvelle clé à chaque changement de valeur : l'animation salm-tick rejoue -->
           <span class="block h-9 overflow-hidden">
             <span
               :key="c.value"
               class="salm-tick block font-salm-title text-[28px] leading-9 font-extrabold tracking-[-0.03em] tabular-nums md:text-[30px]"
-              :class="i === 3 ? 'text-salm-accent-text' : 'text-[#F5F3EF]'"
+              :class="i === 3 ? 'text-salm-accent-text' : 'text-salm-ink'"
             >{{ c.value }}</span>
           </span>
-          <span class="mt-1 text-[10px] font-bold tracking-widest text-stone-400">
+          <span class="mt-1 text-[10px] font-bold tracking-widest text-salm-ink-muted">
             <span class="min-[380px]:hidden">{{ c.short }}</span>
             <span class="hidden min-[380px]:inline">{{ c.label }}</span>
           </span>
         </li>
       </ol>
-      <p class="mt-3 text-sm text-stone-400">Jusqu'au {{ opensDate }}, {{ opensHour }}</p>
+      <p class="mt-3 text-sm text-salm-ink-muted">Jusqu'au {{ opensDate }}, {{ opensHour }}</p>
     </template>
   </div>
 </template>

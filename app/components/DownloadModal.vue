@@ -180,11 +180,11 @@ function handleOverlayClick(e: MouseEvent) {
     >
       <div
         ref="panelRef"
-        class="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-gray-900 shadow-2xl shadow-amber-500/10"
+        class="relative w-full max-w-md overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-2xl shadow-gold/10"
         style="perspective: 800px"
       >
         <!-- Glow décoratif en haut -->
-        <div class="absolute -top-24 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-amber-500/20 blur-3xl" />
+        <div class="absolute -top-24 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-gold/20 blur-3xl" />
 
         <div class="relative p-6">
           <!-- Header -->
@@ -193,24 +193,24 @@ function handleOverlayClick(e: MouseEvent) {
               <!-- Icône animée -->
               <div
                 ref="iconRef"
-                class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/15 ring-1 ring-amber-500/30"
+                class="flex h-11 w-11 items-center justify-center rounded-xl bg-gold/15 ring-1 ring-gold/30"
               >
-                <svg class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <svg class="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
               </div>
               <div>
-                <h2 class="text-base font-bold text-white">
+                <h2 class="text-base font-bold text-ink">
                   Télécharger
                 </h2>
-                <p class="text-sm text-amber-400/80">
+                <p class="text-sm text-accent/80">
                   {{ magazineName }}
                 </p>
               </div>
             </div>
             <button
               type="button"
-              class="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300"
+              class="rounded-lg p-1.5 text-ink-subtle transition-colors hover:bg-ink/5 hover:text-ink-soft"
               aria-label="Fermer"
               @click="animateClose"
             >
@@ -220,74 +220,74 @@ function handleOverlayClick(e: MouseEvent) {
             </button>
           </div>
 
-          <p class="mt-3 text-sm leading-relaxed text-gray-400">
+          <p class="mt-3 text-sm leading-relaxed text-ink-muted">
             Remplissez le formulaire pour accéder au téléchargement gratuit.
           </p>
 
           <!-- Séparateur -->
-          <div class="mt-4 h-px bg-linear-to-r from-transparent via-amber-500/25 to-transparent" />
+          <div class="mt-4 h-px bg-linear-to-r from-transparent via-gold/25 to-transparent" />
 
           <!-- Formulaire -->
           <form ref="fieldsRef" class="mt-5 space-y-4" @submit.prevent="handleSubmit">
             <!-- Nom complet -->
             <div>
-              <label for="dl-fullName" class="mb-1.5 block text-sm font-medium text-gray-300">
+              <label for="dl-fullName" class="mb-1.5 block text-sm font-medium text-ink-soft">
                 Nom & prénoms
               </label>
               <input
                 id="dl-fullName"
                 v-model="form.fullName"
                 type="text"
-                class="block w-full rounded-lg border bg-gray-800/60 px-3.5 py-2.5 text-sm text-white shadow-sm transition-all placeholder:text-gray-500 focus:outline-none focus:ring-2"
+                class="block w-full rounded-lg border bg-surface-2/60 px-3.5 py-2.5 text-sm text-ink shadow-sm transition-all placeholder:text-ink-subtle focus:outline-none focus:ring-2"
                 :class="errors.fullName
                   ? 'border-red-500/50 focus:ring-red-500/30'
-                  : 'border-white/10 focus:border-amber-500/50 focus:ring-amber-500/20'"
+                  : 'border-ink/10 focus:border-gold/50 focus:ring-gold/20'"
                 placeholder="Kouassi Aya Marie"
               />
-              <p v-if="errors.fullName" class="mt-1 text-xs text-red-400">{{ errors.fullName }}</p>
+              <p v-if="errors.fullName" class="mt-1 text-xs text-danger">{{ errors.fullName }}</p>
             </div>
 
             <!-- Contact -->
             <div>
-              <label for="dl-contact" class="mb-1.5 block text-sm font-medium text-gray-300">
+              <label for="dl-contact" class="mb-1.5 block text-sm font-medium text-ink-soft">
                 Numéro de téléphone
               </label>
               <input
                 id="dl-contact"
                 v-model="form.contact"
                 type="tel"
-                class="block w-full rounded-lg border bg-gray-800/60 px-3.5 py-2.5 text-sm text-white shadow-sm transition-all placeholder:text-gray-500 focus:outline-none focus:ring-2"
+                class="block w-full rounded-lg border bg-surface-2/60 px-3.5 py-2.5 text-sm text-ink shadow-sm transition-all placeholder:text-ink-subtle focus:outline-none focus:ring-2"
                 :class="errors.contact
                   ? 'border-red-500/50 focus:ring-red-500/30'
-                  : 'border-white/10 focus:border-amber-500/50 focus:ring-amber-500/20'"
+                  : 'border-ink/10 focus:border-gold/50 focus:ring-gold/20'"
                 placeholder="07 12 34 56 78"
               />
-              <p v-if="errors.contact" class="mt-1 text-xs text-red-400">{{ errors.contact }}</p>
+              <p v-if="errors.contact" class="mt-1 text-xs text-danger">{{ errors.contact }}</p>
             </div>
 
             <!-- Niveau d'étude -->
             <div>
-              <label for="dl-studyLevel" class="mb-1.5 block text-sm font-medium text-gray-300">
+              <label for="dl-studyLevel" class="mb-1.5 block text-sm font-medium text-ink-soft">
                 Niveau d'étude
               </label>
               <select
                 id="dl-studyLevel"
                 v-model="form.studyLevel"
-                class="block w-full rounded-lg border bg-gray-800/60 px-3.5 py-2.5 text-sm text-white shadow-sm transition-all focus:outline-none focus:ring-2"
+                class="block w-full rounded-lg border bg-surface-2/60 px-3.5 py-2.5 text-sm text-ink shadow-sm transition-all focus:outline-none focus:ring-2"
                 :class="errors.studyLevel
                   ? 'border-red-500/50 focus:ring-red-500/30'
-                  : 'border-white/10 focus:border-amber-500/50 focus:ring-amber-500/20'"
+                  : 'border-ink/10 focus:border-gold/50 focus:ring-gold/20'"
               >
-                <option value="" disabled class="text-gray-500">Sélectionnez votre niveau</option>
-                <option v-for="level in STUDY_LEVELS" :key="level" :value="level" class="bg-gray-800 text-white">
+                <option value="" disabled class="text-ink-subtle">Sélectionnez votre niveau</option>
+                <option v-for="level in STUDY_LEVELS" :key="level" :value="level" class="bg-surface-2 text-ink">
                   {{ level }}
                 </option>
               </select>
-              <p v-if="errors.studyLevel" class="mt-1 text-xs text-red-400">{{ errors.studyLevel }}</p>
+              <p v-if="errors.studyLevel" class="mt-1 text-xs text-danger">{{ errors.studyLevel }}</p>
             </div>
 
             <!-- Erreur globale -->
-            <p v-if="submitError" class="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            <p v-if="submitError" class="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-danger">
               {{ submitError }}
             </p>
 
@@ -295,7 +295,7 @@ function handleOverlayClick(e: MouseEvent) {
             <button
               type="submit"
               :disabled="submitting"
-              class="group relative w-full overflow-hidden rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-amber-400/30 disabled:cursor-not-allowed disabled:opacity-50"
+              class="group relative w-full overflow-hidden rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-gold/20 transition-all hover:bg-amber-400 hover:shadow-glow/30 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span class="relative flex items-center justify-center gap-2">
                 <svg v-if="!submitting" class="h-4.5 w-4.5 transition-transform group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">

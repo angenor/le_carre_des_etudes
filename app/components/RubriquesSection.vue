@@ -98,9 +98,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="hasContent" ref="sectionRef" class="relative overflow-hidden bg-gray-950 pb-20 pt-6 sm:pb-28 sm:pt-10">
+  <section v-if="hasContent" ref="sectionRef" class="relative overflow-hidden bg-page pb-20 pt-6 sm:pb-28 sm:pt-10">
     <!-- Fond décoratif -->
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(221,132,72,0.06),transparent_60%)]" />
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,color-mix(in_srgb,var(--site-copper)_6%,transparent),transparent_60%)]" />
     <svg class="absolute inset-0 h-full w-full opacity-[0.03]" aria-hidden="true">
       <defs>
         <pattern id="rubriques-home-grid" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -113,28 +113,28 @@ onUnmounted(() => {
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- En-tête -->
       <div ref="headerRef" class="mb-14 text-center">
-        <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
+        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Éditorial
         </span>
 
-        <h2 class="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2 class="mt-6 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           Nos
-          <span class="bg-linear-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent">
+          <span class="bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
             rubriques
           </span>
         </h2>
 
-        <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-gray-400">
+        <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-ink-muted">
           Interviews, portraits et contenus éditoriaux de nos dernières éditions
         </p>
 
         <!-- Séparateur -->
         <div class="mx-auto mt-8 flex items-center justify-center gap-3">
-          <span class="h-px w-12 bg-linear-to-r from-transparent to-amber-500/50" />
-          <svg class="h-3 w-3 rotate-45 text-amber-500/40" fill="currentColor" viewBox="0 0 16 16">
+          <span class="h-px w-12 bg-linear-to-r from-transparent to-gold/50" />
+          <svg class="h-3 w-3 rotate-45 text-gold/40" fill="currentColor" viewBox="0 0 16 16">
             <rect width="16" height="16" rx="2" />
           </svg>
-          <span class="h-px w-12 bg-linear-to-l from-transparent to-amber-500/50" />
+          <span class="h-px w-12 bg-linear-to-l from-transparent to-gold/50" />
         </div>
       </div>
 
@@ -146,8 +146,8 @@ onUnmounted(() => {
           class="group cursor-pointer"
           @click="selectedItem = item"
         >
-          <div class="block overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5">
-            <div class="relative aspect-210/297 overflow-hidden bg-gray-800">
+          <div class="block overflow-hidden rounded-xl border border-ink/10 bg-ink/5 transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5">
+            <div class="relative aspect-210/297 overflow-hidden bg-surface-2">
               <img
                 :src="item.imagePath"
                 :alt="`Rubrique ${item.sectionLabel}`"
@@ -166,7 +166,7 @@ onUnmounted(() => {
       <div ref="ctaRef" class="mt-12 text-center">
         <NuxtLink
           to="/rubriques"
-          class="group/cta inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 transition-colors hover:text-amber-300"
+          class="group/cta inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent-strong"
         >
           Voir toutes les rubriques
           <svg class="h-4 w-4 transition-transform group-hover/cta:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

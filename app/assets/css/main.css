@@ -1,19 +1,186 @@
 @import "tailwindcss";
 
-/* Jetons du module SALM (research R3). Les polices elles-mêmes sont déclarées dans salm.css. */
+/* Jetons fixes du module SALM (research R3). Les polices elles-mêmes sont déclarées dans salm.css. */
 @theme {
   /* Accent des surfaces web portant du texte blanc : #C2410C (5,18:1, option d'accent de la maquette).
      #D5570B (4,04:1) n'atteint pas le 4,5:1 exigé par FR-082 ; il reste la couleur du badge PDF imprimé. */
   --color-salm-accent: #C2410C;
-  --color-salm-accent-text: #F4792B;
-  --color-salm-bg: #0B0B0D;
-  --color-salm-surface: #141417;
-  --color-salm-surface-2: #16161A;
-  --color-salm-surface-3: #1C1C21;
-  --color-salm-border: #2A2A31;
   --color-salm-input-border: #8A847F;
 
   --font-salm-title: Montserrat, sans-serif;
   --font-salm-body: 'DM Sans', system-ui, sans-serif;
   --font-salm-script: Yellowtail, cursive;
+}
+
+/*
+ * MODE CLAIR / SOMBRE DU SITE PUBLIC
+ *
+ * @nuxtjs/color-mode pose `light` ou `dark` sur <html> (réglage du visiteur, puis son choix).
+ * Les composants publics n'écrivent plus de couleur en dur : ils emploient ces jetons
+ * (`bg-page`, `text-ink`, `border-line`, `text-salm-ink`…), qui changent de valeur avec la classe.
+ *
+ * - Sombre : chaque jeton reprend EXACTEMENT la couleur qu'il remplace ; le thème sombre ne bouge pas.
+ * - Clair : « papier ivoire » pour le magazine, crème pour le SALM ; contrastes AA vérifiés
+ *   (texte ≥ 4,5:1, grands titres et graphismes ≥ 3:1).
+ * - Une zone toujours sombre (pied de page, texte sur photo ou vidéo) porte la classe `dark` :
+ *   les jetons y reprennent leurs valeurs sombres, quel que soit le mode.
+ * - Les aplats ambre des boutons (`bg-amber-400`, `bg-amber-500`) et l'orange SALM (`bg-salm-accent`)
+ *   sont les mêmes dans les deux modes : ils restent écrits tels quels.
+ */
+@theme inline {
+  /* Magazine */
+  --color-page: var(--site-page);
+  --color-surface: var(--site-surface);
+  --color-surface-2: var(--site-surface-2);
+  --color-line: var(--site-line);
+  --color-line-strong: var(--site-line-strong);
+  --color-ink: var(--site-ink);
+  --color-ink-soft: var(--site-ink-soft);
+  --color-ink-muted: var(--site-ink-muted);
+  --color-ink-subtle: var(--site-ink-subtle);
+  --color-ink-faint: var(--site-ink-faint);
+  --color-on-accent: var(--site-on-accent);
+  --color-accent: var(--site-accent);
+  --color-accent-strong: var(--site-accent-strong);
+  --color-gold: var(--site-gold);
+  --color-title-from: var(--site-title-from);
+  --color-title-to: var(--site-title-to);
+  --color-copper: var(--site-copper);
+  --color-glow: var(--site-glow);
+  --color-pattern: var(--site-pattern);
+  --color-title-deep: var(--site-title-deep);
+  --color-spark: var(--site-spark);
+  --color-success: var(--site-success);
+  --color-danger: var(--site-danger);
+
+  /* SALM */
+  --color-salm-bg: var(--salm-bg);
+  --color-salm-surface: var(--salm-surface);
+  --color-salm-surface-2: var(--salm-surface-2);
+  --color-salm-surface-3: var(--salm-surface-3);
+  --color-salm-surface-4: var(--salm-surface-4);
+  --color-salm-border: var(--salm-border);
+  --color-salm-line-strong: var(--salm-line-strong);
+  --color-salm-ink: var(--salm-ink);
+  --color-salm-ink-soft: var(--salm-ink-soft);
+  --color-salm-ink-muted: var(--salm-ink-muted);
+  --color-salm-ink-faint: var(--salm-ink-faint);
+  --color-salm-accent-text: var(--salm-accent-text);
+  --color-salm-accent-soft: var(--salm-accent-soft);
+  --color-salm-ink-strong: var(--salm-ink-strong);
+  --color-salm-ink-dim: var(--salm-ink-dim);
+  --color-salm-overlay: var(--salm-overlay);
+  --color-salm-ok: var(--salm-ok);
+  --color-salm-error: var(--salm-error);
+  --color-salm-highlight: var(--salm-highlight);
+  --color-salm-accent-tint: var(--salm-accent-tint);
+}
+
+:root,
+.dark {
+  --site-scheme: dark;
+
+  /* Magazine : les couleurs actuelles */
+  --site-page: var(--color-gray-950);
+  --site-surface: var(--color-gray-900);
+  --site-surface-2: var(--color-gray-800);
+  --site-line: var(--color-gray-800);
+  --site-line-strong: var(--color-gray-700);
+  --site-ink: var(--color-white);
+  --site-ink-soft: var(--color-gray-300);
+  --site-ink-muted: var(--color-gray-400);
+  --site-ink-subtle: var(--color-gray-500);
+  --site-ink-faint: var(--color-gray-600);
+  --site-on-accent: var(--color-gray-900);
+  --site-accent: var(--color-amber-400);
+  --site-accent-strong: var(--color-amber-300);
+  --site-gold: var(--color-amber-500);
+  --site-title-from: var(--color-amber-400);
+  --site-title-to: var(--color-amber-500);
+  --site-copper: #dd8448;
+  --site-glow: var(--color-amber-400);
+  --site-pattern: var(--color-white);
+  --site-title-deep: var(--color-amber-600);
+  --site-spark: #fbbf24; /* ambre des éclairs et du compte à rebours (valeur d'origine) */
+  --site-frame: oklch(0.185 0 0); /* cadre derrière les couvertures */
+  --site-success: var(--color-emerald-300);
+  --site-danger: var(--color-red-400);
+
+  /* SALM : les couleurs actuelles */
+  --salm-bg: #0B0B0D;
+  --salm-surface: #141417;
+  --salm-surface-2: #16161A;
+  --salm-surface-3: #1C1C21;
+  --salm-surface-4: #24242B;
+  --salm-border: #2A2A31;
+  --salm-line-strong: #3A3A42;
+  --salm-ink: #F5F3EF;
+  --salm-ink-soft: var(--color-stone-300);
+  --salm-ink-muted: var(--color-stone-400);
+  --salm-ink-faint: var(--color-stone-500);
+  --salm-accent-text: #F4792B;
+  --salm-accent-soft: var(--color-orange-300);
+  --salm-ink-strong: var(--color-stone-200);
+  --salm-ink-dim: #8A847F;
+  --salm-overlay: rgb(0 0 0 / 0.3);
+  --salm-ok: var(--color-green-400);
+  --salm-error: var(--color-red-400);
+  --salm-highlight: var(--color-amber-200);
+  --salm-accent-tint: #2A1A10;
+  --salm-card-edge: transparent; /* contour des cartes claires : inutile sur fond sombre */
+  --salm-card-shadow: transparent;
+}
+
+.light {
+  --site-scheme: light;
+
+  /* Magazine : papier ivoire, encre chaude, accent ambre foncé */
+  --site-page: #FAF7F2;
+  --site-surface: #FFFFFF;
+  --site-surface-2: #F3EEE6;
+  --site-line: #E7DFD3;
+  --site-line-strong: #D6CBBB;
+  --site-ink: #1C1917; /* 16,4:1 */
+  --site-ink-soft: #44403C; /* 9,6:1 */
+  --site-ink-muted: #6B645C; /* 5,5:1 */
+  --site-ink-subtle: #6B645C;
+  --site-ink-faint: #736B62; /* 4,9:1 : sert aussi à des numéros et mentions */
+  --site-on-accent: #1C1917;
+  --site-accent: #A3480B; /* 5,6:1 sur le papier, 5,1:1 dans un badge */
+  --site-accent-strong: #7C3A09;
+  --site-gold: #D97706;
+  --site-title-from: #C2620A; /* grands titres : 3,9:1 */
+  --site-title-to: #9A4507;
+  --site-copper: #B05A24; /* 4,5:1 */
+  --site-glow: #92400E; /* les halos dorés deviennent des ombres chaudes */
+  --site-pattern: #78593C;
+  --site-title-deep: #9A4507;
+  --site-spark: #C2620A;
+  --site-frame: #E7DFD3;
+  --site-success: #047857; /* 5,1:1 */
+  --site-danger: #B91C1C;
+
+  /* SALM : crème, encre chaude, orange foncé */
+  --salm-bg: #F7F4EF;
+  --salm-surface: #FFFFFF;
+  --salm-surface-2: #F1ECE6;
+  --salm-surface-3: #E9E2D9;
+  --salm-surface-4: #E2DAD0;
+  --salm-border: #E2DAD0;
+  --salm-line-strong: #D6CBBB;
+  --salm-ink: #1C1917;
+  --salm-ink-soft: #44403C; /* 9,4:1 */
+  --salm-ink-muted: #6B645C; /* 5,3:1 */
+  --salm-ink-faint: #6B645C;
+  --salm-accent-text: #B13C0B; /* 5,4:1 */
+  --salm-accent-soft: #9A3A06;
+  --salm-ink-strong: #292524;
+  --salm-ink-dim: #6B645C;
+  --salm-overlay: #F1ECE6;
+  --salm-ok: #15803D;
+  --salm-error: #B91C1C;
+  --salm-highlight: #78350F; /* 7,4:1 sur le créneau teinté */
+  --salm-accent-tint: #FDF1E8; /* 5,4:1 avec l'orange texte */
+  --salm-card-edge: #E2DAD0; /* la carte crème se détache du fond crème */
+  --salm-card-shadow: rgb(120 53 15 / 0.35);
 }

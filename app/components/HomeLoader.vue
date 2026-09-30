@@ -116,16 +116,16 @@ onUnmounted(() => {
 <template>
   <div
     ref="overlayRef"
-    class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900"
+    class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-surface"
   >
     <!-- Titre -->
-    <h2 class="loader-title mb-8 text-2xl font-light tracking-[0.15em] text-white md:text-3xl">
+    <h2 class="loader-title mb-8 text-2xl font-light tracking-[0.15em] text-ink md:text-3xl">
       Le Carré des Études
     </h2>
 
     <!-- Spinner SVG -->
     <svg
-      class="loader-spinner mb-6 h-12 w-12"
+      class="loader-spinner mb-6 h-12 w-12 text-ink"
       viewBox="0 0 50 50"
       fill="none"
     >
@@ -133,20 +133,20 @@ onUnmounted(() => {
         cx="25"
         cy="25"
         r="20"
-        stroke="white"
+        stroke="currentColor"
         stroke-opacity="0.15"
         stroke-width="2.5"
       />
       <path
         d="M25 5 A20 20 0 0 1 45 25"
-        stroke="white"
+        stroke="currentColor"
         stroke-width="2.5"
         stroke-linecap="round"
       />
     </svg>
 
     <!-- Sous-titre -->
-    <span class="loader-subtitle text-[11px] font-light tracking-[0.25em] uppercase text-white/50">
+    <span class="loader-subtitle text-[11px] font-light tracking-[0.25em] uppercase text-ink/50">
       Chargement
     </span>
   </div>

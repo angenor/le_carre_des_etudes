@@ -61,7 +61,7 @@ onBeforeUnmount(() => {
 <template>
   <dialog
     ref="dialogRef"
-    class="salm-dialog m-auto max-h-[92dvh] w-[min(100%-2rem,72rem)] overflow-visible bg-transparent p-0 text-[#F5F3EF]"
+    class="salm-dialog dark m-auto max-h-[92dvh] w-[min(100%-2rem,72rem)] overflow-visible bg-transparent p-0 text-[#F5F3EF]"
     :class="size === 'gallery' ? 'max-w-6xl' : 'max-w-5xl'"
     :aria-labelledby="titleId"
     @cancel="onCancel"

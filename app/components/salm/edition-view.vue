@@ -14,7 +14,7 @@ useSalmMotion(root)
 </script>
 
 <template>
-  <div ref="root" class="salm-scope overflow-x-clip bg-salm-bg font-salm-body text-[#F5F3EF]">
+  <div ref="root" class="salm-scope overflow-x-clip bg-salm-bg font-salm-body text-salm-ink">
     <template v-if="edition">
       <SalmHero :edition="edition" :previous="previous" />
       <SalmParticipate :edition="edition" />
@@ -35,7 +35,7 @@ useSalmMotion(root)
     <section v-else class="flex min-h-[70vh] flex-col items-center justify-center gap-4 px-5 pt-32 pb-20 text-center">
       <span class="font-salm-title text-[13px] font-bold tracking-[0.16em] text-salm-accent-text">SALON INTERNATIONAL DES LICENCES ET MASTERS</span>
       <h1 class="max-w-2xl font-salm-title text-3xl font-extrabold tracking-[-0.02em] md:text-4xl">La prochaine édition du SALM sera bientôt annoncée.</h1>
-      <NuxtLink to="/" class="mt-2 text-sm font-semibold text-salm-accent-text hover:text-orange-300">Retour à l'accueil</NuxtLink>
+      <NuxtLink to="/" class="mt-2 text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft">Retour à l'accueil</NuxtLink>
     </section>
   </div>
 </template>

@@ -70,7 +70,9 @@ function toggleVideo() {
 </script>
 
 <template>
-  <section class="relative isolate flex min-h-[760px] flex-col overflow-hidden md:min-h-[860px]">
+  <!-- Toujours sombre (texte clair sur image ou vidéo voilée) : la classe `dark` y fige les jetons SALM
+       sur leurs valeurs sombres, quel que soit le mode ; le fond salm-bg la garde sombre sans image. -->
+  <section class="dark relative isolate flex min-h-[760px] flex-col overflow-hidden bg-salm-bg text-salm-ink md:min-h-[860px]">
     <!-- Fond : image de secours (SSR, LCP), puis vidéo si les conditions le permettent -->
     <img
       v-if="fallbackImage"
@@ -108,16 +110,16 @@ function toggleVideo() {
 
         <h1 class="flex items-end gap-0.5 leading-[0.8] md:gap-1">
           <span class="sr-only">SALM {{ edition.year }}</span>
-          <span aria-hidden="true" class="salm-intro-write font-salm-script text-[min(118px,30vw)] font-normal tracking-[-0.01em] text-[#F5F3EF] md:text-[190px]" style="--salm-delay: 0.25s">Salm</span>
+          <span aria-hidden="true" class="salm-intro-write font-salm-script text-[min(118px,30vw)] font-normal tracking-[-0.01em] text-salm-ink md:text-[190px]" style="--salm-delay: 0.25s">Salm</span>
           <span aria-hidden="true" class="salm-intro-stamp pb-1 font-salm-title text-[min(52px,13vw)] font-extrabold tracking-[-0.03em] text-salm-accent-text md:pb-1.5 md:text-[84px]" style="--salm-delay: 1.15s">{{ edition.year }}</span>
         </h1>
 
-        <p v-if="edition.tagline" class="salm-intro font-salm-title text-2xl leading-[1.25] font-semibold tracking-[-0.01em] text-[#F5F3EF] md:text-[34px]" style="--salm-delay: 1.3s">
+        <p v-if="edition.tagline" class="salm-intro font-salm-title text-2xl leading-[1.25] font-semibold tracking-[-0.01em] text-salm-ink md:text-[34px]" style="--salm-delay: 1.3s">
           {{ edition.tagline }}
         </p>
 
         <!-- Informations pratiques -->
-        <ul class="salm-intro flex flex-col gap-2.5 font-salm-body text-[15px] text-stone-300 md:flex-row md:flex-wrap md:gap-7 md:text-[17px]" style="--salm-delay: 1.4s">
+        <ul class="salm-intro flex flex-col gap-2.5 font-salm-body text-[15px] text-salm-ink-soft md:flex-row md:flex-wrap md:gap-7 md:text-[17px]" style="--salm-delay: 1.4s">
           <li class="flex items-center gap-2.5">
             <svg class="size-[18px] shrink-0 md:size-5" viewBox="0 0 24 24" fill="none" stroke="#F4792B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
             <span class="md:hidden">{{ datesShort }}<template v-if="edition.timeline.hoursLabel"> · {{ edition.timeline.hoursLabel }}</template></span>
@@ -153,21 +155,21 @@ function toggleVideo() {
             <svg class="hidden size-5 md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M9 6h6" /><circle cx="12" cy="13" r="3" /></svg>
             Étudiant·e : obtenir mon badge
           </NuxtLink>
-          <div v-else class="flex min-h-14 flex-col justify-center rounded-[14px] bg-white/8 px-6 py-2.5 md:min-h-[60px]">
-            <span class="font-salm-title text-sm font-bold text-[#F5F3EF]">Inscriptions étudiantes closes</span>
-            <NuxtLink to="/salm/inscription-etudiant" class="text-sm font-semibold text-salm-accent-text hover:text-orange-300">Récupérer mon badge</NuxtLink>
+          <div v-else class="flex min-h-14 flex-col justify-center rounded-[14px] bg-ink/8 px-6 py-2.5 md:min-h-[60px]">
+            <span class="font-salm-title text-sm font-bold text-salm-ink">Inscriptions étudiantes closes</span>
+            <NuxtLink to="/salm/inscription-etudiant" class="text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft">Récupérer mon badge</NuxtLink>
           </div>
 
           <NuxtLink
             v-if="schoolsOpen"
             to="/salm/inscription-ecole"
-            class="flex min-h-14 items-center justify-center gap-3 rounded-[14px] border-[1.5px] py-2 text-center border-[#F5F3EF]/50 px-7 font-salm-title text-base font-bold text-[#F5F3EF] transition-colors hover:border-[#F5F3EF] md:h-[60px] md:justify-start"
+            class="flex min-h-14 items-center justify-center gap-3 rounded-[14px] border-[1.5px] py-2 text-center border-salm-ink/50 px-7 font-salm-title text-base font-bold text-salm-ink transition-colors hover:border-salm-ink md:h-[60px] md:justify-start"
           >
             <svg class="hidden size-5 md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" /></svg>
             École : confirmer notre présence
           </NuxtLink>
-          <div v-else class="flex min-h-14 items-center rounded-[14px] border-[1.5px] border-white/15 px-6 md:min-h-[60px]">
-            <span class="font-salm-title text-sm font-bold text-stone-300">Inscriptions des établissements closes</span>
+          <div v-else class="flex min-h-14 items-center rounded-[14px] border-[1.5px] border-ink/15 px-6 md:min-h-[60px]">
+            <span class="font-salm-title text-sm font-bold text-salm-ink-soft">Inscriptions des établissements closes</span>
           </div>
         </div>
 
@@ -175,11 +177,11 @@ function toggleVideo() {
         <button
           v-if="recap"
           type="button"
-          class="salm-intro flex items-center gap-3 self-start text-[15px] font-semibold text-[#F5F3EF] md:hidden"
+          class="salm-intro flex items-center gap-3 self-start text-[15px] font-semibold text-salm-ink md:hidden"
           style="--salm-delay: 1.7s"
           @click="recapOpen = true"
         >
-          <span class="flex size-11 items-center justify-center rounded-full bg-[#F5F3EF] text-[#0B0B0D]">
+          <span class="flex size-11 items-center justify-center rounded-full bg-salm-ink text-salm-bg">
             <svg class="size-4" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
           </span>
           Revivre le SALM {{ previous?.year }} en vidéo
@@ -197,21 +199,21 @@ function toggleVideo() {
         <button
           v-if="recap"
           type="button"
-          class="flex items-center gap-4 rounded-[20px] border border-white/10 bg-[#0B0B0D]/72 py-3.5 pr-[18px] pl-3.5 text-left text-[#F5F3EF] transition-colors hover:border-white/25"
+          class="flex items-center gap-4 rounded-[20px] border border-ink/10 bg-[#0B0B0D]/72 py-3.5 pr-[18px] pl-3.5 text-left text-salm-ink transition-colors hover:border-ink/25"
           @click="recapOpen = true"
         >
-          <span class="flex size-[52px] shrink-0 items-center justify-center rounded-full bg-[#F5F3EF] text-[#0B0B0D]">
+          <span class="flex size-[52px] shrink-0 items-center justify-center rounded-full bg-salm-ink text-salm-bg">
             <svg class="size-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
           </span>
           <span class="flex flex-col gap-0.5">
             <span class="text-[15px] font-semibold">Revivre le SALM {{ previous?.year }}</span>
-            <span class="text-[13px] text-stone-400">Vidéo plein écran · YouTube</span>
+            <span class="text-[13px] text-salm-ink-muted">Vidéo plein écran · YouTube</span>
           </span>
         </button>
         <button
           v-if="videoEligible"
           type="button"
-          class="flex items-center gap-2 self-start rounded-full border border-white/15 bg-[#0B0B0D]/60 px-4 py-2 text-sm font-medium text-stone-300 transition-colors hover:text-white"
+          class="flex items-center gap-2 self-start rounded-full border border-ink/15 bg-[#0B0B0D]/60 px-4 py-2 text-sm font-medium text-salm-ink-soft transition-colors hover:text-ink"
           @click="toggleVideo"
         >
           <svg v-if="!videoPaused" class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>
@@ -222,11 +224,11 @@ function toggleVideo() {
     </div>
 
     <!-- Barre d'ancres et organisateur -->
-    <div class="salm-intro flex flex-col gap-3 border-t border-white/10 bg-[#0B0B0D]/80 px-5 py-4 md:h-[68px] md:flex-row md:items-center md:justify-between md:px-12 md:py-0 xl:px-24" style="--salm-delay: 1.7s">
+    <div class="salm-intro flex flex-col gap-3 border-t border-ink/10 bg-[#0B0B0D]/80 px-5 py-4 md:h-[68px] md:flex-row md:items-center md:justify-between md:px-12 md:py-0 xl:px-24" style="--salm-delay: 1.7s">
       <nav aria-label="Sections de la page SALM" class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium md:gap-x-9 md:text-[15px]">
-        <a v-for="anchor in anchors" :key="anchor.href" :href="anchor.href" class="text-stone-300 transition-colors hover:text-salm-accent-text">{{ anchor.label }}</a>
+        <a v-for="anchor in anchors" :key="anchor.href" :href="anchor.href" class="text-salm-ink-soft transition-colors hover:text-salm-accent-text">{{ anchor.label }}</a>
       </nav>
-      <span class="text-[13px] text-stone-400 md:text-sm">Organisé par <strong class="font-semibold text-[#F5F3EF]">{{ edition.organizerName }}</strong></span>
+      <span class="text-[13px] text-salm-ink-muted md:text-sm">Organisé par <strong class="font-semibold text-salm-ink">{{ edition.organizerName }}</strong></span>
     </div>
 
     <SalmModalDialog
@@ -248,7 +250,7 @@ function toggleVideo() {
         :href="`https://www.youtube.com/watch?v=${recap.youtubeId}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="self-start text-sm font-semibold text-salm-accent-text hover:text-orange-300"
+        class="self-start text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft"
       >Ouvrir sur YouTube</a>
     </SalmModalDialog>
   </section>

@@ -71,31 +71,31 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="hasContent" ref="sectionRef" class="relative overflow-hidden bg-gray-950 pb-20 pt-6 sm:pb-28 sm:pt-10">
+  <section v-if="hasContent" ref="sectionRef" class="relative overflow-hidden bg-page pb-20 pt-6 sm:pb-28 sm:pt-10">
     <!-- Fond décoratif -->
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(221,132,72,0.05),transparent_60%)]" />
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,var(--site-copper)_5%,transparent),transparent_60%)]" />
 
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- En-tête -->
       <div ref="headerRef" class="mb-12 text-center">
-        <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
+        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Partenaires
         </span>
 
-        <h2 class="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h2 class="mt-6 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           Ils nous
-          <span class="bg-linear-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent">
+          <span class="bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
             accompagnent
           </span>
         </h2>
 
         <!-- Séparateur -->
         <div class="mx-auto mt-8 flex items-center justify-center gap-3">
-          <span class="h-px w-12 bg-linear-to-r from-transparent to-amber-500/50" />
-          <svg class="h-3 w-3 rotate-45 text-amber-500/40" fill="currentColor" viewBox="0 0 16 16">
+          <span class="h-px w-12 bg-linear-to-r from-transparent to-gold/50" />
+          <svg class="h-3 w-3 rotate-45 text-gold/40" fill="currentColor" viewBox="0 0 16 16">
             <rect width="16" height="16" rx="2" />
           </svg>
-          <span class="h-px w-12 bg-linear-to-l from-transparent to-amber-500/50" />
+          <span class="h-px w-12 bg-linear-to-l from-transparent to-gold/50" />
         </div>
       </div>
 
@@ -117,7 +117,7 @@ onUnmounted(() => {
               class="max-h-full max-w-full object-contain"
             />
           </div>
-          <span class="text-xs font-medium text-gray-400">{{ partner.name }}</span>
+          <span class="text-xs font-medium text-ink-muted">{{ partner.name }}</span>
         </component>
       </div>
 
@@ -125,7 +125,7 @@ onUnmounted(() => {
       <div ref="ctaRef" class="mt-12 text-center">
         <NuxtLink
           to="/partenaires"
-          class="group/cta inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 transition-colors hover:text-amber-300"
+          class="group/cta inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent-strong"
         >
           Voir tous nos partenaires
           <svg class="h-4 w-4 transition-transform group-hover/cta:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

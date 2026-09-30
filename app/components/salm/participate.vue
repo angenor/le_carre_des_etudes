@@ -25,9 +25,9 @@ const standList = computed(() => {
       <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div class="flex flex-col gap-2.5 md:gap-3.5">
           <span v-if="studentsOpen || schoolsOpen" class="font-salm-title text-xs font-bold tracking-[0.16em] text-salm-accent-text md:text-[13px]">INSCRIPTIONS OUVERTES</span>
-          <h2 class="font-salm-title text-[32px] leading-[1.08] font-extrabold tracking-[-0.03em] text-[#F5F3EF] md:text-5xl md:leading-[1.05]">Deux façons de participer</h2>
+          <h2 class="font-salm-title text-[32px] leading-[1.08] font-extrabold tracking-[-0.03em] text-salm-ink md:text-5xl md:leading-[1.05]">Deux façons de participer</h2>
         </div>
-        <p class="hidden max-w-[440px] text-[17px] leading-[1.55] text-stone-400 md:block">
+        <p class="hidden max-w-[440px] text-[17px] leading-[1.55] text-salm-ink-muted md:block">
           Les étudiant·e·s reçoivent un badge d'entrée nominatif. Les établissements confirment simplement leur présence : aucun badge à télécharger.
         </p>
       </div>
@@ -70,15 +70,15 @@ const standList = computed(() => {
 
         <!-- Établissement -->
         <article class="flex flex-col gap-4 rounded-3xl border border-salm-border bg-salm-surface-2 px-6 py-7 md:min-h-[600px] md:gap-[22px] md:rounded-[28px] md:p-11">
-          <span class="self-start rounded-full bg-[#24242B] px-3 py-1.5 text-xs font-bold tracking-[0.08em] text-salm-accent-text md:px-3.5 md:py-[7px] md:text-[13px]">UNIVERSITÉ · GRANDE ÉCOLE</span>
-          <h3 class="font-salm-title text-2xl leading-[1.15] font-extrabold tracking-[-0.02em] text-[#F5F3EF] md:text-[32px] md:leading-[1.12]">Confirmez la présence de votre établissement</h3>
-          <p class="text-[15px] leading-[1.55] text-stone-400 md:hidden">
+          <span class="self-start rounded-full bg-salm-surface-4 px-3 py-1.5 text-xs font-bold tracking-[0.08em] text-salm-accent-text md:px-3.5 md:py-[7px] md:text-[13px]">UNIVERSITÉ · GRANDE ÉCOLE</span>
+          <h3 class="font-salm-title text-2xl leading-[1.15] font-extrabold tracking-[-0.02em] text-salm-ink md:text-[32px] md:leading-[1.12]">Confirmez la présence de votre établissement</h3>
+          <p class="text-[15px] leading-[1.55] text-salm-ink-muted md:hidden">
             Pas de badge pour les écoles : l'inscription confirme votre participation, vos exposants et votre stand<template v-if="standList"> ({{ standList }})</template>.
           </p>
-          <p class="hidden text-base leading-[1.55] text-stone-400 md:block">
+          <p class="hidden text-base leading-[1.55] text-salm-ink-muted md:block">
             Pas de badge pour les écoles : l'inscription sert uniquement à confirmer votre participation, vos exposants et votre stand. L'équipe SALM vous recontacte pour finaliser.
           </p>
-          <ol class="hidden flex-col gap-3 text-[15px] text-stone-200 md:flex" data-motion="steps">
+          <ol class="hidden flex-col gap-3 text-[15px] text-salm-ink-strong md:flex" data-motion="steps">
             <li class="flex items-center gap-3.5">
               <span class="flex size-8 shrink-0 items-center justify-center rounded-full border-[1.5px] border-salm-accent-text font-extrabold text-salm-accent-text">1</span>
               Votre établissement et vos programmes
@@ -100,7 +100,7 @@ const standList = computed(() => {
             Confirmer notre présence
             <svg class="hidden size-[18px] md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </NuxtLink>
-          <p v-else class="rounded-[14px] border border-salm-border px-5 py-3.5 font-salm-title text-base font-bold text-stone-300 md:mt-auto md:self-start">
+          <p v-else class="rounded-[14px] border border-salm-border px-5 py-3.5 font-salm-title text-base font-bold text-salm-ink-soft md:mt-auto md:self-start">
             Inscriptions des établissements closes
           </p>
         </article>

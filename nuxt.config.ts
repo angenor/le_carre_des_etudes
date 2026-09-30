@@ -19,7 +19,15 @@ export default defineNuxtConfig({
       '/inscription': { redirect: { to: '/salm/inscription-etudiant', statusCode: 302 } },
     },
   },
-  modules: ['@hypernym/nuxt-gsap'],
+  modules: ['@hypernym/nuxt-gsap', '@nuxtjs/color-mode'],
+  // Mode clair / sombre du site public : réglage du visiteur au premier affichage, puis son choix mémorisé.
+  // Classe `light` ou `dark` sur <html> ; les couleurs suivent les jetons de app/assets/css/main.css.
+  colorMode: {
+    preference: 'system',
+    fallback: 'dark',
+    classSuffix: '',
+    storageKey: 'lcde-theme',
+  },
   gsap: {
     composables: true,
     provide: false,

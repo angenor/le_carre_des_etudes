@@ -235,16 +235,16 @@ function statutClasses(statut: string): string {
   if (statut.startsWith('LAURÉAT')) return 'bg-amber-400 text-gray-900'
   if (statut.includes('2e')) return 'bg-gray-300 text-gray-900'
   if (statut.includes('3e')) return 'bg-amber-700/80 text-amber-50'
-  return 'bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30'
+  return 'bg-emerald-500/15 text-success ring-1 ring-emerald-500/30'
 }
 
 const medailles = ['🥇', '🥈', '🥉']
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-950">
+  <div class="min-h-screen bg-page">
     <!-- Hero -->
-    <section class="relative overflow-hidden bg-gray-950 pb-16 pt-32 sm:pb-20 sm:pt-40">
+    <section class="relative overflow-hidden bg-page pb-16 pt-32 sm:pb-20 sm:pt-40">
       <!-- Grille de points + halos -->
       <svg class="absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
@@ -252,28 +252,28 @@ const medailles = ['🥇', '🥈', '🥉']
             <circle cx="1" cy="1" r="1" fill="rgba(251,191,36,0.12)" />
           </pattern>
           <radialGradient id="res-fade" cx="50%" cy="25%" r="60%">
-            <stop offset="0%" stop-color="rgba(221,132,72,0.18)" />
+            <stop offset="0%" style="stop-color: color-mix(in srgb, var(--site-copper) 18%, transparent)" />
             <stop offset="100%" stop-color="transparent" />
           </radialGradient>
         </defs>
         <rect width="100%" height="100%" fill="url(#res-grid)" />
         <rect width="100%" height="100%" fill="url(#res-fade)" />
       </svg>
-      <div class="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-amber-500/5 blur-3xl" />
+      <div class="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-gold/5 blur-3xl" />
 
       <div class="relative mx-auto max-w-5xl px-6 text-center">
-        <span class="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 uppercase">
+        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Résultats officiels
         </span>
-        <h1 class="mt-6 text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+        <h1 class="mt-6 text-3xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
           ADMISSION
-          <span class="bg-linear-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent">TEST</span>
+          <span class="bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">TEST</span>
           2026
         </h1>
-        <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-gray-400 sm:text-lg">
+        <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
           Liste officielle des admis. Félicitations à toutes et à tous&nbsp;!
         </p>
-        <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-sm font-semibold text-emerald-300 ring-1 ring-emerald-500/30">
+        <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-sm font-semibold text-success ring-1 ring-emerald-500/30">
           <span class="h-2 w-2 rounded-full bg-emerald-400" />
           {{ totalAdmis }} admis
         </p>
@@ -287,15 +287,15 @@ const medailles = ['🥇', '🥈', '🥉']
           <div
             v-for="(p, i) in podium"
             :key="p.nom"
-            class="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-gray-900/60 p-6 text-center backdrop-blur"
-            :class="i === 0 ? 'sm:-translate-y-3 border-amber-400/50 shadow-lg shadow-amber-500/10' : ''"
+            class="relative overflow-hidden rounded-2xl border border-gold/20 bg-surface/60 p-6 text-center backdrop-blur"
+            :class="i === 0 ? 'sm:-translate-y-3 border-accent/50 shadow-lg shadow-gold/10' : ''"
           >
-            <div class="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-amber-500/10 blur-2xl" />
+            <div class="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gold/10 blur-2xl" />
             <div class="text-4xl">{{ medailles[i] }}</div>
-            <h3 class="mt-3 text-lg font-bold text-white">{{ p.nom }}</h3>
-            <p v-if="p.naissance" class="mt-1 text-xs text-gray-500">Né(e) en {{ p.naissance }}</p>
+            <h3 class="mt-3 text-lg font-bold text-ink">{{ p.nom }}</h3>
+            <p v-if="p.naissance" class="mt-1 text-xs text-ink-subtle">Né(e) en {{ p.naissance }}</p>
             <div class="mt-4 flex items-center justify-center gap-3">
-              <span class="text-2xl font-bold text-amber-400">{{ p.note }}</span>
+              <span class="text-2xl font-bold text-accent">{{ p.note }}</span>
               <span
                 class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide"
                 :class="statutClasses(p.statut)"
@@ -310,28 +310,28 @@ const medailles = ['🥇', '🥈', '🥉']
     <section class="relative pb-24">
       <div class="mx-auto max-w-5xl px-6">
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <h2 class="text-2xl font-bold tracking-tight text-white">
+          <h2 class="text-2xl font-bold tracking-tight text-ink">
             ADMIS
           </h2>
           <!-- Recherche -->
           <div class="relative w-full sm:max-w-xs">
-            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
             <input
               v-model="recherche"
               type="search"
               placeholder="Rechercher un nom…"
-              class="w-full rounded-full border border-gray-800 bg-gray-900/60 py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-500 outline-none transition-colors focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/30"
+              class="w-full rounded-full border border-line bg-surface/60 py-2.5 pl-10 pr-4 text-sm text-ink placeholder-ink-subtle outline-none transition-colors focus:border-accent/50 focus:ring-1 focus:ring-accent/30"
             >
           </div>
         </div>
 
         <!-- Tableau -->
-        <div class="overflow-x-auto rounded-2xl border border-gray-800 bg-gray-900/40">
+        <div class="overflow-x-auto rounded-2xl border border-line bg-surface/40">
           <table class="w-full min-w-[560px] text-left text-sm">
             <thead>
-              <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-500">
+              <tr class="border-b border-line text-xs uppercase tracking-wider text-ink-subtle">
                 <th class="px-4 py-3 font-semibold">#</th>
                 <th class="px-4 py-3 font-semibold">Nom et prénoms</th>
                 <th class="px-4 py-3 font-semibold">Année de naissance</th>
@@ -343,12 +343,12 @@ const medailles = ['🥇', '🥈', '🥉']
               <tr
                 v-for="(r, i) in resultatsFiltres"
                 :key="r.nom + i"
-                class="border-b border-gray-800/60 transition-colors last:border-0 hover:bg-white/[0.03]"
+                class="border-b border-line/60 transition-colors last:border-0 hover:bg-ink/[0.03]"
               >
-                <td class="px-4 py-3 text-gray-600 tabular-nums">{{ i + 1 }}</td>
-                <td class="px-4 py-3 font-medium text-white">{{ r.nom }}</td>
-                <td class="px-4 py-3 text-gray-400 tabular-nums">{{ r.naissance || '—' }}</td>
-                <td class="px-4 py-3 text-right font-semibold text-amber-400 tabular-nums">{{ r.note }}</td>
+                <td class="px-4 py-3 text-ink-faint tabular-nums">{{ i + 1 }}</td>
+                <td class="px-4 py-3 font-medium text-ink">{{ r.nom }}</td>
+                <td class="px-4 py-3 text-ink-muted tabular-nums">{{ r.naissance || '—' }}</td>
+                <td class="px-4 py-3 text-right font-semibold text-accent tabular-nums">{{ r.note }}</td>
                 <td class="px-4 py-3">
                   <span
                     class="inline-block rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wide"
@@ -357,7 +357,7 @@ const medailles = ['🥇', '🥈', '🥉']
                 </td>
               </tr>
               <tr v-if="!resultatsFiltres.length">
-                <td colspan="5" class="px-4 py-12 text-center text-sm text-gray-500">
+                <td colspan="5" class="px-4 py-12 text-center text-sm text-ink-subtle">
                   Aucun résultat pour « {{ recherche }} ».
                 </td>
               </tr>
@@ -365,7 +365,7 @@ const medailles = ['🥇', '🥈', '🥉']
           </table>
         </div>
 
-        <p class="mt-6 text-center text-xs text-gray-600">
+        <p class="mt-6 text-center text-xs text-ink-faint">
           Le Carré des Études — ADMISSION TEST 2026.
         </p>
       </div>

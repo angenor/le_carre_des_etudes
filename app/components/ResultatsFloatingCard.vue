@@ -32,15 +32,15 @@ function fermer() {
       v-if="visible"
       class="fixed bottom-4 right-4 z-[60] w-[min(92vw,20rem)] sm:bottom-6 sm:right-6"
     >
-      <div class="relative overflow-hidden rounded-2xl border border-amber-400/30 bg-gray-900/85 shadow-2xl shadow-black/50 backdrop-blur-xl">
+      <div class="relative overflow-hidden rounded-2xl border border-accent/30 bg-surface/85 shadow-2xl shadow-black/50 backdrop-blur-xl">
         <!-- Halo décoratif -->
-        <div class="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-amber-500/20 blur-2xl" />
+        <div class="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gold/20 blur-2xl" />
 
         <!-- Bouton fermer -->
         <button
           type="button"
           aria-label="Fermer"
-          class="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+          class="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-ink/10 hover:text-ink"
           @click="fermer"
         >
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor">
@@ -50,19 +50,19 @@ function fermer() {
 
         <NuxtLink to="/resultats" class="block p-5 pr-8" @click="fermer">
           <!-- Badge À la une -->
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-400">
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-accent">
             <span class="relative flex h-1.5 w-1.5">
-              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
-              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-400" />
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
             </span>
             À la une
           </span>
 
           <!-- Contenu -->
-          <p class="mt-3 text-base font-bold leading-snug text-white">
+          <p class="mt-3 text-base font-bold leading-snug text-ink">
             Résultats ADMISSION TEST 2026
           </p>
-          <span class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-400">
+          <span class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent">
             Voir les résultats
             <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
