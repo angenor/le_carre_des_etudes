@@ -5,11 +5,22 @@ const { data: salmStatus } = await useSalmStatus()
 
 // Deux volets : le magazine (menu) et le SALM (lien direct). « Résultats » n'est plus dans la barre,
 // mais /resultats reste en ligne : le lien a déjà été partagé.
+// Icônes (Heroicons, contour) : livre ouvert, journal, groupe
 const magazineLinks = [
-  { label: 'Les numéros', description: 'Lire et télécharger le magazine', to: '/magazine' },
-  { label: 'Les rubriques', description: 'Parcours, focus, agenda et opportunités', to: '/rubriques' },
-  { label: 'Nos partenaires', description: 'Ils soutiennent le magazine', to: '/partenaires' },
+  { label: 'Les numéros', description: 'Lire et télécharger le magazine', to: '/magazine', icon: 'M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25' },
+  { label: 'Les rubriques', description: 'Parcours, focus, agenda et opportunités', to: '/rubriques', icon: 'M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z' },
+  { label: 'Nos partenaires', description: 'Ils soutiennent le magazine', to: '/partenaires', icon: 'M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z' },
 ]
+
+// Panneau image du menu : le numéro à la une (même source que la section « À la une » de l'accueil)
+interface FeaturedMagazine {
+  id: number
+  name: string
+  version: string
+  subtitle: string | null
+  coverImage: string | null
+}
+const { data: featured } = useFetch<FeaturedMagazine | null>('/api/magazines/featured')
 
 function isActive(to: string): boolean {
   if (to === '/') {
@@ -23,14 +34,40 @@ const magazineActive = computed(() => magazineLinks.some((link) => isActive(link
 // Mode clair du magazine « Édition jaune » : barre en style kiosque (main.css, classe `mag-nav`), hors pages SALM
 const salmPage = computed(() => route.path === '/salm' || route.path.startsWith('/salm/'))
 
-// Menu « Le Magazine » : ouverture au clic (pas au survol, absent sur téléphone), fermeture par Échap,
-// clic à l'extérieur, sortie du focus ou changement de page
+// Menu « Le Magazine » : ouverture au survol de la souris (délai de fermeture pour rejoindre le panneau),
+// au clic ou au toucher sinon ; fermeture par Échap, clic à l'extérieur, sortie du focus ou changement de page
 const menuId = useId()
 const menuOpen = ref(false)
 const menuRef = ref<HTMLElement>()
 const buttonRef = ref<HTMLButtonElement>()
 
+let hoverCloseTimer: ReturnType<typeof setTimeout> | null = null
+
+function cancelHoverClose() {
+  if (hoverCloseTimer) clearTimeout(hoverCloseTimer)
+  hoverCloseTimer = null
+}
+
+function onMenuPointerEnter(event: PointerEvent) {
+  if (event.pointerType !== 'mouse') return
+  cancelHoverClose()
+  menuOpen.value = true
+}
+
+function onMenuPointerLeave(event: PointerEvent) {
+  if (event.pointerType !== 'mouse') return
+  cancelHoverClose()
+  hoverCloseTimer = setTimeout(() => closeMenu(), 200)
+}
+
+// À la souris, le survol a déjà ouvert le menu : le clic le laisse ouvert. Au clavier ou au toucher, il bascule.
+function onMenuButtonClick(event: MouseEvent) {
+  const pointerType = (event as PointerEvent).pointerType
+  menuOpen.value = pointerType === 'mouse' ? true : !menuOpen.value
+}
+
 function closeMenu({ focusButton = false } = {}) {
+  cancelHoverClose()
   if (!menuOpen.value) return
   menuOpen.value = false
   if (focusButton) buttonRef.value?.focus()
@@ -52,12 +89,34 @@ function onMenuFocusOut(event: FocusEvent) {
   if (next && !menuRef.value?.contains(next)) closeMenu()
 }
 
+// Téléphone : le panneau se centre dans l'écran. La pilule, floutée, sert de repère aux positions (le flou
+// empêche un placement par rapport à l'écran) : on mesure son bord gauche à l'ouverture.
+const dropdownStyle = ref<Record<string, string>>({})
+
+function placeDropdown() {
+  if (window.innerWidth >= 768) {
+    dropdownStyle.value = {}
+    return
+  }
+  const wrapper = menuRef.value?.closest('.nav-wrapper')
+  if (!wrapper) return
+  const width = Math.min(352, window.innerWidth - 32)
+  const left = (window.innerWidth - width) / 2 - wrapper.getBoundingClientRect().left
+  dropdownStyle.value = { left: `${Math.round(left)}px`, width: `${width}px` }
+}
+
 watch(menuOpen, (open) => {
-  if (open) document.addEventListener('pointerdown', onDocumentPointerDown)
+  if (open) {
+    placeDropdown()
+    document.addEventListener('pointerdown', onDocumentPointerDown)
+  }
   else document.removeEventListener('pointerdown', onDocumentPointerDown)
 })
 watch(() => route.path, () => closeMenu())
-onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPointerDown))
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onDocumentPointerDown)
+  cancelHoverClose()
+})
 
 // Clair / sombre (@nuxtjs/color-mode) : réglage du visiteur au premier affichage, puis son choix, mémorisé.
 // Mode sombre : soleil, pour passer en clair ; mode clair : lune, pour revenir au sombre.
@@ -82,7 +141,7 @@ function toggleTheme() {
           Accueil
         </NuxtLink>
 
-        <div ref="menuRef" class="nav-menu" @keydown="onMenuKeydown" @focusout="onMenuFocusOut">
+        <div ref="menuRef" class="nav-menu" @keydown="onMenuKeydown" @focusout="onMenuFocusOut" @pointerenter="onMenuPointerEnter" @pointerleave="onMenuPointerLeave">
           <button
             ref="buttonRef"
             type="button"
@@ -90,7 +149,7 @@ function toggleTheme() {
             :class="{ 'is-active': magazineActive }"
             :aria-expanded="menuOpen ? 'true' : 'false'"
             :aria-controls="menuId"
-            @click="menuOpen = !menuOpen"
+            @click="onMenuButtonClick"
           >
             Le Magazine
             <svg class="nav-chevron" :class="{ 'is-open': menuOpen }" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -99,19 +158,44 @@ function toggleTheme() {
           </button>
 
           <Transition name="nav-dropdown">
-            <ul v-show="menuOpen" :id="menuId" class="nav-dropdown">
-              <li v-for="link in magazineLinks" :key="link.to">
-                <NuxtLink
-                  :to="link.to"
-                  class="nav-dropdown-link"
-                  :class="{ 'is-current': isActive(link.to) }"
-                  @click="closeMenu()"
-                >
-                  <span class="nav-dropdown-label">{{ link.label }}</span>
-                  <span class="nav-dropdown-description">{{ link.description }}</span>
-                </NuxtLink>
-              </li>
-            </ul>
+            <div v-show="menuOpen" :id="menuId" class="nav-dropdown" :style="dropdownStyle">
+              <!-- À gauche : le numéro à la une, couverture sur voile sombre -->
+              <NuxtLink
+                v-if="featured"
+                :to="`/magazine/${featured.id}`"
+                class="nav-feature"
+                @click="closeMenu()"
+              >
+                <img v-if="featured.coverImage" :src="featured.coverImage" alt="" class="nav-feature-image" loading="lazy">
+                <span class="nav-feature-shade" aria-hidden="true" />
+                <span class="nav-feature-body">
+                  <span class="nav-feature-badge">Dernier numéro · {{ featured.version }}</span>
+                  <span class="nav-feature-title">{{ featured.name }}</span>
+                  <span v-if="featured.subtitle" class="nav-feature-text">{{ featured.subtitle }}</span>
+                  <span class="nav-feature-cta">Découvrir le numéro <span aria-hidden="true">→</span></span>
+                </span>
+              </NuxtLink>
+
+              <!-- À droite : les pages du magazine -->
+              <ul class="nav-dropdown-list">
+                <li v-for="link in magazineLinks" :key="link.to">
+                  <NuxtLink
+                    :to="link.to"
+                    class="nav-dropdown-link"
+                    :class="{ 'is-current': isActive(link.to) }"
+                    @click="closeMenu()"
+                  >
+                    <span class="nav-dropdown-icon" aria-hidden="true">
+                      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" :d="link.icon" /></svg>
+                    </span>
+                    <span class="nav-dropdown-text">
+                      <span class="nav-dropdown-label">{{ link.label }}</span>
+                      <span class="nav-dropdown-description">{{ link.description }}</span>
+                    </span>
+                  </NuxtLink>
+                </li>
+              </ul>
+            </div>
           </Transition>
         </div>
 
@@ -320,35 +404,123 @@ function toggleTheme() {
   transform: rotate(180deg);
 }
 
-/* Menu déroulant */
+/* Menu déroulant : panneau image (numéro à la une) à gauche, pages du magazine à droite */
 .nav-dropdown {
   position: absolute;
   top: calc(100% + 0.75rem);
   left: 50%;
   translate: -50% 0;
-  width: max-content;
-  min-width: 15rem;
+  display: flex;
+  width: 36rem;
   max-width: calc(100vw - 2rem);
-  margin: 0;
-  padding: 0.375rem;
-  list-style: none;
+  overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--nav-accent) 20%, transparent);
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   background: var(--nav-surface); /* opaque : le titre de la page ne doit pas transparaître */
-  box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.6);
+  box-shadow: 0 24px 48px -12px rgb(0 0 0 / 0.6);
+}
+
+/* Pont invisible au-dessus du panneau : la souris le rejoint sans que le menu se ferme */
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  inset: -0.85rem 0 auto;
+  height: 0.85rem;
 }
 
 /* Sur fond clair, une ombre noire marquée ferait tache : ombre chaude et légère */
 .light .nav-dropdown {
-  box-shadow: 0 20px 40px -16px rgb(120 53 15 / 0.25);
+  box-shadow: 0 24px 48px -18px rgb(120 53 15 / 0.3);
+}
+
+.nav-feature {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  width: 13.5rem;
+  min-height: 17rem;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.nav-feature-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  transition: scale 500ms ease;
+}
+
+.nav-feature:hover .nav-feature-image {
+  scale: 1.05;
+}
+
+.nav-feature-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(17 24 39 / 0.15) 0%, rgb(17 24 39 / 0.55) 45%, rgb(17 24 39 / 0.94) 100%);
+}
+
+.nav-feature-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.375rem;
+  padding: 1.125rem;
+  color: rgb(255 255 255);
+}
+
+.nav-feature-badge {
+  align-self: flex-start;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  background: rgb(255 255 255 / 0.15);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(6px);
+}
+
+.nav-feature-title {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.nav-feature-text {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: rgb(255 255 255 / 0.8);
+}
+
+.nav-feature-cta {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: rgb(251 191 36); /* ambre, lisible sur le voile sombre dans les deux modes */
+}
+
+.nav-dropdown-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.75rem;
+  list-style: none;
 }
 
 .nav-dropdown-link {
   display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  border-radius: 0.75rem;
-  padding: 0.625rem 0.875rem;
+  align-items: center;
+  gap: 0.875rem;
+  border-radius: 0.875rem;
+  padding: 0.75rem;
   text-decoration: none;
   transition: background-color 150ms ease-in-out;
 }
@@ -361,6 +533,36 @@ function toggleTheme() {
 .nav-dropdown-link:focus-visible {
   outline: 2px solid var(--nav-accent);
   outline-offset: -2px;
+}
+
+.nav-dropdown-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--nav-accent) 12%, transparent);
+  color: var(--nav-accent);
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+}
+
+.nav-dropdown-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.nav-dropdown-link:hover .nav-dropdown-icon {
+  background: var(--nav-accent);
+  color: var(--nav-surface);
+}
+
+.nav-dropdown-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
 }
 
 .nav-dropdown-label {
@@ -376,6 +578,24 @@ function toggleTheme() {
 .nav-dropdown-description {
   font-size: 0.75rem;
   color: var(--nav-muted);
+}
+
+/* Téléphone et petite tablette : pas de panneau image, faute de place ; le menu se centre dans l'écran
+   (position calculée à l'ouverture, placeDropdown) au lieu de se centrer sous le bouton, décentré */
+@media (max-width: 767px) {
+  .nav-menu {
+    position: static;
+  }
+
+  .nav-dropdown {
+    left: 0;
+    translate: 0 0;
+    width: min(22rem, calc(100vw - 2rem));
+  }
+
+  .nav-feature {
+    display: none;
+  }
 }
 
 .nav-dropdown-enter-active,
