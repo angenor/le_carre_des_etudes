@@ -282,6 +282,25 @@
 .light .mag-band-yellow .mag-cover {
   border: 6px solid #FFFFFF;
   transform: rotate(-2.5deg);
+  animation: mag-cover-sway 6s ease-in-out infinite;
+}
+
+/* La couverture se redresse puis se réincline, lentement, en boucle ; immobile si l'on réduit les animations */
+@keyframes mag-cover-sway {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+
+  50% {
+    transform: rotate(0.5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .light .mag-band-yellow .mag-cover {
+    animation: none;
+  }
 }
 
 /* Liseré électrique et halos autour des couvertures : remplacés par le cadre franc */
