@@ -150,9 +150,11 @@ function toggleVideo() {
           <NuxtLink
             v-if="studentsOpen"
             to="/salm/inscription-etudiant"
-            class="salm-shine flex min-h-14 items-center justify-center gap-3 rounded-[14px] bg-salm-accent px-7 py-2 text-center font-salm-title text-base font-bold text-white transition-colors hover:bg-[#9A3412] md:h-[60px] md:justify-start"
+            class="salm-shine salm-btn-student flex min-h-14 items-center justify-center gap-3 rounded-[14px] bg-salm-accent px-7 py-2 text-center font-salm-title text-base font-bold text-white transition-colors hover:bg-[#9A3412] md:h-[60px] md:justify-start"
           >
-            <svg class="hidden size-5 md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M9 6h6" /><circle cx="12" cy="13" r="3" /></svg>
+            <svg class="salm-icon-dark hidden size-5 md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M9 6h6" /><circle cx="12" cy="13" r="3" /></svg>
+            <!-- Icône du mode clair « Soleil d'Abidjan » (salm.css) -->
+            <svg class="salm-icon-light size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg>
             Étudiant·e : obtenir mon badge
           </NuxtLink>
           <div v-else class="flex min-h-14 flex-col justify-center rounded-[14px] bg-ink/8 px-6 py-2.5 md:min-h-[60px]">
@@ -163,9 +165,10 @@ function toggleVideo() {
           <NuxtLink
             v-if="schoolsOpen"
             to="/salm/inscription-ecole"
-            class="flex min-h-14 items-center justify-center gap-3 rounded-[14px] border-[1.5px] py-2 text-center border-salm-ink/50 px-7 font-salm-title text-base font-bold text-salm-ink transition-colors hover:border-salm-ink md:h-[60px] md:justify-start"
+            class="salm-btn-school flex min-h-14 items-center justify-center gap-3 rounded-[14px] border-[1.5px] py-2 text-center border-salm-ink/50 px-7 font-salm-title text-base font-bold text-salm-ink transition-colors hover:border-salm-ink md:h-[60px] md:justify-start"
           >
-            <svg class="hidden size-5 md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" /></svg>
+            <svg class="salm-icon-dark hidden size-5 md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" /></svg>
+            <svg class="salm-icon-light size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" /></svg>
             École : confirmer notre présence
           </NuxtLink>
           <div v-else class="flex min-h-14 items-center rounded-[14px] border-[1.5px] border-ink/15 px-6 md:min-h-[60px]">
@@ -223,12 +226,11 @@ function toggleVideo() {
       </div>
     </div>
 
-    <!-- Barre d'ancres et organisateur -->
+    <!-- Barre d'ancres -->
     <div class="salm-intro flex flex-col gap-3 border-t border-ink/10 bg-[#0B0B0D]/80 px-5 py-4 md:h-[68px] md:flex-row md:items-center md:justify-between md:px-12 md:py-0 xl:px-24" style="--salm-delay: 1.7s">
       <nav aria-label="Sections de la page SALM" class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium md:gap-x-9 md:text-[15px]">
         <a v-for="anchor in anchors" :key="anchor.href" :href="anchor.href" class="text-salm-ink-soft transition-colors hover:text-salm-accent-text">{{ anchor.label }}</a>
       </nav>
-      <span class="text-[13px] text-salm-ink-muted md:text-sm">Organisé par <strong class="font-semibold text-salm-ink">{{ edition.organizerName }}</strong></span>
     </div>
 
     <SalmModalDialog

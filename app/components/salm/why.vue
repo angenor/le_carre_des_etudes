@@ -7,7 +7,7 @@ defineProps<{ edition: SalmPublicEdition }>()
 </script>
 
 <template>
-  <section id="pourquoi" class="scroll-mt-24 bg-salm-surface px-5 py-16 md:px-12 md:py-[100px] xl:px-24">
+  <section id="pourquoi" class="salm-band-peach scroll-mt-24 bg-salm-surface px-5 py-16 md:px-12 md:py-[100px] xl:px-24">
     <div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-24">
       <figure v-if="edition.poster" class="m-0 w-full shrink-0 lg:w-[400px] xl:w-[480px]" data-motion="pin">
         <img
@@ -16,7 +16,7 @@ defineProps<{ edition: SalmPublicEdition }>()
           width="480"
           height="620"
           loading="lazy"
-          class="aspect-[480/620] w-full rounded-[20px] bg-[#F7F4EF] object-cover object-top"
+          class="salm-offset-shadow aspect-[480/620] w-full rounded-[20px] bg-[#F7F4EF] object-cover object-top"
         >
       </figure>
 
@@ -27,7 +27,7 @@ defineProps<{ edition: SalmPublicEdition }>()
         </h2>
         <p v-if="edition.whyText" class="text-base leading-[1.65] text-salm-ink-soft md:text-lg">{{ edition.whyText }}</p>
         <ul v-if="edition.audiences.length" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <li v-for="audience in edition.audiences" :key="audience.title" class="flex flex-col gap-2 rounded-2xl bg-salm-surface-3 p-[22px]">
+          <li v-for="audience in edition.audiences" :key="audience.title" class="salm-lift flex flex-col gap-2 rounded-2xl bg-salm-surface-3 p-[22px]">
             <span class="font-salm-title text-[17px] font-extrabold text-salm-ink">{{ audience.title }}</span>
             <span class="text-sm leading-normal text-salm-ink-muted">{{ audience.text }}</span>
           </li>

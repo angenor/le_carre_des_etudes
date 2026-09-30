@@ -19,7 +19,11 @@ function tel(value: string) {
 </script>
 
 <template>
-  <section class="salm-on-accent bg-salm-accent px-5 py-14 text-white md:px-12 md:py-20 xl:px-24">
+  <section class="salm-on-accent salm-final bg-salm-accent px-5 py-14 text-white md:px-12 md:py-20 xl:px-24">
+    <!-- Disques du mode clair « Soleil d'Abidjan » (salm.css) : masqués en sombre -->
+    <span class="salm-final-deco salm-final-sun" aria-hidden="true" />
+    <span class="salm-final-deco salm-final-orange" aria-hidden="true" />
+    <span class="salm-final-deco salm-final-ring" aria-hidden="true" />
     <div class="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
       <div class="flex max-w-[640px] flex-col gap-[18px] md:gap-5">
         <h2 class="font-salm-title text-[32px] leading-[1.1] font-extrabold tracking-[-0.03em] md:text-[50px] md:leading-[1.06]" data-motion="rise">

@@ -160,27 +160,28 @@
   --site-success: #047857; /* 5,1:1 */
   --site-danger: #B91C1C;
 
-  /* SALM : crème, encre chaude, orange foncé */
-  --salm-bg: #F7F4EF;
+  /* SALM : « Soleil d'Abidjan », fond abricot et couleurs du drapeau (orange, blanc, vert) plus un jaune soleil.
+     Les aplats de couleur propres au clair (bandeaux, carte école, légendes…) sont dans salm.css, sous `.light`. */
+  --salm-bg: #FFF4E6; /* abricot */
   --salm-surface: #FFFFFF;
-  --salm-surface-2: #F1ECE6;
-  --salm-surface-3: #E9E2D9;
-  --salm-surface-4: #E2DAD0;
-  --salm-border: #E2DAD0;
-  --salm-line-strong: #D6CBBB;
-  --salm-ink: #1C1917;
-  --salm-ink-soft: #44403C; /* 9,4:1 */
-  --salm-ink-muted: #6B645C; /* 5,3:1 */
-  --salm-ink-faint: #6B645C;
-  --salm-accent-text: #B13C0B; /* 5,4:1 */
-  --salm-accent-soft: #9A3A06;
-  --salm-ink-strong: #292524;
-  --salm-ink-dim: #6B645C;
-  --salm-overlay: #F1ECE6;
+  --salm-surface-2: #FFE8D4;
+  --salm-surface-3: #FFFFFF;
+  --salm-surface-4: #FFD9B8; /* pêche */
+  --salm-border: #F3D9BD;
+  --salm-line-strong: #B97A45; /* contour de bouton : ≥ 3:1 */
+  --salm-ink: #1F1206; /* 16,9:1 */
+  --salm-ink-soft: #4A3526;
+  --salm-ink-muted: #5C4533; /* 8,2:1 */
+  --salm-ink-faint: #6B5443; /* 6,5:1 */
+  --salm-accent-text: #B93A0A; /* 5,3:1 sur l'abricot, 4,7:1 sur la menthe */
+  --salm-accent-soft: #8A2B07;
+  --salm-ink-strong: #1F1206;
+  --salm-ink-dim: #6B5443;
+  --salm-overlay: #FFE8D4;
   --salm-ok: #15803D;
   --salm-error: #B91C1C;
-  --salm-highlight: #78350F; /* 7,4:1 sur le créneau teinté */
-  --salm-accent-tint: #FDF1E8; /* 5,4:1 avec l'orange texte */
-  --salm-card-edge: #E2DAD0; /* la carte crème se détache du fond crème */
-  --salm-card-shadow: rgb(120 53 15 / 0.35);
+  --salm-highlight: #1F1206; /* sur le jaune soleil : 11,9:1 */
+  --salm-accent-tint: #CFF1E0; /* menthe */
+  --salm-card-edge: #F3D9BD;
+  --salm-card-shadow: rgb(194 65 12 / 0.3);
 }

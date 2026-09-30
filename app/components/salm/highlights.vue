@@ -5,6 +5,9 @@ import type { SalmPublicHighlight } from '#shared/types/salm'
 // « Programme d'activité » : temps forts de l'édition (FR-013).
 const props = defineProps<{ highlights: SalmPublicHighlight[]; dayCount: number }>()
 
+// Mode clair « Soleil d'Abidjan » : légendes orange, vert, soleil, encre (salm.css) ; sans effet en sombre
+const CAPTION_COLORS = ['', 'salm-cap-2', 'salm-cap-3', 'salm-cap-4']
+
 const NUMBERS = ['UN', 'DEUX', 'TROIS', 'QUATRE', 'CINQ', 'SIX', 'SEPT', 'HUIT', 'NEUF', 'DIX']
 const eyebrow = computed(() => {
   const count = (n: number) => NUMBERS[n - 1] ?? String(n)
@@ -52,9 +55,9 @@ function onKeydown(event: KeyboardEvent) {
         @keydown="onKeydown"
       >
       <ul class="flex gap-4 md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-5" data-motion="deal">
-        <li v-for="item in highlights" :key="item.title" class="w-[78%] shrink-0 snap-start md:w-auto">
+        <li v-for="(item, i) in highlights" :key="item.title" class="w-[78%] shrink-0 snap-start md:w-auto">
           <figure class="m-0 flex h-[360px] flex-col overflow-hidden rounded-[18px] bg-salm-surface-2 md:h-[392px]">
-            <figcaption class="flex h-[72px] shrink-0 items-center justify-center bg-salm-accent px-4 text-center font-salm-title text-[15px] font-extrabold tracking-[0.04em] text-white">
+            <figcaption class="flex h-[72px] shrink-0 items-center justify-center bg-salm-accent px-4 text-center font-salm-title text-[15px] font-extrabold tracking-[0.04em] text-white" :class="CAPTION_COLORS[i % CAPTION_COLORS.length]">
               {{ item.title }}
             </figcaption>
             <img :src="item.imagePath" :alt="item.imageAlt" loading="lazy" width="460" height="930" class="min-h-0 w-full grow object-cover object-top">

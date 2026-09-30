@@ -20,7 +20,7 @@ const standList = computed(() => {
 </script>
 
 <template>
-  <section id="participer" class="scroll-mt-24 px-5 py-16 md:px-12 md:py-[100px] xl:px-24">
+  <section id="participer" class="salm-band-white scroll-mt-24 px-5 py-16 md:px-12 md:py-[100px] xl:px-24">
     <div class="flex flex-col gap-7 md:gap-12">
       <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div class="flex flex-col gap-2.5 md:gap-3.5">
@@ -69,7 +69,7 @@ const standList = computed(() => {
         </article>
 
         <!-- Établissement -->
-        <article class="flex flex-col gap-4 rounded-3xl border border-salm-border bg-salm-surface-2 px-6 py-7 md:min-h-[600px] md:gap-[22px] md:rounded-[28px] md:p-11">
+        <article class="salm-card-green flex flex-col gap-4 rounded-3xl border border-salm-border bg-salm-surface-2 px-6 py-7 md:min-h-[600px] md:gap-[22px] md:rounded-[28px] md:p-11">
           <span class="self-start rounded-full bg-salm-surface-4 px-3 py-1.5 text-xs font-bold tracking-[0.08em] text-salm-accent-text md:px-3.5 md:py-[7px] md:text-[13px]">UNIVERSITÉ · GRANDE ÉCOLE</span>
           <h3 class="font-salm-title text-2xl leading-[1.15] font-extrabold tracking-[-0.02em] text-salm-ink md:text-[32px] md:leading-[1.12]">Confirmez la présence de votre établissement</h3>
           <p class="text-[15px] leading-[1.55] text-salm-ink-muted md:hidden">

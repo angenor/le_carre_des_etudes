@@ -80,7 +80,7 @@ const spoken = computed(() => {
 </script>
 
 <template>
-  <div class="rounded-[20px] border border-ink/10 bg-salm-bg/72 p-4 min-[380px]:p-5">
+  <div class="salm-countdown rounded-[20px] border border-ink/10 bg-salm-bg/72 p-4 min-[380px]:p-5">
     <template v-if="state.kind === 'running'">
       <p class="text-[13px] font-semibold tracking-[0.12em] text-salm-ink-muted">EN CE MOMENT</p>
       <p class="mt-1.5 font-salm-title text-3xl font-extrabold tracking-[-0.03em] text-salm-ink">Le SALM {{ year }} est en cours</p>
@@ -96,6 +96,7 @@ const spoken = computed(() => {
           v-for="(c, i) in cells"
           :key="c.short"
           class="flex min-w-0 flex-col items-center rounded-xl border border-ink/10 bg-ink/4 px-0.5 pt-2.5 pb-2"
+          :class="`salm-cd-${i + 1}`"
         >
           <!-- Nouvelle clé à chaque changement de valeur : l'animation salm-tick rejoue -->
           <span class="block h-9 overflow-hidden">

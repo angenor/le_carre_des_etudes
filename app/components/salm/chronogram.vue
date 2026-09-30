@@ -108,7 +108,7 @@ function capitalize(text: string) {
           :aria-labelledby="isMobile && days.length > 1 ? `${uid}-tab-${dayIndex}` : undefined"
           :tabindex="isMobile && days.length > 1 ? 0 : undefined"
           class="self-start rounded-3xl border border-salm-border bg-salm-bg px-5 pt-2 pb-5 md:px-8"
-          :class="[{ 'hidden md:block': days.length > 1 && dayIndex !== selected }, dayIndex === selected ? tabSlide : '']"
+          :class="[{ 'hidden md:block': days.length > 1 && dayIndex !== selected }, dayIndex === selected ? tabSlide : '', dayIndex % 2 ? 'salm-day-2' : 'salm-day-1']"
         >
           <h3 class="flex flex-wrap items-baseline gap-x-3.5 gap-y-1 pt-6 pb-5">
             <span class="font-salm-title text-2xl font-extrabold text-salm-accent-text">{{ day.label }}</span>
@@ -121,7 +121,7 @@ function capitalize(text: string) {
               :data-glow="slot.isHighlighted || undefined"
               class="grid grid-cols-1 gap-1 py-4 sm:grid-cols-[136px_1fr] sm:gap-4"
               :class="slot.isHighlighted
-                ? '-mx-3 rounded-xl bg-glow/9 px-3'
+                ? 'salm-slot-sun -mx-3 rounded-xl bg-glow/9 px-3'
                 : 'border-t border-salm-surface-4'"
             >
               <span

@@ -65,7 +65,7 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
 </script>
 
 <template>
-  <section id="photos" class="scroll-mt-24 bg-salm-surface px-5 py-14 md:px-12 md:py-[88px] xl:px-24">
+  <section id="photos" class="salm-band-mint scroll-mt-24 bg-salm-surface px-5 py-14 md:px-12 md:py-[88px] xl:px-24">
     <div class="flex flex-col gap-8 md:gap-10">
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div class="flex flex-col gap-2.5 md:gap-3.5">
@@ -86,6 +86,7 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
           <button
             type="button"
             class="block size-full overflow-hidden rounded-[18px]"
+            :class="`salm-frame-${i + 1}`"
             :aria-label="`Agrandir la photo : ${p.alt}`"
             @click="open(i)"
           >
@@ -101,7 +102,7 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
         <li v-if="remaining > 0">
           <button
             type="button"
-            class="flex size-full min-h-[120px] flex-col items-center justify-center gap-2 rounded-[18px] border-[1.5px] border-dashed border-salm-line-strong text-salm-ink-dim transition-colors hover:border-salm-ink-muted"
+            class="salm-more flex size-full min-h-[120px] flex-col items-center justify-center gap-2 rounded-[18px] border-[1.5px] border-dashed border-salm-line-strong text-salm-ink-dim transition-colors hover:border-salm-ink-muted"
             @click="open(preview.length)"
           >
             <span class="font-salm-title text-[32px] font-extrabold text-salm-ink-strong">+ {{ remaining }}</span>
