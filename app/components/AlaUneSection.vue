@@ -318,7 +318,7 @@ onUnmounted(() => {
         <!-- Droite : infos édition -->
         <div ref="infosRef" class="flex flex-col items-center text-center lg:items-start lg:text-left">
           <!-- Badge numéro -->
-          <span class="inline-block rounded-full bg-gold/15 px-4 py-1 text-sm font-bold tracking-wider text-accent">
+          <span class="mag-issue inline-block rounded-full bg-gold/15 px-4 py-1 text-sm font-bold tracking-wider text-accent">
             {{ magazine.version }}
           </span>
 

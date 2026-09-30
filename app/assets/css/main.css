@@ -371,3 +371,10 @@ html.light .mag-card.animated-border {
   background-color: #FFFFFF;
   box-shadow: 4px 4px 0 #111111;
 }
+
+/* Badge du numéro (« N°1 ») : aplat indigo, texte blanc (10:1) */
+.light .mag-issue {
+  border-color: #2E3A8C;
+  background-color: #2E3A8C;
+  color: #FFFFFF;
+}

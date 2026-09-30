@@ -259,7 +259,7 @@ function formatDate(dateStr: string): string {
             <!-- Détails -->
             <div class="flex-1">
               <!-- Badge version -->
-              <span class="inline-block rounded-full border border-gold/20 bg-gold/10 px-3 py-1 text-xs font-bold tracking-wider text-accent">
+              <span class="mag-issue inline-block rounded-full border border-gold/20 bg-gold/10 px-3 py-1 text-xs font-bold tracking-wider text-accent">
                 {{ magazine.version }}
               </span>
 
