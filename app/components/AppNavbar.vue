@@ -3,7 +3,7 @@ const route = useRoute()
 
 const { data: salmStatus } = await useSalmStatus()
 
-// Deux volets : le magazine (menu) et le SALM (lien direct, en orange). « Résultats » n'est plus dans la barre,
+// Deux volets : le magazine (menu) et le SALM (lien direct). « Résultats » n'est plus dans la barre,
 // mais /resultats reste en ligne : le lien a déjà été partagé.
 const magazineLinks = [
   { label: 'Les numéros', description: 'Lire et télécharger le magazine', to: '/magazine' },
@@ -55,10 +55,15 @@ watch(menuOpen, (open) => {
 })
 watch(() => route.path, () => closeMenu())
 onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPointerDown))
+
+// Clair / sombre : pour l'instant, le clic ne fait qu'alterner l'icône (le thème clair viendra plus tard).
+// Mode sombre (le site actuel) : soleil, pour passer en clair ; mode clair : lune, pour revenir au sombre.
+const lightMode = ref(false)
+const themeLabel = computed(() => (lightMode.value ? 'Passer en mode sombre' : 'Passer en mode clair'))
 </script>
 
 <template>
-  <nav class="fixed inset-x-0 top-4 z-50 flex justify-center px-4" aria-label="Navigation principale">
+  <nav class="fixed inset-x-0 top-4 z-50 flex items-center justify-center gap-1.5 px-4" aria-label="Navigation principale">
     <div class="nav-wrapper rounded-full border border-amber-400/20 bg-gray-900/60 backdrop-blur-xl">
       <div class="nav-links">
         <NuxtLink to="/" class="nav-link" :class="{ 'is-active': isActive('/') }">
@@ -102,13 +107,31 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPoin
         <NuxtLink
           v-if="salmStatus?.published"
           to="/salm"
-          class="nav-link nav-link--salm"
+          class="nav-link"
           :class="{ 'is-active': isActive('/salm') }"
         >
           SALM {{ salmStatus.year }}
         </NuxtLink>
       </div>
     </div>
+
+    <!-- Bouton clair / sombre, hors de la pilule : ensemble, ils dessinent un « i » couché -->
+    <button
+      type="button"
+      class="theme-toggle rounded-full border border-amber-400/20 bg-gray-900/60 backdrop-blur-xl"
+      :aria-label="themeLabel"
+      :title="themeLabel"
+      @click="lightMode = !lightMode"
+    >
+      <Transition name="theme-icon" mode="out-in">
+        <svg v-if="lightMode" key="moon" class="theme-toggle-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+        <svg v-else key="sun" class="theme-toggle-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+        </svg>
+      </Transition>
+    </button>
   </nav>
 </template>
 
@@ -173,6 +196,70 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPoin
   }
 }
 
+/* Bouton clair / sombre : un rond de la hauteur exacte de la pilule
+   (padding de la pilule + padding et hauteur de ligne d'un lien + bordures) */
+.theme-toggle {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: calc(2.75rem + 2px);
+  height: calc(2.75rem + 2px);
+  color: rgb(255 255 255 / 0.8);
+  cursor: pointer;
+  transition: color 150ms ease-in-out, background-color 150ms ease-in-out;
+}
+
+.theme-toggle:hover {
+  background-color: rgb(251 191 36 / 0.15);
+  color: rgb(251 191 36);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid rgb(251 191 36);
+  outline-offset: 2px;
+}
+
+.theme-toggle-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Changement d'icône : quart de tour et fondu */
+.theme-icon-enter-active,
+.theme-icon-leave-active {
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.theme-icon-enter-from {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+
+.theme-icon-leave-to {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon-enter-active,
+  .theme-icon-leave-active {
+    transition: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .theme-toggle {
+    width: calc(2.25rem + 2px);
+    height: calc(2.25rem + 2px);
+  }
+
+  .theme-toggle-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
 /* Bouton du menu « Le Magazine » */
 .nav-menu {
   position: relative;
@@ -206,11 +293,6 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPoin
 
 .nav-chevron.is-open {
   transform: rotate(180deg);
-}
-
-/* Le SALM se distingue du magazine : c'est l'autre volet, et un événement */
-.nav-link--salm:not(.is-active) {
-  color: rgb(253 186 116); /* orange-300 */
 }
 
 /* Menu déroulant */
