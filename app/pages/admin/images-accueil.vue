@@ -25,24 +25,42 @@ async function fetchImages() {
   }
 }
 
-async function uploadImage(event: Event, slug: 'hero_desktop' | 'hero_mobile') {
+type Slug = 'hero_desktop' | 'hero_mobile'
+
+// Recadrage avant l'envoi, aux proportions recommandées (1920 × 1080, 750 × 1000)
+const EDITOR: Record<Slug, { title: string; aspectRatio: number; ratioLabel: string; width: number }> = {
+  hero_desktop: { title: 'Grand format', aspectRatio: 16 / 9, ratioLabel: '16:9', width: 1920 },
+  hero_mobile: { title: 'Petit format', aspectRatio: 3 / 4, ratioLabel: '3:4', width: 750 },
+}
+const RECOMMENDED_MAX_KO = 500
+
+const pending = shallowRef<{ file: File; slug: Slug } | null>(null)
+const editorError = ref('')
+
+function chooseImage(event: Event, slug: Slug) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
+  input.value = ''
   if (!file) return
+  editorError.value = ''
+  pending.value = { file, slug }
+}
 
-  // Vérifier la taille du fichier (avertissement au-delà de 500 Ko)
+async function uploadImage({ file }: { file: File }) {
+  const slug = pending.value?.slug
+  if (!slug) return
+
+  // Avertissement au-delà de 500 Ko, mesuré sur le fichier qui sort de l'éditeur
   const fileSizeKo = file.size / 1024
-  if (fileSizeKo > 500) {
+  if (fileSizeKo > RECOMMENDED_MAX_KO) {
     const confirmer = confirm(
-      `Cette image fait ${Math.round(fileSizeKo)} Ko, ce qui dépasse les 500 Ko recommandés.\n\nCela pourrait affecter l'expérience des utilisateurs avec une connexion lente.\n\nVoulez-vous continuer ?`
+      `Cette image fait ${Math.round(fileSizeKo)} Ko, ce qui dépasse les ${RECOMMENDED_MAX_KO} Ko recommandés.\n\nCela pourrait affecter l'expérience des utilisateurs avec une connexion lente.\n\nVoulez-vous continuer ?`
     )
-    if (!confirmer) {
-      input.value = ''
-      return
-    }
+    if (!confirmer) return
   }
 
   saving.value = slug
+  editorError.value = ''
   errorMessage.value = ''
   successMessage.value = ''
 
@@ -63,13 +81,13 @@ async function uploadImage(event: Event, slug: 'hero_desktop' | 'hero_mobile') {
     })
 
     images.value[slug] = result.path
+    pending.value = null
     successMessage.value = 'Image mise à jour avec succès !'
     setTimeout(() => { successMessage.value = '' }, 3000)
   } catch {
-    errorMessage.value = "Erreur lors de l'envoi de l'image"
+    editorError.value = "Erreur lors de l'envoi de l'image"
   } finally {
     saving.value = null
-    input.value = ''
   }
 }
 
@@ -91,8 +109,8 @@ onMounted(fetchImages)
           <p class="mt-1 text-sm text-amber-700">
             Privilégiez des images de <strong>moins de 500 Ko</strong> pour ne pas affecter
             l'expérience des utilisateurs ayant une connexion limitée.
-            Pensez à compresser vos images avant de les charger
-            (par exemple via <a href="https://tinypng.com" target="_blank" class="underline hover:text-amber-900">tinypng.com</a>).
+            L'éditeur qui s'ouvre au choix d'une image affiche son poids : réduisez la largeur ou la qualité
+            pour rester sous cette limite.
           </p>
           <ul class="mt-2 text-sm text-amber-700 list-disc list-inside space-y-1">
             <li><strong>Grand format</strong> : dimensions recommandées 1920×1080 px (paysage)</li>
@@ -147,7 +165,7 @@ onMounted(fetchImages)
             accept="image/*"
             class="hidden"
             :disabled="saving !== null"
-            @change="uploadImage($event, 'hero_desktop')"
+            @change="chooseImage($event, 'hero_desktop')"
           />
         </label>
       </div>
@@ -183,10 +201,24 @@ onMounted(fetchImages)
             accept="image/*"
             class="hidden"
             :disabled="saving !== null"
-            @change="uploadImage($event, 'hero_mobile')"
+            @change="chooseImage($event, 'hero_mobile')"
           />
         </label>
       </div>
     </div>
+
+    <ImageEditor
+      v-if="pending"
+      :file="pending.file"
+      :title="EDITOR[pending.slug].title"
+      :description="`Dimensions recommandées : ${EDITOR[pending.slug].width} px de large.`"
+      :aspect-ratio="EDITOR[pending.slug].aspectRatio"
+      :ratio-label="EDITOR[pending.slug].ratioLabel"
+      :target-width="EDITOR[pending.slug].width"
+      :busy="saving !== null"
+      :error="editorError"
+      @apply="uploadImage"
+      @cancel="pending = null"
+    />
   </div>
 </template>

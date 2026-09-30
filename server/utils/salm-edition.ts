@@ -65,7 +65,7 @@ export function getPreviousEdition(year: number) {
         orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
       },
       photos: {
-        select: { imagePath: true, alt: true, caption: true },
+        select: { imagePath: true, originalPath: true, alt: true, caption: true },
         orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
       },
     },

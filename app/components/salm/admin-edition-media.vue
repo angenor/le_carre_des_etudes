@@ -174,47 +174,112 @@ async function removePhoto(p: SalmAdminPhoto) {
   }
 }
 
-// ---- Envoi multiple (FR-163) : séquentiel, un échec n'interrompt pas la suite ----
+// ---- Envoi multiple (FR-163) : chaque photo passe par l'éditeur, puis part aussitôt ; un échec n'interrompt pas la suite ----
+// Photos agrandissables dans la galerie : l'image recadrée est gardée comme original et le serveur en tire
+// la version web affichée dans l'aperçu (`keepOriginal`).
 const { upload } = useSalmUpload()
 const photoInput = ref<HTMLInputElement>()
-const batch = reactive({ running: false, done: 0, total: 0, added: 0, refused: [] as { name: string; reason: string }[], finished: false })
+const photoMaxBytes = salmMaxBytes('image', true)
+const batch = reactive({ running: false, done: 0, total: 0, added: 0, skipped: 0, refused: [] as { name: string; reason: string }[], finished: false })
+/** Photos qui attendent l'éditeur ; la première y est ouverte. */
+const queue = shallowRef<File[]>([])
+const editor = reactive({ busy: false, progress: 0, error: '' })
 
 function refusalReason(code: string | undefined, err?: unknown) {
   if (code === 'UNSUPPORTED_FORMAT') return 'format non accepté : JPEG, PNG ou WebP'
-  if (code === 'FILE_TOO_LARGE') return 'plus de 5 Mo'
+  if (code === 'FILE_TOO_LARGE') return 'plus de 10 Mo'
   if (code === 'CORRUPTED_FILE') return 'fichier illisible ou endommagé'
   if (code === 'BATCH_LIMIT') return `au-delà de ${PHOTOS_PER_BATCH} fichiers par envoi`
   return salmAdminErrorFrom(err).replace(/\.$/, '').toLocaleLowerCase('fr-FR')
 }
 
-async function onPhotos(event: Event) {
+function onPhotos(event: Event) {
   const target = event.target as HTMLInputElement
   const files = [...(target.files ?? [])]
   target.value = ''
   if (!files.length) return
   clear()
-  Object.assign(batch, { running: true, done: 0, total: Math.min(files.length, PHOTOS_PER_BATCH), added: 0, refused: [], finished: false })
+  Object.assign(batch, { running: true, done: 0, total: Math.min(files.length, PHOTOS_PER_BATCH), added: 0, skipped: 0, refused: [], finished: false })
   for (const file of files.slice(PHOTOS_PER_BATCH)) batch.refused.push({ name: file.name, reason: refusalReason('BATCH_LIMIT') })
 
+  const accepted: File[] = []
   for (const file of files.slice(0, PHOTOS_PER_BATCH)) {
+    // Le type se contrôle avant l'éditeur ; le poids, sur le fichier qui en sort
+    if (checkSalmFile(file, 'image', true) === 'UNSUPPORTED_FORMAT') {
+      batch.refused.push({ name: file.name, reason: refusalReason('UNSUPPORTED_FORMAT') })
+      batch.done++
+    }
+    else accepted.push(file)
+  }
+  Object.assign(editor, { busy: false, progress: 0, error: '' })
+  queue.value = accepted
+  if (!accepted.length) finishBatch()
+}
+
+async function sendPhoto(file: File, onProgress?: (percent: number) => void) {
+  const { path, originalPath } = await upload(file, 'image', { keepOriginal: true, onProgress })
+  await $fetch(`/api/admin/salm/editions/${props.edition.id}/photos`, { method: 'POST', body: { imagePath: path, originalPath } })
+  batch.added++
+}
+
+function nextPhoto() {
+  batch.done++
+  Object.assign(editor, { busy: false, progress: 0, error: '' })
+  queue.value = queue.value.slice(1)
+  if (!queue.value.length) finishBatch()
+}
+
+async function onPhotoApply({ file }: { file: File }) {
+  Object.assign(editor, { busy: true, progress: 0, error: '' })
+  try {
+    await sendPhoto(file, (p) => { editor.progress = p })
+    nextPhoto()
+  }
+  catch (err) {
+    // L'éditeur reste ouvert sur cette photo : réduire le poids, réessayer ou l'écarter
+    const reason = refusalReason(parseSalmAdminError(err).code, err)
+    Object.assign(editor, { busy: false, error: `Envoi refusé : ${reason}.` })
+  }
+}
+
+function skipPhoto() {
+  batch.skipped++
+  nextPhoto()
+}
+
+/** Les photos restantes partent telles quelles (sans recadrage), l'une après l'autre. */
+async function sendRemainingAsIs() {
+  const remaining = queue.value
+  queue.value = []
+  for (const file of remaining) {
     try {
-      const precheck = checkSalmFile(file, 'image')
-      if (precheck) throw Object.assign(new Error(precheck), { code: precheck })
-      const { path } = await upload(file, 'image')
-      await $fetch(`/api/admin/salm/editions/${props.edition.id}/photos`, { method: 'POST', body: { imagePath: path } })
-      batch.added++
+      await sendPhoto(file)
     }
     catch (err) {
       batch.refused.push({ name: file.name, reason: refusalReason(parseSalmAdminError(err).code, err) })
     }
     batch.done++
   }
+  finishBatch()
+}
+
+/** Annuler dans l'éditeur : les photos déjà envoyées restent, les suivantes sont écartées. */
+function cancelBatch() {
+  batch.skipped += queue.value.length
+  batch.done += queue.value.length
+  queue.value = []
+  finishBatch()
+}
+
+function finishBatch() {
   Object.assign(batch, { running: false, finished: true })
   emit('saved')
 }
 
 const batchSummary = computed(() => {
-  const added = `${batch.added} photo${batch.added > 1 ? 's' : ''} ajoutée${batch.added > 1 ? 's' : ''}.`
+  const plural = (n: number) => (n > 1 ? 's' : '')
+  const skipped = batch.skipped ? ` ${batch.skipped} photo${plural(batch.skipped)} écartée${plural(batch.skipped)}.` : ''
+  const added = `${batch.added} photo${plural(batch.added)} ajoutée${plural(batch.added)}.${skipped}`
   if (!batch.refused.length) return added
   const n = batch.refused.length
   return `${added} ${n} fichier${n > 1 ? 's' : ''} refusé${n > 1 ? 's' : ''} : ${batch.refused.map((r) => `${r.name} (${r.reason})`).join(', ')}.`
@@ -245,6 +310,7 @@ const batchSummary = computed(() => {
           v-model="recap.posterPath"
           label="Image de secours"
           decorative
+          :aspect-ratio="16 / 9"
           :error="recapErrors.recapPosterPath"
         />
       </div>
@@ -334,7 +400,7 @@ const batchSummary = computed(() => {
           <h2 class="text-lg font-semibold text-gray-900">Photos</h2>
           <p class="text-sm text-gray-500">
             {{ photos.length }} photo{{ photos.length > 1 ? 's' : '' }} ; les 4 premières forment l'aperçu de la page.
-            JPEG, PNG ou WebP, 5 Mo au plus, {{ PHOTOS_PER_BATCH }} fichiers par envoi.
+            JPEG, PNG ou WebP, 10 Mo au plus, {{ PHOTOS_PER_BATCH }} fichiers par envoi. Chaque photo s'ouvre dans l'éditeur avant l'envoi.
           </p>
         </div>
         <button
@@ -395,5 +461,41 @@ const batchSummary = computed(() => {
       </ol>
       <p v-else class="text-sm text-gray-500">Aucune photo.</p>
     </div>
+
+    <ImageEditor
+      v-if="queue[0]"
+      :file="queue[0]"
+      :title="`Photo ${batch.done + 1} sur ${batch.total}`"
+      description="Recadrez la photo telle qu'elle apparaîtra dans le catalogue."
+      keep-original
+      :max-bytes="photoMaxBytes"
+      :busy="editor.busy"
+      :progress="editor.progress"
+      :error="editor.error"
+      :apply-label="queue.length > 1 ? 'Envoyer et passer à la suivante' : 'Envoyer la photo'"
+      :cancel-label="queue.length > 1 ? 'Arrêter l\'envoi' : 'Annuler'"
+      @apply="onPhotoApply"
+      @cancel="cancelBatch"
+    >
+      <template #actions>
+        <button
+          type="button"
+          :disabled="editor.busy"
+          class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          @click="skipPhoto"
+        >
+          Écarter cette photo
+        </button>
+        <button
+          v-if="queue.length > 1"
+          type="button"
+          :disabled="editor.busy"
+          class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          @click="sendRemainingAsIs"
+        >
+          Envoyer les {{ queue.length }} photos sans recadrer
+        </button>
+      </template>
+    </ImageEditor>
   </div>
 </template>

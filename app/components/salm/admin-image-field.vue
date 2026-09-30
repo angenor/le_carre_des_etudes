@@ -1,6 +1,7 @@
 <script setup lang="ts">
-// Champ image du back-office SALM : aperçu, envoi avec progression, texte alternatif (FR-132, FR-133).
-// `decorative` : image purement décorative, sans texte alternatif (image de secours de la vidéo récapitulative).
+// Champ image du back-office SALM : aperçu, recadrage (ImageEditor), envoi avec progression, texte alternatif
+// (FR-132, FR-133). `decorative` : image purement décorative, sans texte alternatif (image de secours de la vidéo
+// récapitulative). `aspectRatio` : proportions proposées à l'ouverture de l'éditeur.
 const props = withDefaults(defineProps<{
   modelValue: string | null
   alt?: string | null
@@ -11,7 +12,9 @@ const props = withDefaults(defineProps<{
   /** Erreur de champ venue du serveur, déjà traduite. */
   error?: string
   altError?: string
-}>(), { alt: null, defaultAlt: '', required: false, decorative: false, error: '', altError: '' })
+  aspectRatio?: number | null
+  ratioLabel?: string
+}>(), { alt: null, defaultAlt: '', required: false, decorative: false, error: '', altError: '', aspectRatio: null, ratioLabel: '' })
 
 const emit = defineEmits<{
   'update:modelValue': [path: string | null]
@@ -23,8 +26,12 @@ const input = ref<HTMLInputElement>()
 const uploading = ref(false)
 const progress = ref(0)
 const uploadError = ref('')
+/** Fichier en cours de recadrage ; l'éditeur est ouvert tant qu'il est là. */
+const pending = shallowRef<File | null>(null)
+const editorError = ref('')
 const { upload } = useSalmUpload()
 const rules = SALM_IMAGE_RULES
+const maxBytes = salmMaxBytes('image')
 
 const message = computed(() => uploadError.value || props.error)
 
@@ -32,22 +39,34 @@ function choose() {
   input.value?.click()
 }
 
-async function onFile(event: Event) {
+function onFile(event: Event) {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   target.value = ''
   if (!file) return
   uploadError.value = ''
+  // Le type se contrôle avant l'éditeur ; le poids, sur le fichier qui en sort
+  if (checkSalmFile(file, 'image') === 'UNSUPPORTED_FORMAT') {
+    uploadError.value = salmAdminErrorMessage('UNSUPPORTED_FORMAT', { kind: 'image' })
+    return
+  }
+  editorError.value = ''
+  pending.value = file
+}
+
+async function onApply({ file }: { file: File }) {
+  editorError.value = ''
   uploading.value = true
   progress.value = 0
   try {
-    const { path } = await upload(file, 'image', (p) => { progress.value = p })
+    const { path } = await upload(file, 'image', { onProgress: (p) => { progress.value = p } })
     emit('update:modelValue', path)
     if (!props.decorative && !props.alt?.trim()) emit('update:alt', props.defaultAlt)
+    pending.value = null
   }
   catch (err) {
-    // L'image précédente est conservée
-    uploadError.value = salmAdminErrorFrom(err, { kind: 'image' })
+    // L'éditeur reste ouvert pour corriger ; l'image précédente est conservée
+    editorError.value = salmAdminErrorFrom(err, { kind: 'image' })
   }
   finally {
     uploading.value = false
@@ -105,7 +124,7 @@ function remove() {
           >
         </div>
 
-        <div v-if="uploading">
+        <div v-if="uploading && !pending">
           <label :for="`${id}-progress`" class="mb-1 flex justify-between text-xs text-gray-600">
             <span>Envoi de l'image…</span><span>{{ progress }} %</span>
           </label>
@@ -135,5 +154,19 @@ function remove() {
         </template>
       </div>
     </div>
+
+    <ImageEditor
+      v-if="pending"
+      :file="pending"
+      :title="label"
+      :aspect-ratio="aspectRatio"
+      :ratio-label="ratioLabel"
+      :max-bytes="maxBytes"
+      :busy="uploading"
+      :progress="progress"
+      :error="editorError"
+      @apply="onApply"
+      @cancel="pending = null"
+    />
   </fieldset>
 </template>

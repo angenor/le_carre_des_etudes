@@ -51,6 +51,8 @@ model ContentItem {
   eventDate     DateTime?
   eventLocation String?
   imagePath     String
+  /// Image d'origine, affichée à l'agrandissement ; `imagePath` est alors sa version web. Vide : `imagePath` sert aux deux.
+  originalPath  String?
   order         Int       @default(0)
   magazineId    Int?
   magazine      Magazine? @relation(fields: [magazineId], references: [id], onDelete: SetNull)
@@ -189,13 +191,15 @@ model SalmVideo {
 }
 
 model SalmPhoto {
-  id        Int         @id @default(autoincrement())
-  editionId Int
-  edition   SalmEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
-  imagePath String
-  alt       String
-  caption   String?
-  sortOrder Int         @default(0)
+  id           Int         @id @default(autoincrement())
+  editionId    Int
+  edition      SalmEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  imagePath    String
+  /// Image d'origine, affichée dans la galerie ; `imagePath` est alors sa version web. Vide : `imagePath` sert aux deux.
+  originalPath String?
+  alt          String
+  caption      String?
+  sortOrder    Int         @default(0)
 
   @@index([editionId, sortOrder])
 }

@@ -151,27 +151,38 @@ async function handlePdfUpload(event: Event) {
   }
 }
 
-async function handleCoverUpload(event: Event) {
+// Couverture : recadrée dans l'éditeur avant l'envoi ; l'éditeur reste ouvert en cas d'erreur
+const pendingCover = shallowRef<File | null>(null)
+const coverError = ref('')
+
+function chooseCover(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
+  input.value = ''
   if (!file) return
+  coverError.value = ''
+  pendingCover.value = file
+}
+
+async function handleCoverUpload({ file }: { file: File }) {
   if (file.size > MAX_FILE_SIZE) {
-    errorMessage.value = 'Le fichier dépasse la taille maximale autorisée (50 Mo).'
+    coverError.value = 'Le fichier dépasse la taille maximale autorisée (50 Mo).'
     return
   }
   uploadingCover.value = true
   coverUploadProgress.value = 0
+  coverError.value = ''
   try {
     const result = await uploadFile(file, 'magazines', (p) => {
       coverUploadProgress.value = p
     })
     form.coverImage = result.path
     form.coverImageOg = result.ogPath || ''
+    pendingCover.value = null
   } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'Erreur lors de l\'envoi de la couverture'
+    coverError.value = err instanceof Error ? err.message : 'Erreur lors de l\'envoi de la couverture'
   } finally {
     uploadingCover.value = false
-    input.value = ''
   }
 }
 
@@ -398,9 +409,9 @@ onMounted(fetchMagazines)
               accept="image/*"
               :disabled="uploadingCover"
               class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100 disabled:opacity-50"
-              @change="handleCoverUpload"
+              @change="chooseCover"
             />
-            <div v-if="uploadingCover" class="mt-2">
+            <div v-if="uploadingCover && !pendingCover" class="mt-2">
               <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
                 <span>Téléversement de l'image...</span>
                 <span>{{ coverUploadProgress }}%</span>
@@ -554,5 +565,20 @@ onMounted(fetchMagazines)
         </div>
       </div>
     </div>
+
+    <ImageEditor
+      v-if="pendingCover"
+      :file="pendingCover"
+      title="Image de couverture"
+      :aspect-ratio="210 / 297"
+      :target-width="1200"
+      :max-bytes="MAX_FILE_SIZE"
+      :busy="uploadingCover"
+      :progress="coverUploadProgress"
+      :error="coverError"
+      apply-label="Enregistrer la couverture"
+      @apply="handleCoverUpload"
+      @cancel="pendingCover = null"
+    />
   </div>
 </template>

@@ -34,7 +34,7 @@ async function referenceCount(p: string): Promise<number> {
   const counts = await Promise.all([
     prisma.salmEdition.count({ where: { OR: [{ posterPath: p }, { recapPosterPath: p }, { programPdfPath: p }] } }),
     prisma.salmHighlight.count({ where: { imagePath: p } }),
-    prisma.salmPhoto.count({ where: { imagePath: p } }),
+    prisma.salmPhoto.count({ where: { OR: [{ imagePath: p }, { originalPath: p }] } }),
     prisma.salmVideo.count({ where: { thumbnailPath: p } }),
   ])
   return counts.reduce((a, b) => a + b, 0)

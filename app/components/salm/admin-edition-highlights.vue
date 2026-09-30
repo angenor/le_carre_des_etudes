@@ -119,6 +119,7 @@ async function remove(h: SalmAdminHighlight) {
           v-model:alt="form.imageAlt"
           label="Photo"
           :default-alt="form.title"
+          :aspect-ratio="3 / 4"
           required
           :error="errors.imagePath"
           :alt-error="errors.imageAlt"

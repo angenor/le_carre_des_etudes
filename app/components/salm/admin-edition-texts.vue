@@ -63,7 +63,7 @@ async function onPdf(event: Event) {
   pdfUploading.value = true
   pdfProgress.value = 0
   try {
-    form.programPdfPath = (await upload(file, 'pdf', (p) => { pdfProgress.value = p })).path
+    form.programPdfPath = (await upload(file, 'pdf', { onProgress: (p) => { pdfProgress.value = p } })).path
   }
   catch (err) {
     pdfError.value = salmAdminErrorFrom(err, { kind: 'pdf' })

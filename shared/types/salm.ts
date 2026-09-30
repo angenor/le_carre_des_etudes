@@ -111,7 +111,10 @@ export interface SalmPublicVideo {
 }
 
 export interface SalmPublicPhoto {
+  /** Version web, pour l'aperçu. */
   imagePath: string
+  /** Image d'origine, pour la galerie ; `null` : `imagePath` sert aux deux (photos antérieures, seed). */
+  originalPath: string | null
   alt: string
   caption: string | null
 }

@@ -15,11 +15,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Rubrique non trouvée' })
   }
 
-  // Supprimer l'image associée
-  if (contentItem.imagePath) {
-    const publicDir = join(process.cwd(), 'public')
+  // Supprimer les images associées (version web et original)
+  const publicDir = join(process.cwd(), 'public')
+  for (const path of [contentItem.imagePath, contentItem.originalPath]) {
+    if (!path) continue
     try {
-      await fs.unlink(join(publicDir, contentItem.imagePath))
+      await fs.unlink(join(publicDir, path))
     } catch {
       // Fichier peut-être déjà supprimé
     }

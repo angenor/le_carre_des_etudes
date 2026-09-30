@@ -3,6 +3,7 @@ import '~/assets/css/salm.css'
 import type { SalmPublicPhoto } from '#shared/types/salm'
 
 // Catalogue photos de l'édition précédente (FR-017) : aperçu de 4 photos, puis galerie dans une fenêtre.
+// L'aperçu affiche la version web (`imagePath`), la galerie l'image d'origine quand elle existe (`originalPath`).
 const props = defineProps<{ year: number; photos: SalmPublicPhoto[] }>()
 
 const preview = computed(() => props.photos.slice(0, 4))
@@ -125,7 +126,7 @@ const objectPosition = ['center', 'center 60%', 'center 25%', 'center 55%']
         <figure class="m-0 flex flex-col gap-2">
           <img
             :key="photo.imagePath"
-            :src="photo.imagePath"
+            :src="photo.originalPath ?? photo.imagePath"
             :alt="photo.alt"
             class="max-h-[70dvh] w-full rounded-2xl bg-black object-contain"
             :class="photoSlide"

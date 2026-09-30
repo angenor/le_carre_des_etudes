@@ -3,6 +3,17 @@ import { prisma } from '../../utils/prisma'
 
 const VALID_TYPES = ['parcours_inspirant', 'en_vedette', 'agenda_et_opportunites', 'focus']
 
+// Image d'origine d'une rubrique (affichée à l'agrandissement) : un envoi du dossier des rubriques, ou rien.
+const ORIGINAL_PATH = /^\/uploads\/rubriques\/[a-z0-9][a-z0-9._-]*$/
+
+function readOriginalPath(value: unknown): string | null {
+  if (value === undefined || value === null || value === '') return null
+  if (typeof value !== 'string' || !ORIGINAL_PATH.test(value) || value.includes('..')) {
+    throw createError({ statusCode: 400, message: "Chemin de l'image d'origine invalide" })
+  }
+  return value
+}
+
 export default defineEventHandler(async (event) => {
   const id = Number(getRouterParam(event, 'id'))
 
@@ -30,6 +41,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const type = body.type ?? existing.type
+  const imagePath = body.imagePath?.trim() || existing.imagePath
+  // Nouvelle image : son original l'accompagne (ou aucun) ; même image : l'original en place est gardé
+  const originalPath = imagePath !== existing.imagePath ? readOriginalPath(body.originalPath) : existing.originalPath
 
   const contentItem = await prisma.contentItem.update({
     where: { id },
@@ -41,7 +55,8 @@ export default defineEventHandler(async (event) => {
       subtitle: type === 'parcours_inspirant' ? (body.subtitle !== undefined ? body.subtitle : existing.subtitle) : null,
       eventDate: type === 'agenda_et_opportunites' ? (body.eventDate !== undefined ? (body.eventDate ? new Date(body.eventDate) : null) : existing.eventDate) : null,
       eventLocation: type === 'agenda_et_opportunites' ? (body.eventLocation !== undefined ? body.eventLocation : existing.eventLocation) : null,
-      imagePath: body.imagePath?.trim() ?? existing.imagePath,
+      imagePath,
+      originalPath,
       order: body.order ?? existing.order,
       ...(body.magazineId !== undefined && { magazineId: body.magazineId }),
     },

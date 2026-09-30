@@ -402,12 +402,18 @@ export function validateVideo(body: Body, { partial = false }: ItemOptions<never
   return { data, errors }
 }
 
-/** Photo : `imagePath` à la création seulement ; `alt` vide à la création : prérempli par la route. */
+/**
+ * Photo : `imagePath` (version web) et `originalPath` (image d'origine, facultative) à la création seulement ;
+ * `alt` vide à la création : prérempli par la route.
+ */
 export async function validatePhoto(body: Body, { partial = false }: ItemOptions<never> = {}) {
   const errors: ContentErrors = {}
-  const data: { imagePath?: string; alt?: string | null; caption?: string | null } = {}
+  const data: { imagePath?: string; originalPath?: string | null; alt?: string | null; caption?: string | null } = {}
 
-  if (!partial) setIfDefined(data, 'imagePath', (await readImagePath(body, 'imagePath', errors, { required: true })) ?? undefined)
+  if (!partial) {
+    setIfDefined(data, 'imagePath', (await readImagePath(body, 'imagePath', errors, { required: true })) ?? undefined)
+    setIfDefined(data, 'originalPath', await readImagePath(body, 'originalPath', errors))
+  }
   setIfDefined(data, 'alt', readText(body, 'alt', errors, { max: 200, required: partial, partial }))
   setIfDefined(data, 'caption', readText(body, 'caption', errors, { max: 200 }))
   if (partial) requireSomeField(data, errors)

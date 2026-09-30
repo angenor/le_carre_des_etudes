@@ -64,7 +64,7 @@ export async function deleteDraftEdition(id: number) {
       programPdfPath: true,
       days: { select: { date: true, opensAt: true, closesAt: true } },
       highlights: { select: { imagePath: true } },
-      photos: { select: { imagePath: true } },
+      photos: { select: { imagePath: true, originalPath: true } },
       videos: { select: { thumbnailPath: true } },
       _count: { select: { studentRegistrations: true, schoolRegistrations: true } },
     },
@@ -78,7 +78,7 @@ export async function deleteDraftEdition(id: number) {
     edition.recapPosterPath,
     edition.programPdfPath,
     ...edition.highlights.map((h) => h.imagePath),
-    ...edition.photos.map((p) => p.imagePath),
+    ...edition.photos.flatMap((p) => [p.imagePath, p.originalPath]),
     ...edition.videos.map((v) => v.thumbnailPath),
   ]
   await prisma.salmEdition.delete({ where: { id } })

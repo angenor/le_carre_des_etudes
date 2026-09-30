@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
     data: {
       editionId,
       imagePath: data.imagePath!,
+      originalPath: data.originalPath ?? null,
       alt: data.alt ?? `Photo du SALM ${edition.year} n° ${position}`,
       caption: data.caption ?? null,
       sortOrder: await nextSortOrder('salmPhoto', { editionId }),

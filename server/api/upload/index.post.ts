@@ -18,6 +18,11 @@ const SALM_MAX_UPLOAD = 10 * 1024 * 1024 // 10 Mo
 const SALM_MAX_IMAGE = 5 * 1024 * 1024 // 5 Mo
 const SALM_IMAGE_FORMATS: Record<string, string> = { jpeg: '.jpg', png: '.png', webp: '.webp' }
 
+// `variants=web` : images agrandissables au clic (photos SALM, rubriques). Le fichier reçu est gardé tel quel
+// (`originalPath`, affiché en grand) et une version web légère en est tirée (`path`, affichée partout ailleurs).
+const WEB_MAX_SIDE = 1600
+const WEB_QUALITY = 80
+
 function salmError(statusCode: number, code: string) {
   return createError({ statusCode, message: code, data: { code } })
 }
@@ -42,6 +47,36 @@ function sanitizeFilename(filename: string): string {
   return sanitized + ext.toLowerCase()
 }
 
+/** Version web : WebP, 1600 px au plus sur le plus grand côté, jamais agrandie. */
+async function generateWebImage(inputPath: string, outputPath: string): Promise<void> {
+  await sharp(inputPath)
+    .rotate()
+    .resize({ width: WEB_MAX_SIDE, height: WEB_MAX_SIDE, fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: WEB_QUALITY })
+    .toFile(outputPath)
+}
+
+/**
+ * Crée la version web à côté de l'original (`<nom>-web.webp`) et renvoie son chemin public.
+ * En cas d'échec, l'original est supprimé : on ne garde pas une image à moitié enregistrée.
+ */
+async function addWebVariant(category: string, filename: string): Promise<string> {
+  const dir = join(process.cwd(), 'public', 'uploads', category)
+  const base = filename.slice(0, filename.length - extname(filename).length)
+  const webFilename = `${base}-web.webp`
+  try {
+    await generateWebImage(join(dir, filename), join(dir, webFilename))
+  }
+  catch {
+    try { await unlink(join(dir, filename)) } catch { /* ignore */ }
+    try { await unlink(join(dir, webFilename)) } catch { /* ignore */ }
+    throw category === 'salm'
+      ? salmError(422, 'CORRUPTED_FILE')
+      : createError({ statusCode: 422, message: "Impossible de préparer la version web de l'image." })
+  }
+  return `/uploads/${category}/${webFilename}`
+}
+
 /**
  * Génère une version OG (Open Graph) optimisée pour le SEO.
  * Lit le fichier depuis le disque (pas de buffer en RAM).
@@ -58,6 +93,7 @@ interface ParsedUpload {
   filePath: string
   category: string
   kind: string
+  variants: string
   bytesWritten: number
 }
 
@@ -75,6 +111,7 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
 
     let category = ''
     let kind = ''
+    let variants = ''
     let filename = ''
     let filePath = ''
     let uploadDir = ''
@@ -90,6 +127,9 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
       }
       if (name === 'kind') {
         kind = value.trim()
+      }
+      if (name === 'variants') {
+        variants = value.trim()
       }
     })
 
@@ -195,7 +235,7 @@ function parseMultipart(event: H3Event): Promise<ParsedUpload> {
       const finalPath = join(uploadDir, filename)
       await rename(filePath, finalPath)
 
-      resolve({ filename, filePath: finalPath, category, kind, bytesWritten })
+      resolve({ filename, filePath: finalPath, category, kind, variants, bytesWritten })
     })
 
     busboy.on('error', reject)
@@ -239,7 +279,8 @@ async function checkSalmUpload(parsed: ParsedUpload): Promise<string> {
     finalExt = '.pdf'
   }
   else if (!parsed.kind || parsed.kind === 'image') {
-    if (size > SALM_MAX_IMAGE) throw await reject(413, 'FILE_TOO_LARGE')
+    // Un original gardé pour l'agrandissement peut peser jusqu'à 10 Mo : c'est sa version web qui est servie en liste
+    if (size > (parsed.variants === 'web' ? SALM_MAX_UPLOAD : SALM_MAX_IMAGE)) throw await reject(413, 'FILE_TOO_LARGE')
     let format: string | undefined
     try {
       format = (await sharp(parsed.filePath).metadata()).format
@@ -267,8 +308,12 @@ async function handleUpload(event: H3Event) {
 
   if (parsed.category === 'salm') {
     const filename = await checkSalmUpload(parsed)
+    const publicPath = `/uploads/salm/${filename}`
     setResponseStatus(event, 201)
-    return { path: `/uploads/salm/${filename}`, ogPath: null }
+    if (parsed.variants === 'web' && parsed.kind !== 'pdf') {
+      return { path: await addWebVariant('salm', filename), originalPath: publicPath, ogPath: null }
+    }
+    return { path: publicPath, originalPath: null, ogPath: null }
   }
 
   const publicPath = `/uploads/${parsed.category}/${parsed.filename}`
@@ -276,6 +321,9 @@ async function handleUpload(event: H3Event) {
   // Générer la version OG si c'est une image (lecture depuis le disque)
   const ext = extname(parsed.filename).toLowerCase()
   let ogPath: string | null = null
+  const webPath = parsed.variants === 'web' && IMAGE_EXTENSIONS.includes(ext)
+    ? await addWebVariant(parsed.category, parsed.filename)
+    : null
 
   if (IMAGE_EXTENSIONS.includes(ext)) {
     const baseName = parsed.filename.slice(0, parsed.filename.length - ext.length)
@@ -292,5 +340,7 @@ async function handleUpload(event: H3Event) {
   }
 
   setResponseStatus(event, 201)
-  return { path: publicPath, ogPath }
+  return webPath
+    ? { path: webPath, originalPath: publicPath, ogPath }
+    : { path: publicPath, originalPath: null, ogPath }
 }

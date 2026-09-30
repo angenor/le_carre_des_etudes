@@ -3,6 +3,8 @@ interface ContentItemWithMagazine {
   id: number
   type: string
   imagePath: string
+  /** Image d'origine, pour l'agrandissement ; `null` : `imagePath` sert aux deux. */
+  originalPath: string | null
   order: number
   magazine: { id: number; slug: string; name: string } | null
 }
@@ -177,7 +179,7 @@ onUnmounted(() => {
     <!-- Lightbox -->
     <RubriqueLightbox
       v-if="selectedItem"
-      :image-path="selectedItem.imagePath"
+      :image-path="selectedItem.originalPath ?? selectedItem.imagePath"
       :magazine-slug="selectedItem.magazine?.slug"
       :section-label="selectedItem.sectionLabel"
       @close="selectedItem = null"

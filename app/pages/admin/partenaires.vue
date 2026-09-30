@@ -67,10 +67,23 @@ function cancelForm() {
   resetForm()
 }
 
-async function uploadLogo(event: Event) {
+// Recadrage du logo avant l'envoi (PNG gardé en PNG : la transparence reste)
+const pendingLogo = shallowRef<File | null>(null)
+const uploadingLogo = ref(false)
+const logoError = ref('')
+
+function chooseLogo(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
+  input.value = ''
   if (!file) return
+  logoError.value = ''
+  pendingLogo.value = file
+}
+
+async function uploadLogo({ file }: { file: File }) {
+  uploadingLogo.value = true
+  logoError.value = ''
   try {
     const formData = new FormData()
     formData.append('file', file)
@@ -80,8 +93,11 @@ async function uploadLogo(event: Event) {
       body: formData,
     })
     form.logoPath = result.path
+    pendingLogo.value = null
   } catch {
-    errorMessage.value = "Erreur lors de l'envoi du logo"
+    logoError.value = "Erreur lors de l'envoi du logo"
+  } finally {
+    uploadingLogo.value = false
   }
 }
 
@@ -192,7 +208,7 @@ onMounted(fetchPartners)
             type="file"
             accept="image/*"
             class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100"
-            @change="uploadLogo"
+            @change="chooseLogo"
           />
           <p v-if="form.logoPath" class="mt-1 text-xs text-emerald-600">
             {{ form.logoPath }}
@@ -290,5 +306,18 @@ onMounted(fetchPartners)
         </div>
       </div>
     </div>
+
+    <ImageEditor
+      v-if="pendingLogo"
+      :file="pendingLogo"
+      title="Logo du partenaire"
+      description="Resserrez le cadre autour du logo."
+      :target-width="600"
+      :busy="uploadingLogo"
+      :error="logoError"
+      apply-label="Enregistrer le logo"
+      @apply="uploadLogo"
+      @cancel="pendingLogo = null"
+    />
   </div>
 </template>

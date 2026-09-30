@@ -20,6 +20,7 @@ interface ContentItem {
   eventDate: string | null
   eventLocation: string | null
   imagePath: string
+  originalPath: string | null
   order: number
   magazineId: number | null
   magazine: { id: number; slug: string; name: string } | null
@@ -52,6 +53,7 @@ const form = reactive({
   eventDate: '',
   eventLocation: '',
   imagePath: '',
+  originalPath: '',
   order: 0,
   magazineId: null as number | null,
 })
@@ -84,6 +86,7 @@ function resetForm() {
   form.eventDate = ''
   form.eventLocation = ''
   form.imagePath = ''
+  form.originalPath = ''
   form.order = 0
   form.magazineId = null
   editingItem.value = null
@@ -106,6 +109,7 @@ function openEditForm(item: ContentItem) {
   form.eventDate = item.eventDate ? item.eventDate.slice(0, 10) : ''
   form.eventLocation = item.eventLocation ?? ''
   form.imagePath = item.imagePath
+  form.originalPath = item.originalPath ?? ''
   form.order = item.order
   form.magazineId = item.magazineId
   errorMessage.value = ''
@@ -119,21 +123,40 @@ function cancelForm() {
   resetForm()
 }
 
-async function uploadImage(event: Event) {
+// Image agrandissable dans la visionneuse : recadrée dans l'éditeur, gardée comme original (`originalPath`)
+// et accompagnée d'une version web légère (`imagePath`) pour les grilles.
+const pendingImage = shallowRef<File | null>(null)
+const uploadingImage = ref(false)
+const imageError = ref('')
+
+function chooseImage(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
+  input.value = ''
   if (!file) return
+  imageError.value = ''
+  pendingImage.value = file
+}
+
+async function uploadImage({ file }: { file: File }) {
+  uploadingImage.value = true
+  imageError.value = ''
   try {
     const formData = new FormData()
-    formData.append('file', file)
     formData.append('category', 'rubriques')
-    const result = await $fetch<{ path: string }>('/api/upload', {
+    formData.append('variants', 'web')
+    formData.append('file', file)
+    const result = await $fetch<{ path: string; originalPath: string | null }>('/api/upload', {
       method: 'POST',
       body: formData,
     })
     form.imagePath = result.path
+    form.originalPath = result.originalPath ?? ''
+    pendingImage.value = null
   } catch {
-    errorMessage.value = "Erreur lors de l'envoi de l'image"
+    imageError.value = "Erreur lors de l'envoi de l'image"
+  } finally {
+    uploadingImage.value = false
   }
 }
 
@@ -145,6 +168,7 @@ async function saveItem() {
     const payload: Record<string, unknown> = {
       type: form.type,
       imagePath: form.imagePath,
+      originalPath: form.originalPath || null,
       order: form.order,
       magazineId: form.magazineId || null,
       title: form.title || '',
@@ -261,7 +285,7 @@ onMounted(fetchItems)
             type="file"
             accept="image/*"
             class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100"
-            @change="uploadImage"
+            @change="chooseImage"
           />
           <p v-if="form.imagePath" class="mt-1 text-xs text-emerald-600">
             {{ form.imagePath }}
@@ -468,5 +492,19 @@ onMounted(fetchItems)
         </div>
       </div>
     </div>
+
+    <ImageEditor
+      v-if="pendingImage"
+      :file="pendingImage"
+      title="Image de la rubrique"
+      description="Recadrez la page telle qu'elle apparaîtra dans la grille et dans la visionneuse."
+      :aspect-ratio="210 / 297"
+      keep-original
+      :max-bytes="50 * 1024 * 1024"
+      :busy="uploadingImage"
+      :error="imageError"
+      @apply="uploadImage"
+      @cancel="pendingImage = null"
+    />
   </div>
 </template>
