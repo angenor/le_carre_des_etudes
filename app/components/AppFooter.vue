@@ -195,43 +195,46 @@ async function subscribeNewsletter() {
           </ul>
         </div>
 
-        <!-- Colonne 3 : Liens rapides -->
-        <div class="md:col-span-3">
-          <h3 class="text-xs font-semibold uppercase tracking-widest text-amber-400">
-            Liens rapides
-          </h3>
-          <ul class="mt-5 space-y-3 text-sm">
-            <li>
-              <NuxtLink to="/" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
-                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
-                Accueil
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/magazine" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
-                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
-                Magazine
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/rubriques" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
-                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
-                Rubriques
-              </NuxtLink>
-            </li>
-            <li v-if="salmStatus?.published">
-              <NuxtLink to="/salm" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
-                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
-                SALM {{ salmStatus.year }}
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/partenaires" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
-                <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
-                Partenaires
-              </NuxtLink>
-            </li>
-          </ul>
+        <!-- Colonne 3 : les deux volets de la plateforme (même découpage que la barre de navigation) -->
+        <div class="space-y-8 md:col-span-3">
+          <nav aria-labelledby="footer-magazine">
+            <h3 id="footer-magazine" class="text-xs font-semibold uppercase tracking-widest text-amber-400">
+              Le magazine
+            </h3>
+            <ul class="mt-5 space-y-3 text-sm">
+              <li>
+                <NuxtLink to="/magazine" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
+                  <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
+                  Les numéros
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink to="/rubriques" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
+                  <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
+                  Les rubriques
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink to="/partenaires" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
+                  <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
+                  Nos partenaires
+                </NuxtLink>
+              </li>
+            </ul>
+          </nav>
+          <nav v-if="salmStatus?.published" aria-labelledby="footer-salm">
+            <h3 id="footer-salm" class="text-xs font-semibold uppercase tracking-widest text-amber-400">
+              Le SALM
+            </h3>
+            <ul class="mt-5 space-y-3 text-sm">
+              <li>
+                <NuxtLink to="/salm" class="group flex items-center gap-2 text-gray-400 transition-colors duration-200 hover:text-white">
+                  <span class="inline-block h-px w-0 bg-amber-500 transition-all duration-300 group-hover:w-4" />
+                  Salon SALM {{ salmStatus.year }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
 

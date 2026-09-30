@@ -47,37 +47,52 @@ interface NavChild {
   match: (path: string) => boolean
 }
 
-interface NavItem {
-  label: string
-  to: string
-  icon: string
-  children?: NavChild[]
-}
+/** Lien seul (tableau de bord), ou groupe d'un des volets de la plateforme : son titre n'est pas un lien. */
+type NavEntry =
+  | { kind: 'link'; label: string; to: string; icon: string }
+  | { kind: 'group'; label: string; icon: string; children: NavChild[] }
 
-const navItems: NavItem[] = [
-  { label: 'Tableau de bord', to: '/admin', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
-  { label: 'Magazines', to: '/admin/magazines', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
-  { label: 'Rubriques', to: '/admin/rubriques', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
-  { label: 'Partenaires', to: '/admin/partenaires', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
-  { label: 'Téléchargements', to: '/admin/telechargements', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' },
-  { label: 'Newsletter', to: '/admin/newsletter', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+const startsWith = (prefix: string) => (p: string) => p.startsWith(prefix)
+
+// Deux volets, le magazine et le SALM, puis ce qui vaut pour tout le site (même découpage que le site public)
+const navEntries: NavEntry[] = [
+  { kind: 'link', label: 'Tableau de bord', to: '/admin', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
   {
+    kind: 'group',
+    label: 'Le magazine',
+    icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z',
+    children: [
+      { label: 'Numéros', to: '/admin/magazines', match: startsWith('/admin/magazines') },
+      { label: 'Rubriques', to: '/admin/rubriques', match: startsWith('/admin/rubriques') },
+      { label: 'Partenaires', to: '/admin/partenaires', match: startsWith('/admin/partenaires') },
+      { label: 'Téléchargements', to: '/admin/telechargements', match: startsWith('/admin/telechargements') },
+    ],
+  },
+  {
+    kind: 'group',
     label: 'SALM',
-    to: '/admin/salm',
     icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm4-6h2v2H9v-2z',
     children: [
       { label: 'Inscriptions', to: '/admin/salm', match: (p) => p === '/admin/salm' || p.startsWith('/admin/salm/etablissements') },
-      { label: 'Contrôle d\'entrée', to: '/admin/salm/controle', match: (p) => p.startsWith('/admin/salm/controle') },
-      { label: 'Éditions', to: '/admin/salm/editions', match: (p) => p.startsWith('/admin/salm/editions') },
+      { label: 'Contrôle d\'entrée', to: '/admin/salm/controle', match: startsWith('/admin/salm/controle') },
+      { label: 'Éditions', to: '/admin/salm/editions', match: startsWith('/admin/salm/editions') },
       { label: 'Statistiques', to: '/admin/salm/statistiques', match: (p) => p === '/admin/salm/statistiques' },
     ],
   },
-  { label: 'Images accueil', to: '/admin/images-accueil', icon: 'M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z' },
+  {
+    kind: 'group',
+    label: 'Site',
+    icon: 'M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418',
+    children: [
+      { label: 'Images d\'accueil', to: '/admin/images-accueil', match: startsWith('/admin/images-accueil') },
+      { label: 'Newsletter', to: '/admin/newsletter', match: startsWith('/admin/newsletter') },
+    ],
+  },
 ]
 
-function isActive(to: string) {
-  if (to === '/admin') return route.path === '/admin'
-  return route.path.startsWith(to)
+function isEntryActive(entry: NavEntry) {
+  if (entry.kind === 'link') return entry.to === '/admin' ? route.path === '/admin' : route.path.startsWith(entry.to)
+  return entry.children.some((child) => child.match(route.path))
 }
 </script>
 
@@ -107,44 +122,58 @@ function isActive(to: string) {
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 space-y-1 px-3 py-4">
-        <template v-for="item in navItems" :key="item.to">
+      <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Administration">
+        <template v-for="(entry, i) in navEntries" :key="entry.label">
           <NuxtLink
-            :to="item.to"
-            v-bind="item.children ? { 'aria-current': undefined } : {}"
+            v-if="entry.kind === 'link'"
+            :to="entry.to"
             class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
-            :class="isActive(item.to)
+            :class="isEntryActive(entry)
               ? 'bg-gray-800 text-amber-400'
               : 'text-gray-400 hover:bg-gray-800 hover:text-white'"
             @click="sidebarOpen = false"
           >
             <svg
               class="h-5 w-5 shrink-0"
-              :class="isActive(item.to) ? 'text-amber-400' : 'text-gray-500'"
+              :class="isEntryActive(entry) ? 'text-amber-400' : 'text-gray-500'"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               stroke-width="1.5"
+              aria-hidden="true"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
+              <path stroke-linecap="round" stroke-linejoin="round" :d="entry.icon" />
             </svg>
-            {{ item.label }}
+            {{ entry.label }}
           </NuxtLink>
-          <ul v-if="item.children" class="space-y-0.5 pb-1 pl-11" :aria-label="`Rubriques ${item.label}`">
-            <li v-for="child in item.children" :key="child.to">
-              <NuxtLink
-                :to="child.to"
-                :aria-current="child.match(route.path) ? 'page' : undefined"
-                class="block rounded-lg px-3 py-1.5 text-sm transition-colors"
-                :class="child.match(route.path)
-                  ? 'font-medium text-amber-400'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'"
-                @click="sidebarOpen = false"
-              >
-                {{ child.label }}
-              </NuxtLink>
-            </li>
-          </ul>
+
+          <div v-else class="pt-3">
+            <p
+              :id="`nav-group-${i}`"
+              class="flex items-center gap-3 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
+              :class="isEntryActive(entry) ? 'text-amber-400' : 'text-gray-500'"
+            >
+              <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" :d="entry.icon" />
+              </svg>
+              {{ entry.label }}
+            </p>
+            <ul class="space-y-0.5 pl-8" :aria-labelledby="`nav-group-${i}`">
+              <li v-for="child in entry.children" :key="child.to">
+                <NuxtLink
+                  :to="child.to"
+                  :aria-current="child.match(route.path) ? 'page' : undefined"
+                  class="block rounded-lg px-3 py-1.5 text-sm transition-colors"
+                  :class="child.match(route.path)
+                    ? 'bg-gray-800 font-medium text-amber-400'
+                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'"
+                  @click="sidebarOpen = false"
+                >
+                  {{ child.label }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </div>
         </template>
       </nav>
 
