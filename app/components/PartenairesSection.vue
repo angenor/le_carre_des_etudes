@@ -71,20 +71,20 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="hasContent" ref="sectionRef" class="relative overflow-hidden bg-page pb-20 pt-6 sm:pb-28 sm:pt-10">
+  <section v-if="hasContent" ref="sectionRef" class="mag-band-indigo relative overflow-hidden bg-page pb-20 pt-6 sm:pb-28 sm:pt-10">
     <!-- Fond décoratif -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,var(--site-copper)_5%,transparent),transparent_60%)]" />
 
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- En-tête -->
       <div ref="headerRef" class="mb-12 text-center">
-        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
+        <span class="mag-badge inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Partenaires
         </span>
 
         <h2 class="mt-6 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           Ils nous
-          <span class="bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
+          <span class="mag-marker bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
             accompagnent
           </span>
         </h2>
@@ -110,7 +110,7 @@ onUnmounted(() => {
           :rel="partner.url ? 'noopener noreferrer' : undefined"
           class="flex flex-col items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <div class="flex h-20 w-20 items-center justify-center rounded-xl bg-white/90 p-3 sm:h-24 sm:w-24">
+          <div class="mag-tile flex h-20 w-20 items-center justify-center rounded-xl bg-white/90 p-3 sm:h-24 sm:w-24">
             <img
               :src="partner.logoPath"
               :alt="`Logo ${partner.name}`"

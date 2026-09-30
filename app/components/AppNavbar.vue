@@ -20,6 +20,9 @@ function isActive(to: string): boolean {
 
 const magazineActive = computed(() => magazineLinks.some((link) => isActive(link.to)))
 
+// Mode clair du magazine « Édition jaune » : barre en style kiosque (main.css, classe `mag-nav`), hors pages SALM
+const salmPage = computed(() => route.path === '/salm' || route.path.startsWith('/salm/'))
+
 // Menu « Le Magazine » : ouverture au clic (pas au survol, absent sur téléphone), fermeture par Échap,
 // clic à l'extérieur, sortie du focus ou changement de page
 const menuId = useId()
@@ -72,7 +75,7 @@ function toggleTheme() {
 </script>
 
 <template>
-  <nav class="site-nav fixed inset-x-0 top-4 z-50 flex items-center justify-center gap-1.5 px-4" aria-label="Navigation principale">
+  <nav class="site-nav fixed inset-x-0 top-4 z-50 flex items-center justify-center gap-1.5 px-4" :class="{ 'mag-nav': !salmPage }" aria-label="Navigation principale">
     <div class="nav-wrapper rounded-full border border-accent/20 bg-surface/60 backdrop-blur-xl">
       <div class="nav-links">
         <NuxtLink to="/" class="nav-link" :class="{ 'is-active': isActive('/') }">

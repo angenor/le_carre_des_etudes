@@ -262,12 +262,12 @@ const medailles = ['🥇', '🥈', '🥉']
       <div class="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-gold/5 blur-3xl" />
 
       <div class="relative mx-auto max-w-5xl px-6 text-center">
-        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
+        <span class="mag-badge inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Résultats officiels
         </span>
         <h1 class="mt-6 text-3xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
           ADMISSION
-          <span class="bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">TEST</span>
+          <span class="mag-marker bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">TEST</span>
           2026
         </h1>
         <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
@@ -287,8 +287,8 @@ const medailles = ['🥇', '🥈', '🥉']
           <div
             v-for="(p, i) in podium"
             :key="p.nom"
-            class="relative overflow-hidden rounded-2xl border border-gold/20 bg-surface/60 p-6 text-center backdrop-blur"
-            :class="i === 0 ? 'sm:-translate-y-3 border-accent/50 shadow-lg shadow-gold/10' : ''"
+            class="mag-card relative overflow-hidden rounded-2xl border border-gold/20 bg-surface/60 p-6 text-center backdrop-blur"
+            :class="[i === 0 ? 'sm:-translate-y-3 border-accent/50 shadow-lg shadow-gold/10' : '', ['', 'mag-card-indigo', 'mag-card-yellow'][i % 3]]"
           >
             <div class="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gold/10 blur-2xl" />
             <div class="text-4xl">{{ medailles[i] }}</div>

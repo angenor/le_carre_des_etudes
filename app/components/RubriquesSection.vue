@@ -113,13 +113,13 @@ onUnmounted(() => {
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- En-tête -->
       <div ref="headerRef" class="mb-14 text-center">
-        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
+        <span class="mag-badge inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Éditorial
         </span>
 
         <h2 class="mt-6 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           Nos
-          <span class="bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
+          <span class="mag-marker bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
             rubriques
           </span>
         </h2>
@@ -141,12 +141,15 @@ onUnmounted(() => {
       <!-- Grille d'images -->
       <div ref="gridRef" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 sm:gap-6">
         <div
-          v-for="item in highlights"
+          v-for="(item, index) in highlights"
           :key="item.id"
           class="group cursor-pointer"
           @click="selectedItem = item"
         >
-          <div class="block overflow-hidden rounded-xl border border-ink/10 bg-ink/5 transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5">
+          <div
+            class="mag-card block overflow-hidden rounded-xl border border-ink/10 bg-ink/5 transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5"
+            :class="['', 'mag-card-indigo', 'mag-card-yellow', ''][index % 4]"
+          >
             <div class="relative aspect-210/297 overflow-hidden bg-surface-2">
               <img
                 :src="item.imagePath"

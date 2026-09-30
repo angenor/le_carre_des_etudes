@@ -124,17 +124,17 @@ onUnmounted(() => {
 
       <!-- Contenu hero -->
       <div ref="heroContentRef" class="relative mx-auto max-w-5xl px-6 text-center">
-        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
+        <span class="mag-badge inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Ensemble
         </span>
 
         <h1 class="mt-6 text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
           Nos
           <span class="relative">
-            <span class="relative z-10 bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
+            <span class="mag-marker relative z-10 bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
               partenaires
             </span>
-            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none" aria-hidden="true">
+            <svg class="mag-squiggle absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none" aria-hidden="true">
               <path class="stroke-copper" d="M1 5.5C40 2 80 2 100 4C120 6 160 6 199 3" stroke-width="2" stroke-linecap="round" opacity="0.5" />
             </svg>
           </span>
@@ -179,14 +179,17 @@ onUnmounted(() => {
         <div v-else ref="logosRef" class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
           <component
             :is="partner.url ? 'a' : 'div'"
-            v-for="partner in partners"
+            v-for="(partner, index) in partners"
             :key="partner.id"
             :href="partner.url || undefined"
             :target="partner.url ? '_blank' : undefined"
             :rel="partner.url ? 'noopener noreferrer' : undefined"
             class="flex flex-col items-center gap-3 transition-opacity hover:opacity-80"
           >
-            <div class="flex h-20 w-20 items-center justify-center rounded-xl bg-white/90 p-3 sm:h-24 sm:w-24">
+            <div
+              class="mag-card flex h-20 w-20 items-center justify-center rounded-xl bg-white/90 p-3 sm:h-24 sm:w-24"
+              :class="['', 'mag-card-indigo', 'mag-card-yellow'][index % 3]"
+            >
               <img
                 :src="partner.logoPath"
                 :alt="`Logo ${partner.name}`"

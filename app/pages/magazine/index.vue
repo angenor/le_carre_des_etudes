@@ -141,17 +141,17 @@ onUnmounted(() => {
 
       <!-- Contenu hero -->
       <div ref="heroContentRef" class="relative mx-auto max-w-5xl px-6 text-center">
-        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
+        <span class="mag-badge inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Collection
         </span>
 
         <h1 class="mt-6 text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
           Nos
           <span class="relative">
-            <span class="relative z-10 bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
+            <span class="mag-marker relative z-10 bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
               magazines
             </span>
-            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none" aria-hidden="true">
+            <svg class="mag-squiggle absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none" aria-hidden="true">
               <path class="stroke-copper" d="M1 5.5C40 2 80 2 100 4C120 6 160 6 199 3" stroke-width="2" stroke-linecap="round" opacity="0.5" />
             </svg>
           </span>

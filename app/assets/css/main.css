@@ -134,29 +134,30 @@
 .light {
   --site-scheme: light;
 
-  /* Magazine : papier ivoire, encre chaude, accent ambre foncé */
-  --site-page: #FAF7F2;
+  /* Magazine : « Édition jaune », l'énergie de la couverture (jaune #F9C81A, encre, indigo) sur papier.
+     Les aplats et effets propres au clair (bandeaux, badges, marqueur, ombres franches) : classes `mag-*` en fin de fichier. */
+  --site-page: #FFFBEF; /* papier */
   --site-surface: #FFFFFF;
-  --site-surface-2: #F3EEE6;
-  --site-line: #E7DFD3;
-  --site-line-strong: #D6CBBB;
-  --site-ink: #1C1917; /* 16,4:1 */
-  --site-ink-soft: #44403C; /* 9,6:1 */
-  --site-ink-muted: #6B645C; /* 5,5:1 */
-  --site-ink-subtle: #6B645C;
-  --site-ink-faint: #736B62; /* 4,9:1 : sert aussi à des numéros et mentions */
-  --site-on-accent: #1C1917;
-  --site-accent: #A3480B; /* 5,6:1 sur le papier, 5,1:1 dans un badge */
-  --site-accent-strong: #7C3A09;
-  --site-gold: #D97706;
-  --site-title-from: #C2620A; /* grands titres : 3,9:1 */
-  --site-title-to: #9A4507;
-  --site-copper: #B05A24; /* 4,5:1 */
-  --site-glow: #92400E; /* les halos dorés deviennent des ombres chaudes */
-  --site-pattern: #78593C;
-  --site-title-deep: #9A4507;
-  --site-spark: #C2620A;
-  --site-frame: #E7DFD3;
+  --site-surface-2: #FFF6D6;
+  --site-line: #E8DFC4;
+  --site-line-strong: #111111;
+  --site-ink: #111111; /* 18,3:1 */
+  --site-ink-soft: #2B2B2B;
+  --site-ink-muted: #4B4B4B; /* 8,4:1 */
+  --site-ink-subtle: #4B4B4B;
+  --site-ink-faint: #5A5A5A;
+  --site-on-accent: #111111;
+  --site-accent: #2E3A8C; /* indigo : 9,7:1 sur le papier, 6,3:1 sur le jaune */
+  --site-accent-strong: #1E2766;
+  --site-gold: #F9C81A; /* jaune de la couverture : teintes, filets, décor */
+  --site-title-from: #111111;
+  --site-title-to: #111111;
+  --site-copper: #2E3A8C;
+  --site-glow: #111111;
+  --site-pattern: #111111;
+  --site-title-deep: #111111;
+  --site-spark: #111111;
+  --site-frame: #111111;
   --site-success: #047857; /* 5,1:1 */
   --site-danger: #B91C1C;
 
@@ -184,4 +185,170 @@
   --salm-accent-tint: #CFF1E0; /* menthe */
   --salm-card-edge: #F3D9BD;
   --salm-card-shadow: rgb(194 65 12 / 0.3);
+}
+
+/*
+ * MODE CLAIR DU MAGAZINE : « ÉDITION JAUNE »
+ *
+ * Style « kiosque » : jaune de la couverture en aplats, encre, indigo, bordures et ombres franches.
+ * Chaque règle est préfixée par `.light` : sans effet en sombre. Hors couche : elles priment sur les utilitaires.
+ */
+
+/* Pastille d'en-tête de section (« COLLECTION », « À LA UNE »…) : encre, texte jaune */
+.light .mag-badge {
+  border-color: #111111;
+  border-radius: 6px;
+  background: #111111;
+  color: #F9C81A; /* 11,9:1 */
+}
+
+/* Mot-clé des titres : surligné au marqueur jaune au lieu du dégradé */
+.light .mag-marker {
+  padding-inline: 0.12em;
+  background: linear-gradient(transparent 52%, #F9C81A 52%, #F9C81A 90%, transparent 90%);
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+}
+
+/* Trait ondulé sous le mot-clé : remplacé par le marqueur */
+.light .mag-squiggle {
+  display: none;
+}
+
+/* Bandeau jaune (« À la une ») : les jetons y deviennent encre et indigo */
+.light .mag-band-yellow {
+  --site-page: #F9C81A;
+  --site-surface: #FFFFFF;
+  --site-ink-muted: #2B2B2B;
+  --site-ink-subtle: #2B2B2B;
+  --site-accent: #2E3A8C;
+  --site-gold: #111111;
+  --site-glow: #111111;
+  --site-copper: #111111;
+  --site-pattern: #111111;
+  background-color: #F9C81A;
+  box-shadow: inset 0 3px 0 #111111, inset 0 -3px 0 #111111;
+}
+
+/* Bandeau indigo (partenaires de l'accueil) : texte blanc, accent jaune */
+.light .mag-band-indigo {
+  --site-page: #2E3A8C;
+  --site-ink: #FFFFFF; /* 10:1 */
+  --site-ink-soft: #FFFFFF;
+  --site-ink-muted: #E6E9FF;
+  --site-ink-subtle: #E6E9FF;
+  --site-accent: #F9C81A; /* 6,3:1 */
+  --site-accent-strong: #FFFFFF;
+  --site-gold: #F9C81A;
+  --site-copper: #F9C81A;
+  --site-pattern: #FFFFFF;
+  background-color: #2E3A8C;
+}
+
+.light .mag-band-indigo .mag-marker {
+  border-radius: 4px;
+  background: #F9C81A;
+}
+
+.light .mag-band-indigo .mag-badge {
+  background: #F9C81A;
+  color: #111111;
+}
+
+/* Cartes : bordure d'encre et ombre franche décalée (variantes indigo et jaune) */
+.light .mag-card {
+  border: 2px solid #111111;
+  background-color: #FFFFFF;
+  box-shadow: 6px 6px 0 #111111;
+}
+
+.light .mag-card-indigo {
+  box-shadow: 6px 6px 0 #2E3A8C;
+}
+
+.light .mag-card-yellow {
+  box-shadow: 6px 6px 0 #F9C81A;
+}
+
+/* Couvertures : bordure d'encre, ombre franche ; posées en biais sur le bandeau jaune */
+.light .mag-cover {
+  border: 2px solid #111111;
+  box-shadow: 10px 10px 0 #111111;
+  filter: none;
+}
+
+.light .mag-band-yellow .mag-cover {
+  border: 6px solid #FFFFFF;
+  transform: rotate(-2.5deg);
+}
+
+/* Liseré électrique et halos autour des couvertures : remplacés par le cadre franc */
+.light .mag-electric {
+  display: none;
+}
+
+/* Bouton principal : encre, texte jaune, ombre franche */
+.light .mag-btn {
+  border: 2px solid #111111;
+  background: #111111;
+  color: #F9C81A;
+  box-shadow: 5px 5px 0 #F9C81A;
+}
+
+.light .mag-btn:hover {
+  background: #2B2B2B;
+  color: #F9C81A;
+}
+
+.light .mag-band-yellow .mag-btn {
+  box-shadow: 5px 5px 0 #FFFFFF;
+}
+
+/* Bouton secondaire : blanc à bordure d'encre */
+.light .mag-btn-alt {
+  border: 2px solid #111111;
+  background: #FFFFFF;
+  color: #111111;
+  box-shadow: 4px 4px 0 #111111;
+}
+
+/* Barre de navigation sur les pages du magazine (hors SALM) : pilule et bouton rond à bordure d'encre */
+.light .mag-nav .nav-wrapper,
+.light .mag-nav .theme-toggle {
+  border: 2px solid #111111;
+  background-color: #FFFFFF;
+  box-shadow: 3px 3px 0 #111111;
+}
+
+.light .mag-nav .nav-wrapper {
+  --nav-indicator-active: #F9C81A;
+}
+
+.light .mag-nav .nav-dropdown {
+  border: 2px solid #111111;
+  box-shadow: 5px 5px 0 #111111;
+}
+
+/* Liseré électrique des couvertures : ses bordures déformées fixent la taille de la carte, on ne peut pas les
+   masquer ; en clair, elles deviennent invisibles (plus de cadre ni de déformation). `html.light` : plus précis
+   que les styles scoped des composants, chargés après. */
+html.light .electric-main-border,
+html.light .electric-border-outer,
+html.light .electric-inner {
+  border-color: transparent;
+  filter: none;
+}
+
+/* Panneau d'informations de la carte magazine : sa bordure animée conique cède au cadre franc */
+html.light .mag-card.animated-border {
+  border: 2px solid #111111;
+  background: #FFFFFF;
+}
+
+/* Tuiles de logos sur le bandeau indigo : blanches, ombre franche d'encre */
+.light .mag-tile {
+  background-color: #FFFFFF;
+  box-shadow: 4px 4px 0 #111111;
 }

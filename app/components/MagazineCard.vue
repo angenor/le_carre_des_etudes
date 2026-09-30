@@ -66,11 +66,11 @@ const countdown = computed(() => {
           :src="coverImage"
           :alt="`Couverture ${name} — ${version}`"
           loading="lazy"
-          class="w-full h-auto shadow-lg rounded-sm"
+          class="mag-cover w-full h-auto shadow-lg rounded-sm"
         />
         <div
           v-else
-          class="w-full h-80 shadow-lg rounded-sm flex items-center justify-center bg-linear-to-br from-surface-2 to-surface"
+          class="mag-cover w-full h-80 shadow-lg rounded-sm flex items-center justify-center bg-linear-to-br from-surface-2 to-surface"
         >
           <div class="text-center">
             <div class="text-4xl font-bold text-accent">{{ version }}</div>
@@ -80,7 +80,7 @@ const countdown = computed(() => {
       </NuxtLink>
 
       <!-- Panneau d'infos superposé -->
-      <div class="animated-border rounded-l-[20px] rounded-t-[20px] absolute bottom-4 -right-6 w-[55%] h-[55%] sm:bottom-6 sm:-right-10 px-5 pt-4 pb-6 shadow-xl flex flex-col">
+      <div class="mag-card animated-border rounded-l-[20px] rounded-t-[20px] absolute bottom-4 -right-6 w-[55%] h-[55%] sm:bottom-6 sm:-right-10 px-5 pt-4 pb-6 shadow-xl flex flex-col">
         <span class="inline-block text-xs text-ink-subtle">
           {{ formatDate(publishedAt) }}
         </span>

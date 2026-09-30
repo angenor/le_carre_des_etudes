@@ -188,17 +188,17 @@ onUnmounted(() => {
 
       <!-- Contenu hero -->
       <div ref="heroContentRef" class="relative mx-auto max-w-5xl px-6 text-center">
-        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
+        <span class="mag-badge inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           Éditorial
         </span>
 
         <h1 class="mt-6 text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
           Nos
           <span class="relative">
-            <span class="relative z-10 bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
+            <span class="mag-marker relative z-10 bg-linear-to-r from-title-from to-title-to bg-clip-text text-transparent">
               rubriques
             </span>
-            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none" aria-hidden="true">
+            <svg class="mag-squiggle absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none" aria-hidden="true">
               <path d="M1 5.5C40 2 80 2 100 4C120 6 160 6 199 3" class="stroke-copper" stroke-width="2" stroke-linecap="round" opacity="0.5" />
             </svg>
           </span>
@@ -253,8 +253,9 @@ onUnmounted(() => {
               <!-- Grille d'images A4 vertical -->
               <div class="section-grid grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <RubriqueCard
-                  v-for="item in visibleItems(section.key)"
+                  v-for="(item, index) in visibleItems(section.key)"
                   :key="item.id"
+                  :class="['', 'mag-card-indigo', 'mag-card-yellow'][index % 3]"
                   :image-path="item.imagePath"
                   :magazine-slug="item.magazine?.slug"
                   @click="selectedItem = item"
@@ -265,7 +266,7 @@ onUnmounted(() => {
               <div v-if="hasMore(section.key)" class="mt-8 text-center">
                 <button
                   type="button"
-                  class="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-6 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-gold/20"
+                  class="mag-btn-alt inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-6 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-gold/20"
                   @click="loadMore(section.key)"
                 >
                   Charger plus

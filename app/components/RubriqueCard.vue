@@ -9,7 +9,7 @@ const emit = defineEmits<{ click: [] }>()
 
 <template>
   <div
-    class="group block cursor-pointer overflow-hidden rounded-xl border border-ink/10 bg-ink/5 transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5"
+    class="mag-card group block cursor-pointer overflow-hidden rounded-xl border border-ink/10 bg-ink/5 transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5"
     @click="emit('click')"
   >
     <div class="relative aspect-210/297 overflow-hidden bg-surface-2">

@@ -196,14 +196,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="magazine" ref="sectionRef" class="relative overflow-hidden bg-page py-20 sm:py-28">
+  <section v-if="magazine" ref="sectionRef" class="mag-band-yellow relative overflow-hidden bg-page py-20 sm:py-28">
     <!-- Fond subtil -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,color-mix(in_srgb,var(--site-copper)_8%,transparent),transparent_60%)]" />
 
     <div class="relative mx-auto max-w-6xl px-6">
       <!-- Titre de section -->
       <div ref="badgeRef" class="mb-14 text-center">
-        <span class="inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
+        <span class="mag-badge inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-accent uppercase">
           À la une
         </span>
       </div>
@@ -211,7 +211,7 @@ onUnmounted(() => {
       <!-- Contenu principal -->
       <div class="relative flex flex-col items-center gap-12 lg:flex-row lg:gap-20">
         <!-- Éclairs qui s'échappent vers le titre (desktop) -->
-        <div ref="foudreContainerRef" class="pointer-events-none absolute inset-0 z-10 hidden lg:block" aria-hidden="true">
+        <div ref="foudreContainerRef" class="mag-electric pointer-events-none absolute inset-0 z-10 hidden lg:block" aria-hidden="true">
           <!-- Gradient pour les éclairs -->
           <svg class="absolute h-0 w-0">
             <defs>
@@ -281,18 +281,18 @@ onUnmounted(() => {
           </svg>
 
           <!-- Card avec electric border -->
-          <div class="electric-card">
+          <div class="electric-card mag-cover">
             <div class="electric-inner">
               <div class="electric-border-outer">
                 <div class="electric-main-border" />
               </div>
-              <div class="electric-glow-1" />
-              <div class="electric-glow-2" />
+              <div class="electric-glow-1 mag-electric" />
+              <div class="electric-glow-2 mag-electric" />
             </div>
 
-            <div class="electric-overlay-1" />
-            <div class="electric-overlay-2" />
-            <div class="electric-bg-glow" />
+            <div class="electric-overlay-1 mag-electric" />
+            <div class="electric-overlay-2 mag-electric" />
+            <div class="electric-bg-glow mag-electric" />
 
             <!-- Image du magazine -->
             <div class="electric-content">
@@ -361,7 +361,7 @@ onUnmounted(() => {
             <button
               v-if="estDisponible && magazine.pdfPath"
               type="button"
-              class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-gold/20 transition-all hover:bg-amber-400 hover:shadow-glow/30"
+              class="mag-btn inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-gold/20 transition-all hover:bg-amber-400 hover:shadow-glow/30"
               @click="showDownloadModal = true"
             >
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

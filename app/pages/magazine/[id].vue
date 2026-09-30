@@ -210,22 +210,22 @@ function formatDate(dateStr: string): string {
                     <div class="electric-border-outer">
                       <div class="electric-main-border" />
                     </div>
-                    <div class="electric-glow-1" />
-                    <div class="electric-glow-2" />
+                    <div class="electric-glow-1 mag-electric" />
+                    <div class="electric-glow-2 mag-electric" />
                   </div>
-                  <div class="electric-overlay-1" />
-                  <div class="electric-overlay-2" />
-                  <div class="electric-bg-glow" />
+                  <div class="electric-overlay-1 mag-electric" />
+                  <div class="electric-overlay-2 mag-electric" />
+                  <div class="electric-bg-glow mag-electric" />
                   <div class="electric-content">
                     <img
                       v-if="magazine.coverImage"
                       :src="magazine.coverImage"
                       :alt="`Couverture ${magazine.name} — ${magazine.version}`"
-                      class="h-full w-full rounded-[22px] object-cover"
+                      class="mag-cover h-full w-full rounded-[22px] object-cover"
                     />
                     <div
                       v-else
-                      class="flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-surface-2 to-surface"
+                      class="mag-cover flex h-full w-full items-center justify-center rounded-[22px] bg-linear-to-br from-surface-2 to-surface"
                     >
                       <div class="text-center">
                         <div class="text-5xl font-bold text-accent">{{ magazine.version }}</div>
@@ -237,7 +237,7 @@ function formatDate(dateStr: string): string {
               </template>
 
               <!-- Couverture normale (pas à la une) -->
-              <div v-else class="w-full overflow-hidden rounded-2xl border border-line shadow-2xl shadow-black/50">
+              <div v-else class="mag-cover w-full overflow-hidden rounded-2xl border border-line shadow-2xl shadow-black/50">
                 <img
                   v-if="magazine.coverImage"
                   :src="magazine.coverImage"
@@ -312,7 +312,7 @@ function formatDate(dateStr: string): string {
                 <button
                   v-if="estDisponible && magazine.pdfPath"
                   type="button"
-                  class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-gold/20 transition-all hover:bg-amber-400 hover:shadow-glow/30"
+                  class="mag-btn inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-8 py-3.5 text-sm font-bold tracking-wide text-gray-900 uppercase shadow-lg shadow-gold/20 transition-all hover:bg-amber-400 hover:shadow-glow/30"
                   @click="showDownloadModal = true"
                 >
                   <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
