@@ -22,11 +22,14 @@ export default defineNuxtConfig({
   modules: ['@hypernym/nuxt-gsap', '@nuxtjs/color-mode'],
   // Mode clair / sombre du site public : réglage du visiteur au premier affichage, puis son choix mémorisé.
   // Classe `light` ou `dark` sur <html> ; les couleurs suivent les jetons de app/assets/css/main.css.
+  // Sombre imposé pour l'instant, bouton masqué (THEME_TOGGLE dans AppNavbar.vue). Clé de stockage neuve :
+  // les choix « clair » déjà mémorisés sous `lcde-theme` sont ignorés. Pour rouvrir le choix :
+  // preference 'system', storageKey 'lcde-theme', THEME_TOGGLE = true.
   colorMode: {
-    preference: 'system',
+    preference: 'dark',
     fallback: 'dark',
     classSuffix: '',
-    storageKey: 'lcde-theme',
+    storageKey: 'lcde-theme-sombre',
   },
   gsap: {
     composables: true,

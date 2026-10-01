@@ -118,6 +118,10 @@ onBeforeUnmount(() => {
   cancelHoverClose()
 })
 
+// Bouton clair / sombre masqué pour l'instant : le site est imposé en sombre (colorMode de nuxt.config.ts).
+// Passer à true, avec la configuration indiquée dans nuxt.config.ts, pour le réafficher.
+const THEME_TOGGLE = false
+
 // Clair / sombre (@nuxtjs/color-mode) : réglage du visiteur au premier affichage, puis son choix, mémorisé.
 // Mode sombre : soleil, pour passer en clair ; mode clair : lune, pour revenir au sombre.
 const colorMode = useColorMode()
@@ -213,6 +217,7 @@ function toggleTheme() {
 
     <!-- Bouton clair / sombre, hors de la pilule : ensemble, ils dessinent un « i » couché -->
     <button
+      v-if="THEME_TOGGLE"
       type="button"
       class="theme-toggle rounded-full border border-accent/20 bg-surface/60 backdrop-blur-xl"
       :aria-label="themeLabel"
