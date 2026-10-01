@@ -12,7 +12,7 @@ import {
   SLOT_KINDS,
   type SalmFieldError,
 } from '#shared/utils/salm'
-import type { SalmAdminEditionDetail, SalmAudience, SalmContact } from '#shared/types/salm'
+import type { SalmAdminEditionDetail, SalmAudience, SalmContact, SalmKeyFigure } from '#shared/types/salm'
 
 // Écritures du back-office des contenus SALM (specs/007-salm-admin-contenus, data-model § 3 et § 4).
 // Chaque corps passe par une liste blanche de champs (research R15) : tout autre champ est ignoré.
@@ -185,6 +185,24 @@ function readAudiences(body: Body, errors: ContentErrors): SalmAudience[] | unde
     const text = readText(entry, 'text', errors, { max: 300, required: true, multiline: true, errorKey: `audiences.${i}.text` })
     return { title: title ?? '', text: text ?? '' }
   })
+}
+
+export const KEY_FIGURES_MAX = 6
+
+/** Liste complète des chiffres clés du SALM (`PUT /api/admin/salm/key-figures`) ; lève `400 VALIDATION`. */
+export function validateKeyFigures(body: Body): SalmKeyFigure[] {
+  const errors: ContentErrors = {}
+  const raw = body.keyFigures
+  if (!Array.isArray(raw)) throw contentValidationError({ keyFigures: has(body, 'keyFigures') ? 'INVALID_FORMAT' : 'REQUIRED' })
+  if (raw.length > KEY_FIGURES_MAX) throw contentValidationError({ keyFigures: 'TOO_MANY' })
+  const figures = raw.map((item, i) => {
+    const entry = (item && typeof item === 'object' ? item : {}) as Body
+    const value = readText(entry, 'value', errors, { max: 20, required: true, errorKey: `keyFigures.${i}.value` })
+    const label = readText(entry, 'label', errors, { max: 120, required: true, errorKey: `keyFigures.${i}.label` })
+    return { value: value ?? '', label: label ?? '' }
+  })
+  assertValid(errors)
+  return figures
 }
 
 function readContacts(body: Body, errors: ContentErrors): SalmContact[] | undefined {

@@ -5,6 +5,7 @@ import type {
   SalmAudience,
   SalmContact,
   SalmEditionResponse,
+  SalmKeyFigure,
   SalmPreviousEdition,
   SalmPublicEdition,
   SalmTimeline,
@@ -187,10 +188,19 @@ export async function loadEditionPayload(where: Prisma.SalmEditionWhereInput): P
     },
   })
 
-  if (!edition) return { edition: null, previous: null }
+  const keyFigures = await getKeyFigures()
+  if (!edition) return { edition: null, previous: null, keyFigures }
 
   const previous = await getPreviousEdition(edition.year)
-  return { edition: serializePublicEdition(edition), previous: serializePreviousEdition(previous) }
+  return { edition: serializePublicEdition(edition), previous: serializePreviousEdition(previous), keyFigures }
+}
+
+/** Chiffres clés du SALM, toutes éditions confondues, dans l'ordre du back-office. */
+export function getKeyFigures(): Promise<SalmKeyFigure[]> {
+  return prisma.salmKeyFigure.findMany({
+    select: { value: true, label: true },
+    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+  })
 }
 
 type PublicEditionRow = {

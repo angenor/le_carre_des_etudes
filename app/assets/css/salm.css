@@ -600,3 +600,165 @@ dialog.salm-dialog[open]::backdrop {
   border-color: #005C3B;
   background-color: #F0FBF6;
 }
+
+/* Chiffres clés en clair : même carte pour tous, contour encre et ombre orange décalée, disque pêche en coin,
+   nombre orange surligné de jaune soleil ; au survol la carte se soulève et son ombre s'allonge */
+.light .salm-figure {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #1F1206;
+  border-radius: 24px;
+  background-color: #FFFFFF;
+  padding: 32px 26px 28px;
+  box-shadow: 8px 8px 0 #E8590C;
+  transition: translate 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.light .salm-figure::after {
+  content: '';
+  position: absolute;
+  top: -56px;
+  right: -56px;
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  background-color: #FFD9B8; /* pêche */
+  box-shadow: 0 0 0 14px #FFF4E6; /* anneau abricot */
+}
+
+.light .salm-figure > * {
+  position: relative;
+  z-index: 1;
+}
+
+.light .salm-figure-value {
+  align-self: flex-start;
+  padding: 0 4px;
+  margin-left: -4px;
+  background: linear-gradient(transparent 60%, #FFC940 60%, #FFC940 90%, transparent 90%); /* surligneur jaune soleil */
+}
+
+/* translate et non transform : GSAP laisse un transform en ligne après l'apparition */
+.light .salm-figure:hover {
+  translate: -3px -3px;
+  box-shadow: 12px 12px 0 #E8590C;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .light .salm-figure {
+    transition: none;
+  }
+
+  .light .salm-figure:hover {
+    translate: none;
+  }
+}
+
+/* Chiffres clés en sombre : halo orange derrière la section, cartes de verre fumé éclairées par le haut,
+   nombres en dégradé ambre → orange, numéro d'ordre en filigrane ; la carte s'allume au survol.
+   html:not(.light) : aussi sans la classe posée par color-mode (sombre par défaut). */
+.salm-figure-index,
+.salm-figure-rule {
+  display: none;
+}
+
+html:not(.light) .salm-figures {
+  overflow: hidden;
+}
+
+html:not(.light) .salm-figures::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 100%, rgb(244 121 43 / 0.16), transparent 70%),
+    radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.05) 1px, transparent 0) 0 0 / 28px 28px;
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 80%, transparent);
+  pointer-events: none;
+}
+
+html:not(.light) .salm-figure {
+  position: relative;
+  overflow: hidden;
+  gap: 0;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 24px;
+  padding: 36px 28px 30px;
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgb(244 121 43 / 0.14), transparent 55%),
+    linear-gradient(180deg, #17171B, #101013);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 24px 48px -28px rgb(0 0 0 / 0.9);
+  transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.35s, box-shadow 0.35s;
+}
+
+/* Filet lumineux sur le bord haut */
+html:not(.light) .salm-figure::before {
+  content: '';
+  position: absolute;
+  inset: 0 24px auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(251 191 36 / 0.8), rgb(244 121 43 / 0.8), transparent);
+}
+
+/* translate et non transform : GSAP laisse un transform en ligne après l'apparition */
+html:not(.light) .salm-figure:hover {
+  translate: 0 -6px;
+  border-color: rgb(244 121 43 / 0.45);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 30px 60px -24px rgb(244 121 43 / 0.35);
+}
+
+html:not(.light) .salm-figure-index {
+  display: block;
+  position: absolute;
+  right: 18px;
+  bottom: -30px;
+  font-family: var(--font-salm-title);
+  font-size: 128px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(255 255 255 / 0.08);
+  pointer-events: none;
+  user-select: none;
+}
+
+html:not(.light) .salm-figure-value {
+  position: relative;
+  padding-bottom: 0.08em; /* jambages du dégradé découpé sur le texte */
+  background: linear-gradient(180deg, #FCD34D 5%, #F4792B 60%, #E8590C 95%); /* vertical : même rendu quelle que soit la longueur */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html:not(.light) .salm-figure-rule {
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin: 20px 0 16px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #FBBF24, #F4792B);
+  transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html:not(.light) .salm-figure:hover .salm-figure-rule {
+  width: 88px;
+}
+
+html:not(.light) .salm-figure-label {
+  position: relative;
+  color: var(--color-stone-300);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.light) .salm-figure,
+  html:not(.light) .salm-figure-rule {
+    transition: none;
+  }
+
+  html:not(.light) .salm-figure:hover {
+    translate: none;
+  }
+}

@@ -113,6 +113,7 @@ const FIELD_SPECIFIC: Record<string, Partial<Record<string, string>>> = {
   programPdfPath: { INVALID_FORMAT: `Fichier non accepté (${SALM_PDF_RULES}).` },
   audiences: { TOO_MANY: '6 publics au plus.' },
   contacts: { TOO_MANY: '8 contacts au plus.' },
+  keyFigures: { TOO_MANY: '6 chiffres au plus.' },
   body: { REQUIRED: 'Aucune modification à enregistrer.' },
 }
 

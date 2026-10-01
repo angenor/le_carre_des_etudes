@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import '~/assets/css/salm.css'
-import type { SalmPreviousEdition, SalmPublicEdition } from '#shared/types/salm'
+import type { SalmKeyFigure, SalmPreviousEdition, SalmPublicEdition } from '#shared/types/salm'
 
 // Sections de la page du SALM, partagées par /salm et l'aperçu du back-office (FR-120, research R6).
-defineProps<{
+withDefaults(defineProps<{
   edition: SalmPublicEdition | null
   previous: SalmPreviousEdition | null
-}>()
+  /** Chiffres clés, toutes éditions confondues : en fin de page, même sans édition publiée */
+  keyFigures?: SalmKeyFigure[]
+}>(), { keyFigures: () => [] })
 
 // Apparitions au défilement, déclarées par data-motion dans les sections
 const root = ref<HTMLElement | null>(null)
@@ -37,5 +39,7 @@ useSalmMotion(root)
       <h1 class="max-w-2xl font-salm-title text-3xl font-extrabold tracking-[-0.02em] md:text-4xl">La prochaine édition du SALM sera bientôt annoncée.</h1>
       <NuxtLink to="/" class="mt-2 text-sm font-semibold text-salm-accent-text hover:text-salm-accent-soft">Retour à l'accueil</NuxtLink>
     </section>
+
+    <SalmKeyFigures v-if="keyFigures.length" :figures="keyFigures" />
   </div>
 </template>

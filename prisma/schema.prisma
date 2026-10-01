@@ -276,6 +276,15 @@ model SalmSchoolRegistration {
   @@index([editionId, createdAt])
 }
 
+// Chiffres clés du SALM, toutes éditions confondues (fin de la page /salm)
+model SalmKeyFigure {
+  id        Int      @id @default(autoincrement())
+  value     String // « + de 2 000 »
+  label     String // « étudiants participants… »
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
 // Réglages globaux du site (une seule ligne, id = 1)
 model SiteSettings {
   id              Int      @id @default(1)

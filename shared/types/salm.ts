@@ -127,9 +127,16 @@ export interface SalmPreviousEdition {
   photos: SalmPublicPhoto[]
 }
 
+/** Chiffre clé du SALM, toutes éditions confondues (fin de la page /salm). */
+export interface SalmKeyFigure {
+  value: string
+  label: string
+}
+
 export interface SalmEditionResponse {
   edition: SalmPublicEdition | null
   previous: SalmPreviousEdition | null
+  keyFigures: SalmKeyFigure[]
 }
 
 export interface SalmBadgePayload {

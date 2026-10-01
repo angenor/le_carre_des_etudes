@@ -84,6 +84,36 @@ const EFFECTS: Record<string, (el: HTMLElement) => void> = {
     })
   },
 
+  // Chiffres clés : les blocs montent l'un après l'autre et chaque nombre défile de 0 à sa valeur.
+  // Seul le nombre change (« + de » reste en place) ; la valeur saisie est rétablie telle quelle à la fin.
+  count(el) {
+    useGsap.from(el.children, { y: 36, autoAlpha: 0, duration: 0.7, ease: 'power3.out', stagger: 0.12, scrollTrigger: onEnter(el) })
+    el.querySelectorAll<HTMLElement>('[data-count]').forEach((node, i) => {
+      const text = node.firstChild
+      const original = text?.nodeValue ?? ''
+      const match = /\d(?:[\d\s\u00a0\u202f]*\d)?/.exec(original)
+      if (!(text instanceof Text) || !match) return
+      const before = original.slice(0, match.index)
+      const after = original.slice(match.index + match[0].length)
+      const separator = /[\s\u00a0\u202f]/.exec(match[0])?.[0] ?? ''
+      const show = (n: number) => {
+        const digits = String(Math.round(n))
+        text.nodeValue = before + (separator ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, separator) : digits) + after
+      }
+      const counter = { n: 0 }
+      show(0)
+      useGsap.to(counter, {
+        n: Number(match[0].replace(/\D/g, '')),
+        duration: 1.8,
+        delay: 0.2 + i * 0.12,
+        ease: 'power2.out',
+        scrollTrigger: onEnter(el),
+        onUpdate: () => show(counter.n),
+        onComplete: () => { text.nodeValue = original },
+      })
+    })
+  },
+
   rise(el) {
     useGsap.from(el, { y: 36, autoAlpha: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: onEnter(el) })
   },
