@@ -12,7 +12,7 @@ import {
   SLOT_KINDS,
   type SalmFieldError,
 } from '#shared/utils/salm'
-import type { SalmAdminEditionDetail, SalmAudience, SalmContact, SalmKeyFigure } from '#shared/types/salm'
+import type { SalmAdminEditionDetail, SalmAudience, SalmContact, SalmKeyFigure, SalmPartner } from '#shared/types/salm'
 
 // Écritures du back-office des contenus SALM (specs/007-salm-admin-contenus, data-model § 3 et § 4).
 // Chaque corps passe par une liste blanche de champs (research R15) : tout autre champ est ignoré.
@@ -203,6 +203,41 @@ export function validateKeyFigures(body: Body): SalmKeyFigure[] {
   })
   assertValid(errors)
   return figures
+}
+
+export const PARTNERS_MAX = 40
+
+/** Adresse web http(s) d'au plus 300 caractères. */
+function isWebUrl(value: string): boolean {
+  if (value.length > 300 || !/^https?:\/\/\S+$/i.test(value)) return false
+  try {
+    return !!new URL(value).hostname
+  }
+  catch {
+    return false
+  }
+}
+
+/** Liste complète des partenaires du SALM (`PUT /api/admin/salm/partners`) ; lève `400 VALIDATION`. */
+export async function validateSalmPartners(body: Body): Promise<SalmPartner[]> {
+  const errors: ContentErrors = {}
+  const raw = body.partners
+  if (!Array.isArray(raw)) throw contentValidationError({ partners: has(body, 'partners') ? 'INVALID_FORMAT' : 'REQUIRED' })
+  if (raw.length > PARTNERS_MAX) throw contentValidationError({ partners: 'TOO_MANY' })
+  const partners: SalmPartner[] = []
+  for (const [i, item] of raw.entries()) {
+    const entry = (item && typeof item === 'object' ? item : {}) as Body
+    const name = readText(entry, 'name', errors, { max: 80, required: true, errorKey: `partners.${i}.name` })
+    const url = readText(entry, 'url', errors, { max: 300, errorKey: `partners.${i}.url` })
+    if (url && !isWebUrl(url)) errors[`partners.${i}.url`] = 'INVALID_FORMAT'
+    const logoPath = entry.logoPath
+    if (typeof logoPath !== 'string' || !logoPath) errors[`partners.${i}.logoPath`] = 'REQUIRED'
+    else if (!isSalmImagePath(logoPath)) errors[`partners.${i}.logoPath`] = 'INVALID_FORMAT'
+    else if (!(await salmFileExists(logoPath))) errors[`partners.${i}.logoPath`] = 'FILE_NOT_FOUND'
+    partners.push({ name: name ?? '', logoPath: typeof logoPath === 'string' ? logoPath : '', url: url ?? null })
+  }
+  assertValid(errors)
+  return partners
 }
 
 function readContacts(body: Body, errors: ContentErrors): SalmContact[] | undefined {

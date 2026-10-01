@@ -285,6 +285,17 @@ model SalmKeyFigure {
   updatedAt DateTime @updatedAt
 }
 
+// Partenaires du SALM, toutes éditions confondues (bandeaux de logos en fin de page /salm)
+model SalmPartner {
+  id        Int      @id @default(autoincrement())
+  name      String
+  logoPath  String // /uploads/salm/…
+  url       String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // Réglages globaux du site (une seule ligne, id = 1)
 model SiteSettings {
   id              Int      @id @default(1)

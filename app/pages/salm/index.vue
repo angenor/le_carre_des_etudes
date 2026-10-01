@@ -70,5 +70,5 @@ useHead(() => {
 </script>
 
 <template>
-  <SalmEditionView :edition="edition" :previous="previous" :key-figures="data?.keyFigures" />
+  <SalmEditionView :edition="edition" :previous="previous" :key-figures="data?.keyFigures" :partners="data?.partners" />
 </template>

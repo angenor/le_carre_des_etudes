@@ -72,7 +72,7 @@ onBeforeUnmount(() => clearTimeout(noticeTimer))
     </div>
 
     <div v-if="data && !error" class="pt-11" @click.capture="blockRegistration">
-      <SalmEditionView :edition="edition" :previous="previous" :key-figures="data?.keyFigures" />
+      <SalmEditionView :edition="edition" :previous="previous" :key-figures="data?.keyFigures" :partners="data?.partners" />
     </div>
     <div v-else class="flex min-h-[60vh] items-center justify-center px-4 pt-32 pb-20 text-center text-gray-600">
       <p>{{ placeholder }}</p>

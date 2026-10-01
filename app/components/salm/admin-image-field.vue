@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // Champ image du back-office SALM : aperçu, recadrage (ImageEditor), envoi avec progression, texte alternatif
 // (FR-132, FR-133). `decorative` : image purement décorative, sans texte alternatif (image de secours de la vidéo
-// récapitulative). `aspectRatio` : proportions proposées à l'ouverture de l'éditeur.
+// récapitulative). `aspectRatio` : proportions proposées à l'ouverture de l'éditeur. `logo` : aperçu entier
+// (non rogné) et pas de texte alternatif, donné par le nom saisi à côté (partenaires).
 const props = withDefaults(defineProps<{
   modelValue: string | null
   alt?: string | null
@@ -14,7 +15,8 @@ const props = withDefaults(defineProps<{
   altError?: string
   aspectRatio?: number | null
   ratioLabel?: string
-}>(), { alt: null, defaultAlt: '', required: false, decorative: false, error: '', altError: '', aspectRatio: null, ratioLabel: '' })
+  logo?: boolean
+}>(), { alt: null, defaultAlt: '', required: false, decorative: false, error: '', altError: '', aspectRatio: null, ratioLabel: '', logo: false })
 
 const emit = defineEmits<{
   'update:modelValue': [path: string | null]
@@ -61,7 +63,7 @@ async function onApply({ file }: { file: File }) {
   try {
     const { path } = await upload(file, 'image', { onProgress: (p) => { progress.value = p } })
     emit('update:modelValue', path)
-    if (!props.decorative && !props.alt?.trim()) emit('update:alt', props.defaultAlt)
+    if (!props.decorative && !props.logo && !props.alt?.trim()) emit('update:alt', props.defaultAlt)
     pending.value = null
   }
   catch (err) {
@@ -88,7 +90,7 @@ function remove() {
 
     <div class="mt-2 flex flex-wrap items-start gap-4">
       <div class="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-        <img v-if="modelValue" :src="modelValue" alt="" class="h-full w-full object-cover">
+        <img v-if="modelValue" :src="modelValue" alt="" class="h-full w-full" :class="logo ? 'bg-white object-contain p-2' : 'object-cover'">
         <span v-else class="px-2 text-center text-xs text-gray-400">Aucune image</span>
       </div>
 
@@ -133,7 +135,7 @@ function remove() {
 
         <p v-if="message" :id="`${id}-error`" class="text-sm text-red-600">{{ message }}</p>
 
-        <template v-if="modelValue">
+        <template v-if="modelValue && !logo">
           <p v-if="decorative" class="text-xs text-gray-500">Image décorative : aucun texte alternatif nécessaire.</p>
           <div v-else>
             <label :for="`${id}-alt`" class="block text-sm font-medium text-gray-700">Texte alternatif <span class="text-red-600" aria-hidden="true">*</span></label>

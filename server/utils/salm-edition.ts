@@ -6,6 +6,7 @@ import type {
   SalmContact,
   SalmEditionResponse,
   SalmKeyFigure,
+  SalmPartner,
   SalmPreviousEdition,
   SalmPublicEdition,
   SalmTimeline,
@@ -188,11 +189,19 @@ export async function loadEditionPayload(where: Prisma.SalmEditionWhereInput): P
     },
   })
 
-  const keyFigures = await getKeyFigures()
-  if (!edition) return { edition: null, previous: null, keyFigures }
+  const [keyFigures, partners] = await Promise.all([getKeyFigures(), getSalmPartners()])
+  if (!edition) return { edition: null, previous: null, keyFigures, partners }
 
   const previous = await getPreviousEdition(edition.year)
-  return { edition: serializePublicEdition(edition), previous: serializePreviousEdition(previous), keyFigures }
+  return { edition: serializePublicEdition(edition), previous: serializePreviousEdition(previous), keyFigures, partners }
+}
+
+/** Partenaires du SALM, toutes éditions confondues, dans l'ordre du back-office. */
+export function getSalmPartners(): Promise<SalmPartner[]> {
+  return prisma.salmPartner.findMany({
+    select: { name: true, logoPath: true, url: true },
+    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+  })
 }
 
 /** Chiffres clés du SALM, toutes éditions confondues, dans l'ordre du back-office. */

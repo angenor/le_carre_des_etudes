@@ -114,6 +114,9 @@ const FIELD_SPECIFIC: Record<string, Partial<Record<string, string>>> = {
   audiences: { TOO_MANY: '6 publics au plus.' },
   contacts: { TOO_MANY: '8 contacts au plus.' },
   keyFigures: { TOO_MANY: '6 chiffres au plus.' },
+  partners: { TOO_MANY: '40 partenaires au plus.' },
+  logoPath: { REQUIRED: 'Choisissez un logo.', INVALID_FORMAT: `Image non acceptée (${SALM_IMAGE_RULES}).` },
+  url: { INVALID_FORMAT: 'Adresse web invalide (https://…).' },
   body: { REQUIRED: 'Aucune modification à enregistrer.' },
 }
 

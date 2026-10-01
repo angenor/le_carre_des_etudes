@@ -762,3 +762,95 @@ html:not(.light) .salm-figure-label {
     translate: none;
   }
 }
+
+/* Partenaires : bandeau de logos sur pastilles blanches, bords en fondu, défilement continu */
+.salm-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.salm-marquee-track {
+  display: flex;
+  width: max-content;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  animation: salm-marquee var(--salm-marquee-duration, 32s) linear infinite;
+}
+
+.salm-marquee:hover .salm-marquee-track,
+.salm-marquee:focus-within .salm-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes salm-marquee {
+  to {
+    translate: -50% 0;
+  }
+}
+
+/* Marge à droite plutôt qu'écart : les deux séries font exactement la même largeur */
+.salm-marquee-item {
+  flex-shrink: 0;
+  padding-right: 20px;
+}
+
+.salm-marquee-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 76px;
+  padding: 10px 16px;
+  border: 1px solid var(--salm-border);
+  border-radius: 16px;
+  background-color: #FFFFFF;
+  transition: translate 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.salm-marquee-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+a.salm-marquee-logo:hover {
+  translate: 0 -3px;
+}
+
+a.salm-marquee-logo:focus-visible {
+  outline: 3px solid #F4792B;
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .salm-marquee-item {
+    padding-right: 28px;
+  }
+
+  .salm-marquee-logo {
+    width: 184px;
+    height: 92px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .salm-marquee-track {
+    animation: none;
+  }
+
+  .salm-marquee-logo {
+    transition: none;
+  }
+}
+
+/* Fond à peine teinté pour détacher les partenaires des chiffres clés : brun nuit en sombre, pêche pâle en clair */
+.salm-partners {
+  background-color: #17120F;
+  border-top: 1px solid rgb(244 121 43 / 0.12);
+}
+
+.light .salm-partners {
+  background-color: #FFE8D4;
+  border-top-color: #F3D9BD;
+}

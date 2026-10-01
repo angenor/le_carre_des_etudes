@@ -78,6 +78,7 @@ const navEntries: NavEntry[] = [
       { label: 'Éditions', to: '/admin/salm/editions', match: startsWith('/admin/salm/editions') },
       { label: 'Statistiques', to: '/admin/salm/statistiques', match: (p) => p === '/admin/salm/statistiques' },
       { label: 'Chiffres clés', to: '/admin/salm/chiffres-cles', match: (p) => p === '/admin/salm/chiffres-cles' },
+      { label: 'Partenaires', to: '/admin/salm/partenaires', match: (p) => p === '/admin/salm/partenaires' },
     ],
   },
   {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import '~/assets/css/salm.css'
-import type { SalmKeyFigure, SalmPreviousEdition, SalmPublicEdition } from '#shared/types/salm'
+import type { SalmKeyFigure, SalmPartner, SalmPreviousEdition, SalmPublicEdition } from '#shared/types/salm'
 
 // Sections de la page du SALM, partagées par /salm et l'aperçu du back-office (FR-120, research R6).
 withDefaults(defineProps<{
@@ -8,7 +8,9 @@ withDefaults(defineProps<{
   previous: SalmPreviousEdition | null
   /** Chiffres clés, toutes éditions confondues : en fin de page, même sans édition publiée */
   keyFigures?: SalmKeyFigure[]
-}>(), { keyFigures: () => [] })
+  /** Partenaires du SALM, toutes éditions confondues : après les chiffres clés */
+  partners?: SalmPartner[]
+}>(), { keyFigures: () => [], partners: () => [] })
 
 // Apparitions au défilement, déclarées par data-motion dans les sections
 const root = ref<HTMLElement | null>(null)
@@ -41,5 +43,6 @@ useSalmMotion(root)
     </section>
 
     <SalmKeyFigures v-if="keyFigures.length" :figures="keyFigures" />
+    <SalmPartners v-if="partners.length" :partners="partners" />
   </div>
 </template>

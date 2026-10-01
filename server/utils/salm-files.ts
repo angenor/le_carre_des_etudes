@@ -36,6 +36,7 @@ async function referenceCount(p: string): Promise<number> {
     prisma.salmHighlight.count({ where: { imagePath: p } }),
     prisma.salmPhoto.count({ where: { OR: [{ imagePath: p }, { originalPath: p }] } }),
     prisma.salmVideo.count({ where: { thumbnailPath: p } }),
+    prisma.salmPartner.count({ where: { logoPath: p } }),
   ])
   return counts.reduce((a, b) => a + b, 0)
 }

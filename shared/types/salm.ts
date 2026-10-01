@@ -133,10 +133,18 @@ export interface SalmKeyFigure {
   label: string
 }
 
+/** Partenaire du SALM, toutes éditions confondues. */
+export interface SalmPartner {
+  name: string
+  logoPath: string
+  url: string | null
+}
+
 export interface SalmEditionResponse {
   edition: SalmPublicEdition | null
   previous: SalmPreviousEdition | null
   keyFigures: SalmKeyFigure[]
+  partners: SalmPartner[]
 }
 
 export interface SalmBadgePayload {
