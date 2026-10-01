@@ -814,6 +814,10 @@ html:not(.light) .salm-figure-label {
   object-fit: contain;
 }
 
+a.salm-marquee-logo {
+  cursor: pointer;
+}
+
 a.salm-marquee-logo:hover {
   translate: 0 -3px;
 }

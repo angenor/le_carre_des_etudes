@@ -185,6 +185,7 @@ onUnmounted(() => {
             :target="partner.url ? '_blank' : undefined"
             :rel="partner.url ? 'noopener noreferrer' : undefined"
             class="flex flex-col items-center gap-3 transition-opacity hover:opacity-80"
+            :class="{ 'cursor-pointer': partner.url }"
           >
             <div
               class="mag-card flex h-20 w-20 items-center justify-center rounded-xl bg-white/90 p-3 sm:h-24 sm:w-24"
