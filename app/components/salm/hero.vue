@@ -45,11 +45,8 @@ const backgroundSrc = computed(() => {
 
 onMounted(() => {
   if (!backgroundSrc.value) return
-  const wide = window.matchMedia('(min-width: 768px)').matches
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection
-  const slow = ['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '')
-  videoEligible.value = wide && !reducedMotion && !connection?.saveData && !slow
+  // Lecture sur tous les écrans et toutes les connexions ; seul le réglage « moins d'animations » l'empêche.
+  videoEligible.value = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
   try {
     videoPaused.value = sessionStorage.getItem(PAUSE_KEY) === '1'
   }
@@ -85,15 +82,16 @@ function toggleVideo() {
     >
     <div
       v-if="videoEligible && !videoPaused && backgroundSrc"
-      class="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      class="pointer-events-none absolute inset-0 -z-10 overflow-hidden @container-[size]"
       aria-hidden="true"
     >
+      <!-- « cover » 16:9 mesuré sur le hero (cqw/cqh), qui dépasse la hauteur de l'écran sur mobile -->
       <iframe
         :src="backgroundSrc"
         title="Vidéo de fond"
         tabindex="-1"
         allow="autoplay; encrypted-media"
-        class="absolute top-1/2 left-1/2 h-[max(100%,56.25vw)] w-[max(100%,177.78vh)] -translate-x-1/2 -translate-y-1/2 border-0 brightness-[0.45]"
+        class="absolute top-1/2 left-1/2 h-[max(100cqh,56.25cqw)] w-[max(100cqw,177.78cqh)] -translate-x-1/2 -translate-y-1/2 border-0 brightness-[0.45]"
       />
     </div>
     <div class="absolute inset-0 -z-10 bg-[#0B0B0D]/35" />
