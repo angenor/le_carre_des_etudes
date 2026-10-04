@@ -35,6 +35,16 @@ function selectTab(index: number) {
   tabRefs.value[index]?.focus()
 }
 
+// Bouton du bas (mobile) : change de jour puis remonte en haut des onglets, pour lire le jour depuis le début
+const tablistRef = ref<HTMLElement | null>(null)
+async function selectFromBottom(index: number) {
+  selected.value = index
+  await nextTick()
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  tablistRef.value?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' })
+  tabRefs.value[index]?.focus({ preventScroll: true })
+}
+
 function onTabKeydown(event: KeyboardEvent) {
   const last = props.days.length - 1
   const moves: Record<string, number> = {
@@ -75,9 +85,10 @@ function capitalize(text: string) {
       <!-- Onglets (mobile) -->
       <div
         v-if="days.length > 1"
+        ref="tablistRef"
         role="tablist"
         aria-label="Jour du salon"
-        class="grid gap-1 rounded-[14px] bg-salm-bg p-1 md:hidden"
+        class="grid scroll-mt-24 gap-1 rounded-[14px] bg-salm-bg p-1 md:hidden"
         :style="{ gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))` }"
       >
         <button
@@ -152,6 +163,28 @@ function capitalize(text: string) {
           </div>
         </div>
       </div>
+
+      <!-- Bas du jour (mobile) : passer au jour suivant, ou revenir au précédent sur le dernier, sans remonter -->
+      <template v-if="days.length > 1">
+        <button
+          v-if="selected < days.length - 1"
+          type="button"
+          class="flex h-12 items-center justify-center gap-2 rounded-xl bg-salm-accent px-5 text-[15px] font-bold text-white md:hidden"
+          @click="selectFromBottom(selected + 1)"
+        >
+          Voir le programme du {{ days[selected + 1]!.label }} · {{ formatDayTab(days[selected + 1]!.date) }}
+          <span aria-hidden="true">→</span>
+        </button>
+        <button
+          v-else
+          type="button"
+          class="flex h-12 items-center justify-center gap-2 rounded-xl border border-salm-line-strong px-5 text-[15px] font-semibold text-salm-ink-strong md:hidden"
+          @click="selectFromBottom(selected - 1)"
+        >
+          <span aria-hidden="true">←</span>
+          Revoir le {{ days[selected - 1]!.label }} · {{ formatDayTab(days[selected - 1]!.date) }}
+        </button>
+      </template>
     </div>
   </section>
 </template>
